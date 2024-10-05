@@ -15,5 +15,8 @@ Then, to see the game board and the target's location, run the provided JAR file
 
 ```bash
 java -jar KillDoctorLucky.jar.jar
+```
 
 There will be a txt file to show the example run to show some text info about how a test run is. The code you are running is in the src/WorldDriver.java
+
+### Citation
