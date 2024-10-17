@@ -459,4 +459,3 @@ public class World implements WorldOutline {
     }
   }
 }
-

@@ -1,10 +1,12 @@
 finish drawing a world!-----------------------------------------------
-Detailed Room Information:Room Name: Armory
+Detailed Room Information:
+Room Name: Armory
 Room ID: 0
 Coordinates: [22, 19, 23, 26]
 Neighbors: Billiard Room, Dining Hall, Drawing Room
 Visible From: Billiard Room, Dining Hall, Drawing Room, Library, Master Suite, Nursery, Tennessee Room, Trophy Room, Wine Cellar
-Items: Revolver--------------------------------------------------Armory has Neighbors(list seperately): Billiard Room, Dining Hall, Drawing Room--------------------------------------------------Room Name: Billiard Room
+Items: Revolver
+--------------------------------------------------Armory has Neighbors(list seperately): Billiard Room, Dining Hall, Drawing Room--------------------------------------------------Room Name: Billiard Room
 Room ID: 1
 Coordinates: [16, 21, 21, 28]
 Neighbors: Armory, Dining Hall, Trophy Room
