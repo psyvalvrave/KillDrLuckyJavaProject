@@ -1,13 +1,17 @@
 package world;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Represents a player in the game, implementing the Character interface.
  * This is not yet the requirement for milestone 1, so I just create a basic version, 
  * it will be updated in next iteration. 
  */
-public class Player implements Character {
-  private String playerName;
-  private Room currentRoom;
+public class Player extends AbstractCharacter {
+  private int playerId;
+  private List<Item> items;
+  private int itemLimit;
 
   /**
    * Constructor for the Player class.
@@ -15,9 +19,11 @@ public class Player implements Character {
    * @param playerNameInput Name of the player.
    * @param startingRoomInput Initial room where the player starts.
    */
-  public Player(String playerNameInput, Room startingRoomInput) {
-    this.playerName = playerNameInput;
-    this.currentRoom = startingRoomInput;
+  public Player(String playerNameInput, Room startingRoomInput, int playerId, int itemLimit) {
+    super(playerNameInput, startingRoomInput);
+    this.playerId = playerId;
+    this.itemLimit = itemLimit;
+    this.items = new ArrayList<>();
   }
 
   /**
@@ -31,27 +37,6 @@ public class Player implements Character {
   }
 
   /**
-   * Return player's name.
-   * 
-   * @return The name of the player.
-   */
-  @Override
-  public String getCharacterName() {
-    return playerName;
-  }
-  
-  /**
-   * It allow player to move from one room to the other. 
-   */
-  @Override
-  public void move(Room room) {
-    if (room != null) {
-      currentRoom = room;
-      System.out.println(playerName + " has moved to " + room.getRoomName());
-    }
-  }
-
-  /**
    * Attempts to murder a target within the same room.
    * 
    * @param target The target to murder.
@@ -60,10 +45,10 @@ public class Player implements Character {
   public void murder(Target target, int damage) {
     if (target != null && currentRoom.equals(target.getLocation())) {
       target.setHealthPoint(target.getHealthPoint() - damage);
-      System.out.println(playerName + " has attacked " + target.getCharacterName() 
+      System.out.println(name + " has attacked " + target.getCharacterName() 
           + " with " + damage + " damage.");
     } else {
-      System.out.println(playerName + " cannot attack " 
+      System.out.println(name + " cannot attack " 
           + (target == null ? "nobody" : target.getCharacterName()) 
           + " from current location.");
     }
@@ -76,6 +61,6 @@ public class Player implements Character {
    */
   public String getCharacterInfo() {
     return String.format("Target Name: %s\nCurrent Location: %s",
-        playerName, currentRoom.getRoomName());
+        name, currentRoom.getRoomName());
   }
 }

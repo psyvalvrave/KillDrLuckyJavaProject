@@ -17,40 +17,41 @@ public class WorldDriver {
   public static void main(String[] args) {
     try {
       Readable fileInput = new FileReader("res/mansion.txt");  
+      Appendable consoleOutput = System.out;
       Appendable fileOutput = new FileWriter("res/example_run.txt");
       World myWorld = new World(fileInput);
 
       myWorld.drawWorld();  
-      fileOutput.append("finish drawing a world!");
-      fileOutput.append("-----------------------------------------------");
-      fileOutput.append("\nDetailed Room Information:");
+      consoleOutput.append("finish drawing a world!\n");
+      consoleOutput.append("-----------------------------------------------");
+      consoleOutput.append("\nDetailed Room Information:");
       for (Room room : myWorld.getRooms()) {
-        fileOutput.append(room.getInfo());
-        fileOutput.append("--------------------------------------------------");
-        fileOutput.append(room.getRoomName() + " has Neighbors(list seperately): " 
+        consoleOutput.append(room.getInfo());
+        consoleOutput.append("\n--------------------------------------------------\n");
+        consoleOutput.append(room.getRoomName() + " has Neighbors(list seperately): " 
             + room.getNeighborNames());
-        fileOutput.append("--------------------------------------------------");
+        consoleOutput.append("\n--------------------------------------------------\n");
       }
-      fileOutput.append(myWorld.getWorldText());
-      fileOutput.append("--------------------------------------------------");
+      consoleOutput.append(myWorld.getWorldText());
+      consoleOutput.append("\n--------------------------------------------------\n");
       myWorld.moveTargetToNextRoom();
       myWorld.moveTargetToNextRoom();
       myWorld.moveTargetToNextRoom();
       myWorld.moveTargetToNextRoom();
-      fileOutput.append(myWorld.getTarget().getCharacterInfo());
-      fileOutput.append("--------------------------------------------------");
+      consoleOutput.append(myWorld.getTarget().getCharacterInfo());
+      consoleOutput.append("\n--------------------------------------------------\n");
       for (int i = 0; i < 16; i++) {
         myWorld.moveTargetToNextRoom();
-        fileOutput.append("Move " + (i + 1) + ": " + myWorld.getTarget().getCharacterInfo());
-        fileOutput.append("--------------------------------------------------");
+        consoleOutput.append("Move " + (i + 1) + ": " + myWorld.getTarget().getCharacterInfo());
+        consoleOutput.append("\n--------------------------------------------------\n");
       }
-      fileOutput.append("This is the last room, next move should go back to the first room");
-      fileOutput.append("--------------------------------------------------");
+      consoleOutput.append("This is the last room, next move should go back to the first room");
+      consoleOutput.append("\n--------------------------------------------------\n");
       myWorld.moveTargetToNextRoom();
-      fileOutput.append(myWorld.getTarget().getCharacterInfo());
-      fileOutput.append("--------------------------------------------------");
-      fileOutput.append(myWorld.getWorldText());
-      ((FileWriter) fileOutput).close();  
+      consoleOutput.append(myWorld.getTarget().getCharacterInfo());
+      consoleOutput.append("\n--------------------------------------------------\n");
+      consoleOutput.append(myWorld.getWorldText());
+      //((FileWriter) consoleOutput).close();  
     } catch (IOException e) {
       System.err.println("Failed to read or write: " + e.getMessage());
     } catch (IllegalArgumentException e) {
