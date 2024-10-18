@@ -153,6 +153,34 @@ public class Player extends AbstractCharacter {
     }
 
     return info.toString();
+  }
+  
+  /**
+   * Moves the player to a new room if it is a neighbor.
+   *
+   * @param room The new room to move the player to.
+   * @throws IllegalArgumentException If the room is null or not a neighbor.
+   */
+  @Override
+  public void move(Room room) {
+      if (room == null) {
+          throw new IllegalArgumentException("Room cannot be null.");
+      }
+      if (!currentRoom.getNeighbor().contains(room)) {
+          throw new IllegalArgumentException("Cannot move to a non-neighboring room.");
+      }
+      this.currentRoom = room;
+  }
+  
+  public void setItemLimit(int newItemLimit) {
+    this.itemLimit = newItemLimit;
+    while (items.size() > itemLimit) {
+        items.remove(items.size() - 1); 
+    }
 }
+
+  public int getItemLimit() {
+    return this.itemLimit;
+  }
   
 }

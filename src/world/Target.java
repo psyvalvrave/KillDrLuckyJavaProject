@@ -53,4 +53,11 @@ public class Target extends AbstractCharacter {
     return String.format("Target Name: %s\nHealth Points: %d\nCurrent Location: %s",
         name, healthPoint, currentRoom.getRoomName());
   }
+  
+  @Override
+  public String toString() {
+      return String.format("Target[name=%s, Current Room=%s, Health Points=%d]",
+                           name, currentRoom.getRoomName(), healthPoint);
+  }
+
 }

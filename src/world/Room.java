@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -312,5 +313,25 @@ public class Room implements Block {
     itemsList.setLength(itemsList.length() - 2); 
     return itemsList.toString();
 }
+  
+  @Override
+  public String toString() {
+      return String.format("Room[name=%s, id=%d, items=%s]",
+              roomName, roomId, items.isEmpty() ? "None" : listItems());
+  }
+  
+  @Override
+  public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Room room = (Room) obj;
+      return roomId == room.roomId;
+  }
+
+  @Override
+  public int hashCode() {
+      return Objects.hash(roomId);
+  }
+
 
 } 

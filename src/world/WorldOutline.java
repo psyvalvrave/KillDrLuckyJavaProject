@@ -114,4 +114,11 @@ public interface WorldOutline {
    */
   List<String[]> getItemData();
   
+  Player createPlayer(String playerName, int startRoomIndex);
+  
+  void setItemLimit(int newItemLimit);
+  
+  String getRoomOccupants(Room room);
+  
+  String displayRoomInfo(String roomName);
 }

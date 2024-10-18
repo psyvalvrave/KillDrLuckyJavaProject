@@ -16,7 +16,7 @@ public class WorldDriver {
    */
   public static void main(String[] args) {
     try {
-      Readable fileInput = new FileReader("res/mansion.txt");  
+      Readable fileInput = new FileReader("res/one_room.txt");  
       Appendable consoleOutput = System.out;
       Appendable fileOutput = new FileWriter("res/example_run.txt");
       World myWorld = new World(fileInput);

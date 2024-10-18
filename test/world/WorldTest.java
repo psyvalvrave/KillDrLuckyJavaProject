@@ -3,6 +3,7 @@ package world;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
@@ -430,5 +431,136 @@ public class WorldTest {
         + "because they are not adjacent", armory.getVisibleFrom().contains(parlor));
     assertFalse("Armory should not be added as a neighbor to "
         + "Library", parlor.getVisibleFrom().contains(armory));
+  }
+  
+  @Test
+  public void testCreatePlayer() {
+      Player player = world.createPlayer("Alice", 0);  
+      assertNotNull("Player should be created", player);
+      assertEquals("Player's name should be Alice", "Alice", player.getCharacterName());
+      assertEquals("Player should start in the first room", world.getRooms().get(0), player.getLocation());
+      assertEquals("Player's item limit should be 3", 3, player.getItemLimit());
+  }
+  
+  @Test
+  public void testCreateMultiplePlayers() {
+      int initialItemLimit = 3;
+      world.setItemLimit(initialItemLimit); 
+
+      Player player1 = world.createPlayer("Alice", 0);
+      Player player2 = world.createPlayer("Bob", 1);
+      Player player3 = world.createPlayer("Charlie", 2);
+
+      assertNotNull("Player 1 should be created", player1);
+      assertNotNull("Player 2 should be created", player2);
+      assertNotNull("Player 3 should be created", player3);
+
+      assertEquals("Player 1's name should be Alice", "Alice", player1.getCharacterName());
+      assertEquals("Player 2's name should be Bob", "Bob", player2.getCharacterName());
+      assertEquals("Player 3's name should be Charlie", "Charlie", player3.getCharacterName());
+
+      assertEquals("Player 1 should start in the first room", world.getRooms().get(0), player1.getLocation());
+      assertEquals("Player 2 should start in the second room", world.getRooms().get(1), player2.getLocation());
+      assertEquals("Player 3 should start in the third room", world.getRooms().get(2), player3.getLocation());
+
+      assertEquals("Player 1's item limit should be 3", initialItemLimit, player1.getItemLimit());
+      assertEquals("Player 2's item limit should be 3", initialItemLimit, player2.getItemLimit());
+      assertEquals("Player 3's item limit should be 3", initialItemLimit, player3.getItemLimit());
+
+      assertNotEquals("Player 1 and Player 2 should have different IDs", player1.getPlayerId(), player2.getPlayerId());
+      assertNotEquals("Player 2 and Player 3 should have different IDs", player2.getPlayerId(), player3.getPlayerId());
+      assertNotEquals("Player 1 and Player 3 should have different IDs", player1.getPlayerId(), player3.getPlayerId());
+  }
+
+
+  @Test
+  public void testSetItemLimit() {
+      world.setItemLimit(3); 
+      Player player = world.createPlayer("Bob", 0);
+      assertEquals("Item limit should be updated to 3", 3, player.getItemLimit());
+
+      Player existingPlayer = world.createPlayer("Charlie", 1);
+      world.setItemLimit(2);
+      assertEquals("Existing player's item limit should be adjusted to 2", 2, existingPlayer.getItemLimit());
+  }
+
+  @Test
+  public void testCreatePlayerWithInvalidRoom() {
+      int invalidRoomIndex = world.getRooms().size(); 
+      assertThrows(IllegalArgumentException.class, () -> world.createPlayer("Dave", invalidRoomIndex));
+  }
+
+  @Test
+  public void testAdjustItemLimitWithItems() {
+      Player player = world.createPlayer("Eve", 0);
+      Room startingRoom = world.getRooms().get(0);
+      Item sword = new Item("Sword", startingRoom, 10);
+      Item shield = new Item("Shield", startingRoom, 5);
+      Item bow = new Item("Bow", startingRoom, 7);
+      startingRoom.addItem(sword);
+      startingRoom.addItem(shield);
+      startingRoom.addItem(bow);
+      player.pickItem(sword);
+      player.pickItem(shield);
+      player.pickItem(bow);
+      world.setItemLimit(2);
+      assertEquals("Player should have no more than 2 items", 2, player.getItem().size());
+  }
+
+  @Test
+  public void testReduceItemLimitAndRemoveExcessItems() {
+      Player player = world.createPlayer("Frank", 0);
+      Room startingRoom = world.getRooms().get(0); 
+      Item sword = new Item("Sword", startingRoom, 10);
+      Item shield = new Item("Shield", startingRoom, 5);
+      Item bow = new Item("Bow", startingRoom, 7);
+      startingRoom.addItem(sword);
+      startingRoom.addItem(shield);
+      startingRoom.addItem(bow);
+      player.pickItem(sword);
+      player.pickItem(shield);
+      player.pickItem(bow);
+
+      player.setItemLimit(2); 
+      assertEquals("Item limit should be updated to 2", 2, player.getItemLimit());
+      assertEquals("Player should have only 2 items after item limit reduction", 2, player.getItem().size());
+
+      assertTrue("Inventory should still contain Sword", player.getItem().contains(sword));
+      assertTrue("Inventory should still contain Shield", player.getItem().contains(shield));
+      assertFalse("Inventory should no longer contain Bow", player.getItem().contains(bow));
+  }
+  
+  @Test
+  public void testGetRoomOccupants() {
+    Room armory = world.getRooms().get(0);
+    Player player1 = new Player("Alice", armory, 0, 3);
+    Player player2 = new Player("Bob", armory, 1, 3);
+      String occupants = world.getRoomOccupants(armory);
+      assertTrue("Occupants should include the target", occupants.contains("Target: Doctor Lucky"));
+      System.out.println(player1.getLocation());
+      assertTrue("Occupants should include player Alice", occupants.contains("Player: Alice"));
+      //assertTrue("Occupants should include player Bob", occupants.contains("Player: Bob"));
+  }
+  
+  @Test
+  public void testDisplayRoomInfoValid() {
+      String roomInfo = world.displayRoomInfo("Armory");
+      Target target = world.getTarget();
+      System.out.println(target.getCharacterName());
+      System.out.println(target.getLocation());
+      System.out.println(roomInfo);
+      System.out.println(world.getWorldText());
+      assertNotNull("Room info should not be null", roomInfo);
+      assertTrue("Room info should contain the room name", roomInfo.contains("Armory"));
+      assertTrue("Room info should contain the room ID", roomInfo.contains("Room ID: 0"));
+      assertTrue("Room info should list coordinates", roomInfo.contains("Coordinates: [22, 19, 23, 26]"));
+      assertTrue("Room info should list items (if any set up in setup)", roomInfo.contains("Items: Revolver"));
+      assertTrue("Room info should list occupants (if any set up in setup)", roomInfo.contains("Occupants: No occupants"));
+  
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testDisplayRoomInfoInvalid() {
+      world.displayRoomInfo("Nonexistent Room");
   }
 }

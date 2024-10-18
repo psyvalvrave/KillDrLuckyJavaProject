@@ -29,6 +29,8 @@ public class World implements WorldOutline {
   private String targetName;
   private int targetHealth = 0;
   private String worldName;
+  private int itemLimit = 3;
+  private int nextPlayerId = 0;
 
   /**
    * Constructor for World that initializes the game from a file.
@@ -129,8 +131,6 @@ public class World implements WorldOutline {
         }
       }
       scanner.close();
-      
-      // Process the saved room and item data
       processRoomData(roomData);
       processItemData(itemData);
       createTarget(targetName, rooms.get(0), targetHealth);
@@ -487,4 +487,59 @@ public class World implements WorldOutline {
 
       return isOccupied ? occupants.toString() : "No occupants";
   }
+  
+  
+  public Player createPlayer(String playerName, int startRoomIndex) {
+    if (startRoomIndex < 0 || startRoomIndex >= rooms.size()) {
+        throw new IllegalArgumentException("Invalid room index for player starting room.");
+    }
+    Room startRoom = rooms.get(startRoomIndex);
+    Player newPlayer = new Player(playerName, startRoom, nextPlayerId++, itemLimit);
+    players.add(newPlayer);
+    return newPlayer;
+  }
+  
+  /**
+   * Setter for item limit. Updates the item limit for all players in the world.
+   * 
+   * @param newItemLimit The new item limit to be set for all players.
+   */
+  public void setItemLimit(int newItemLimit) {
+      this.itemLimit = newItemLimit;
+      for (Player player : players) {
+          player.setItemLimit(newItemLimit);
+      }
+  }
+  
+  /**
+   * Displays the detailed information of a specific room by name, including the room's
+   * properties (name, ID, coordinates, neighbors, visible rooms, items) and the occupants (players and target).
+   * 
+   * @param roomName The name of the room to display.
+   * @return A string containing the room information and occupants.
+   * @throws IllegalArgumentException if the room name does not exist.
+   */
+  public String displayRoomInfo(String roomName) {
+      Room room = null;
+      for (Room r : rooms) {
+          if (r.getRoomName().equalsIgnoreCase(roomName)) {
+              room = r;
+              break;
+          }
+      }
+
+      if (room == null) {
+          throw new IllegalArgumentException("Room with name '" + roomName + "' not found.");
+      }
+
+      String roomInfo = room.getInfo();
+      String occupants = getRoomOccupants(room);
+
+      StringBuilder fullInfo = new StringBuilder();
+      fullInfo.append(roomInfo).append("\n");
+      fullInfo.append("Occupants:\n").append(occupants);
+
+      return fullInfo.toString();
+  }
+
 }
