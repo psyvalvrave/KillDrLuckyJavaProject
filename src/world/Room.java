@@ -263,38 +263,31 @@ public class Room implements Block {
 
     info.append("Neighbors: ");
     if (neighbors.isEmpty()) {
-      info.append("None");
+        info.append("None");
     } else {
-      for (Room neighbor : neighbors) {
-        info.append(neighbor.getRoomName()).append(", ");
-      }
-      info.setLength(info.length() - 2);  
+        for (Room neighbor : neighbors) {
+            info.append(neighbor.getRoomName()).append(", ");
+        }
+        info.setLength(info.length() - 2);  
     }
     info.append("\n");
 
     info.append("Visible From: ");
     if (visibleFrom.isEmpty()) {
-      info.append("None");
+        info.append("None");
     } else {
-      for (Room visible : visibleFrom) {
-        info.append(visible.getRoomName()).append(", ");
-      }
-      info.setLength(info.length() - 2);  
+        for (Room visible : visibleFrom) {
+            info.append(visible.getRoomName()).append(", ");
+        }
+        info.setLength(info.length() - 2);  
     }
     info.append("\n");
 
-    info.append("Items: ");
-    if (items.isEmpty()) {
-      info.append("None");
-    } else {
-      for (Item item : items) {
-        info.append(item.getItemName()).append(", ");
-      }
-      info.setLength(info.length() - 2);  
-    }
+    info.append("Items: ").append(listItems());
+    //info.append("Occupants: ").append(World.getRoomOccupants(this));
 
     return info.toString();
-  }
+}
 
   /**
    * Gets the unique identifier for this room.
@@ -304,5 +297,21 @@ public class Room implements Block {
   public int getRoomId() {
     return roomId;
   }
+  
+  public void removeItem(Item item) {
+    items.remove(item);
+  }
+  
+  public String listItems() {
+    if (items.isEmpty()) {
+        return "None";
+    }
+    StringBuilder itemsList = new StringBuilder();
+    for (Item item : items) {
+        itemsList.append(item.getItemName()).append(", ");
+    }
+    itemsList.setLength(itemsList.length() - 2); 
+    return itemsList.toString();
+}
 
 } 

@@ -49,7 +49,6 @@ public class WorldTest {
     testRoom = new Room("Test Room", 1, new int[]{0, 0, 10, 10}, world.getRoomData());
     world.getRooms().clear();
     world.getRooms().add(testRoom);
-    System.out.println(world.getRoomCount());
   }
   
   @Test
@@ -71,8 +70,6 @@ public class WorldTest {
   @Test
   public void testRoomCount() {
     int expected = 21;  
-    System.out.println("test");
-    System.out.println(world.getRoomCount());
     assertEquals(expected, world.getRoomCount());
   }
   

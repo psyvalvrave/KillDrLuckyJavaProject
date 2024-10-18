@@ -2,6 +2,7 @@ package world;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents a player in the game, implementing the Character interface.
@@ -19,10 +20,10 @@ public class Player extends AbstractCharacter {
    * @param playerNameInput Name of the player.
    * @param startingRoomInput Initial room where the player starts.
    */
-  public Player(String playerNameInput, Room startingRoomInput, int playerId, int itemLimit) {
+  public Player(String playerNameInput, Room startingRoomInput, int playerIdInput, int itemLimitInput) {
     super(playerNameInput, startingRoomInput);
-    this.playerId = playerId;
-    this.itemLimit = itemLimit;
+    this.playerId = playerIdInput;
+    this.itemLimit = itemLimitInput;
     this.items = new ArrayList<>();
   }
 
@@ -43,15 +44,13 @@ public class Player extends AbstractCharacter {
    * @param damage The amount of damage to inflict.
    */
   public void murder(Target target, int damage) {
-    if (target != null && currentRoom.equals(target.getLocation())) {
-      target.setHealthPoint(target.getHealthPoint() - damage);
-      System.out.println(name + " has attacked " + target.getCharacterName() 
-          + " with " + damage + " damage.");
-    } else {
-      System.out.println(name + " cannot attack " 
-          + (target == null ? "nobody" : target.getCharacterName()) 
-          + " from current location.");
-    }
+    if (target == null) {
+      throw new IllegalArgumentException("No target specified.");
+  }
+  if (!currentRoom.equals(target.getLocation())) {
+      throw new IllegalArgumentException(name + " cannot attack " + target.getCharacterName() + " from current location.");
+  }
+  target.setHealthPoint(target.getHealthPoint() - damage);
   }
   
   /**
@@ -59,8 +58,64 @@ public class Player extends AbstractCharacter {
    * 
    * @return A formatted string containing the name, health, and location of the target.
    */
+  @Override
   public String getCharacterInfo() {
-    return String.format("Target Name: %s\nCurrent Location: %s",
-        name, currentRoom.getRoomName());
+      return String.format("ID: %d, Name: %s, Current Room: %s, Items: %s", 
+              playerId, getCharacterName(), getLocation().getRoomName(), listItems());
   }
+  
+  public List<Item> getItem() {
+    return new ArrayList<>(items);
+  }
+  
+  public int getPlayerId() {
+    return playerId;
+  }
+  
+  @Override
+  public String toString() {
+      return String.format("Player [ID=%d, Name=%s, Current Room=%s, Items=%s]",
+              playerId, getCharacterName(), getLocation().getRoomName(), listItems());
+  }
+  
+  public String listItems() {
+    if (items.isEmpty()) {
+        return "None";
+    }
+    StringBuilder sb = new StringBuilder();
+    for (Item item : items) {
+        if (sb.length() > 0) sb.append(", ");
+        sb.append(item.getItemName());
+    }
+    return sb.toString();
+  }
+  
+  @Override
+  public int hashCode() {
+      return Objects.hash(playerId, name, currentRoom, items);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Player other = (Player) obj;
+      return playerId == other.playerId &&
+             Objects.equals(name, other.name) &&
+             Objects.equals(currentRoom, other.currentRoom) &&
+             Objects.equals(items, other.items);
+  }
+  
+  public void pickItem(Item item) throws IllegalArgumentException {
+    Room currentRoom = getLocation();
+    if (!currentRoom.getItem().contains(item)) {
+        throw new IllegalArgumentException("Item not available in the room.");
+    }
+    if (items.size() >= itemLimit) {
+        throw new IllegalArgumentException("Item limit reached. Cannot pick up any more items.");
+    }
+    items.add(item);
+    currentRoom.removeItem(item);
+  }
+  
 }

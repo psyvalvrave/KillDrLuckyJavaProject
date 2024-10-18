@@ -19,6 +19,7 @@ import javax.imageio.ImageIO;
 public class World implements WorldOutline {
   private List<Room> rooms;
   private List<Item> items;
+  private List<Player> players;
   private Target target;
   private String worldText;
   private int rows;
@@ -259,7 +260,7 @@ public class World implements WorldOutline {
     Graphics g = image.createGraphics();
 
     g.setColor(Color.WHITE);
-    g.fillRect(0, 0, this.cols * 25, this.rows * 25); // Fill background
+    g.fillRect(0, 0, this.cols * 25, this.rows * 25); 
 
     Font font = new Font("Arial", Font.PLAIN, 9);
     g.setFont(font);
@@ -297,7 +298,7 @@ public class World implements WorldOutline {
       File outputfile = new File("res/world.png");
       ImageIO.write(image, "png", outputfile);
     } catch (IOException e) {
-      System.out.println("Error saving world image: " + e.getMessage());
+      throw new IllegalArgumentException("Error saving world image: " + e.getMessage());
     }
   }
 
@@ -389,7 +390,7 @@ public class World implements WorldOutline {
           this.target.move(room);  
           setWorldText();  
         } else {
-          System.out.println("No target set in the world.");
+          throw new IllegalArgumentException("No target set in the world.");
         }
         return;  
       }
@@ -422,10 +423,10 @@ public class World implements WorldOutline {
         this.target.move(nextRoom);
         setWorldText();
       } else {
-        System.out.println("No rooms available to move the target to.");
+        throw new IllegalArgumentException("No rooms available to move the target to.");
       }
     } else {
-      System.out.println("No target set in the world or target does not have a current room.");
+      throw new IllegalArgumentException("No target set in the world or target does not have a current room.");
     }
   }
   
@@ -457,5 +458,32 @@ public class World implements WorldOutline {
         }
       }
     }
+  }
+  
+  /**
+   * Returns detailed information about which players and whether the target is in the specified room.
+   * @param room The room to check for occupancy details.
+   * @return A descriptive string of all occupants in the room.
+   */
+  public String getRoomOccupants(Room room) {
+      StringBuilder occupants = new StringBuilder();
+      boolean isOccupied = false;
+
+      if (target != null && target.getLocation().equals(room)) {
+          occupants.append("Target: ").append(target.getCharacterName()).append("\n");
+          isOccupied = true;
+      }
+
+      for (Player player : players) {
+          if (player.getLocation().equals(room)) {
+              if (occupants.length() > 0) {
+                  occupants.append(", ");
+              }
+              occupants.append("Player: ").append(player.getCharacterName());
+              isOccupied = true;
+          }
+      }
+
+      return isOccupied ? occupants.toString() : "No occupants";
   }
 }
