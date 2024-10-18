@@ -533,29 +533,26 @@ public class WorldTest {
   @Test
   public void testGetRoomOccupants() {
     Room armory = world.getRooms().get(0);
-    Player player1 = new Player("Alice", armory, 0, 3);
-    Player player2 = new Player("Bob", armory, 1, 3);
+    world.createPlayer("Alice", 0);
+    world.createPlayer("Bob", 0);
       String occupants = world.getRoomOccupants(armory);
       assertTrue("Occupants should include the target", occupants.contains("Target: Doctor Lucky"));
-      System.out.println(player1.getLocation());
       assertTrue("Occupants should include player Alice", occupants.contains("Player: Alice"));
-      //assertTrue("Occupants should include player Bob", occupants.contains("Player: Bob"));
+      assertTrue("Occupants should include player Bob", occupants.contains("Player: Bob"));
   }
   
   @Test
   public void testDisplayRoomInfoValid() {
       String roomInfo = world.displayRoomInfo("Armory");
-      Target target = world.getTarget();
-      System.out.println(target.getCharacterName());
-      System.out.println(target.getLocation());
-      System.out.println(roomInfo);
-      System.out.println(world.getWorldText());
       assertNotNull("Room info should not be null", roomInfo);
       assertTrue("Room info should contain the room name", roomInfo.contains("Armory"));
       assertTrue("Room info should contain the room ID", roomInfo.contains("Room ID: 0"));
       assertTrue("Room info should list coordinates", roomInfo.contains("Coordinates: [22, 19, 23, 26]"));
       assertTrue("Room info should list items (if any set up in setup)", roomInfo.contains("Items: Revolver"));
-      assertTrue("Room info should list occupants (if any set up in setup)", roomInfo.contains("Occupants: No occupants"));
+      assertTrue("Room info should list occupants (if any set up in setup)", roomInfo.contains("Target: Doctor Lucky"));
+      world.moveTargetToNextRoom();
+      roomInfo = world.displayRoomInfo("Armory");
+      assertTrue("Room info should list occupants (if any set up in setup)", roomInfo.contains("No occupants"));
   
   }
 
