@@ -3,6 +3,7 @@ package world;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Represents a player in the game, implementing the Character interface.
@@ -117,5 +118,41 @@ public class Player extends AbstractCharacter {
     items.add(item);
     currentRoom.removeItem(item);
   }
+  
+  public String lookAround() {
+    Room currentRoom = getLocation();
+    StringBuilder info = new StringBuilder();
+    info.append("Current Room ID: ").append(currentRoom.getRoomId()).append("\n")
+        .append("Current Room Name: ").append(currentRoom.getRoomName()).append("\n")
+        .append("Current Room Items: ").append(currentRoom.listItems()).append("\n");
+
+    List<Room> visibleAndNeighbor = currentRoom.getVisibleFrom().stream()
+        .filter(currentRoom.getNeighbor()::contains)
+        .collect(Collectors.toList());
+
+    if (!visibleAndNeighbor.isEmpty()) {
+        info.append("Neighboring and Visible Rooms:\n");
+        for (Room room : visibleAndNeighbor) {
+            info.append("  Room ID: ").append(room.getRoomId())
+                .append(", Room Name: ").append(room.getRoomName())
+                .append(", Items: ").append(room.listItems()).append("\n");
+        }
+    }
+
+    List<Room> visibleNotNeighbor = currentRoom.getVisibleFrom().stream()
+        .filter(room -> !currentRoom.getNeighbor().contains(room))
+        .collect(Collectors.toList());
+
+    if (!visibleNotNeighbor.isEmpty()) {
+        info.append("Other Visible Rooms:\n");
+        for (Room room : visibleNotNeighbor) {
+            info.append("  Room ID: ").append(room.getRoomId())
+                .append(", Room Name: ").append(room.getRoomName())
+                .append(", Items: ").append(room.listItems()).append("\n");
+        }
+    }
+
+    return info.toString();
+}
   
 }

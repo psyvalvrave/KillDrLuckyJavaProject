@@ -40,6 +40,7 @@ public class World implements WorldOutline {
     items = new ArrayList<>();
     roomData = new ArrayList<>();
     itemData = new ArrayList<>();
+    players = new ArrayList<>();
     loadWorld(inputSource);
     establishRoomNeighbors();
     establishRoomVisble();

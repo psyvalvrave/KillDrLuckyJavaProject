@@ -284,7 +284,6 @@ public class Room implements Block {
     info.append("\n");
 
     info.append("Items: ").append(listItems());
-    //info.append("Occupants: ").append(World.getRoomOccupants(this));
 
     return info.toString();
 }
