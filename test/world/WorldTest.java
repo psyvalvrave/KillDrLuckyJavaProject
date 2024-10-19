@@ -25,7 +25,7 @@ import org.junit.Test;
  * and test them together to make sure they are both function properly. 
  */
 public class WorldTest {
-  private WorldOutline world;
+  private World world;
   private Room testRoom;
   
   /**

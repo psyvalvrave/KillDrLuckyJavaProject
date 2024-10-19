@@ -31,6 +31,7 @@ public class World implements WorldOutline {
   private String worldName;
   private int itemLimit = 3;
   private int nextPlayerId = 0;
+  private int maxTurn;
 
   /**
    * Constructor for World that initializes the game from a file.
@@ -91,7 +92,7 @@ public class World implements WorldOutline {
           case 3:  // Room details
             if (roomCount > 0) {
               String[] parts = line.split("\\s+");
-              if (parts.length < 5) {  // Ensure there are enough parts to avoid index errors
+              if (parts.length < 5) {  
                 throw new IllegalArgumentException("Insufficient parts to parse room details.");
               }
               int[] coordinates = {
@@ -181,7 +182,6 @@ public class World implements WorldOutline {
     return items.size();
   }
 
-  @Override
   public Target getTarget() {
     return target;
   }
@@ -194,7 +194,6 @@ public class World implements WorldOutline {
    * @param murderValue The impact or damage value of the item.
    * @return The newly created item object.
    */
-  @Override
   public Item createItem(String name, int location, int murderValue) {
     if (location < 0 || location >= rooms.size()) {
       throw new IllegalArgumentException("Invalid room location index: " + location);
@@ -202,7 +201,7 @@ public class World implements WorldOutline {
     Room room = rooms.get(location);
     Item newItem = new Item(name, room, murderValue);
     items.add(newItem);
-    room.addItem(newItem); // Assuming Room has a method to add an item
+    room.addItem(newItem); 
     return newItem;
   }
 
@@ -214,7 +213,6 @@ public class World implements WorldOutline {
    * @param health The initial health points for the target.
    * @return The newly created target object.
    */
-  @Override
   public Target createTarget(String name, Room room, int health) {
     Target newTarget = new Target(name, room, health);
     this.target = newTarget;
@@ -230,7 +228,6 @@ public class World implements WorldOutline {
    * @param allRoomData Additional data for room configurations.
    * @return The newly created room object.
    */
-  @Override
   public Room createRoom(String roomName, int roomId, 
       int[] coordinates, List<String[]> allRoomData) {
     if (roomName == null || roomName.trim().isEmpty()) {
@@ -255,56 +252,65 @@ public class World implements WorldOutline {
   /**
    * Draws the world to an image file.
    */
-  public void drawWorld() {
-    BufferedImage image = new BufferedImage(this.cols * 25, 
-        this.rows * 25, BufferedImage.TYPE_INT_RGB);
+  public BufferedImage drawWorld() {
+    BufferedImage image = new BufferedImage(this.cols * 25, this.rows * 25, BufferedImage.TYPE_INT_RGB);
     Graphics g = image.createGraphics();
 
     g.setColor(Color.WHITE);
-    g.fillRect(0, 0, this.cols * 25, this.rows * 25); 
+    g.fillRect(0, 0, this.cols * 25, this.rows * 25);
 
     Font font = new Font("Arial", Font.PLAIN, 9);
     g.setFont(font);
 
+    // Draw rooms
     for (String[] room : roomData) {
-      String roomName = room[0];
-      String[] coordsStr = room[1].replace("[", "").replace("]", "").split(", ");
-      int y1 = Integer.parseInt(coordsStr[0]);
-      int x1 = Integer.parseInt(coordsStr[1]);
-      int y2 = Integer.parseInt(coordsStr[2]);
-      int x2 = Integer.parseInt(coordsStr[3]);
+        String roomName = room[0];
+        String[] coordsStr = room[1].replace("[", "").replace("]", "").split(", ");
+        int y1 = Integer.parseInt(coordsStr[0]);
+        int x1 = Integer.parseInt(coordsStr[1]);
+        int y2 = Integer.parseInt(coordsStr[2]);
+        int x2 = Integer.parseInt(coordsStr[3]);
 
-      int x1Draw = x1 * 25;
-      int y1Draw = y1 * 25;
-      int width = ((x2 - x1 + 1) * 25) - 1;
-      int height = ((y2 - y1 + 1) * 25) - 1;
+        int x1Draw = x1 * 25;
+        int y1Draw = y1 * 25;
+        int width = ((x2 - x1 + 1) * 25) - 1;
+        int height = ((y2 - y1 + 1) * 25) - 1;
 
-      if (width > 0 && height > 0) {
-        g.setColor(Color.WHITE);
-        g.fillRect(x1Draw, y1Draw, width, height); 
+        if (width > 0 && height > 0) {
+            g.setColor(Color.WHITE);
+            g.fillRect(x1Draw, y1Draw, width, height);
 
-        g.setColor(Color.BLACK); 
-        g.drawRect(x1Draw, y1Draw, width, height); 
-        g.drawString(roomName, x1Draw + 3, y1Draw + (height / 2) + 5); 
-      }
-      if (target != null && target.getLocation() != null 
-          && roomName.equals(target.getLocation().getRoomName())) {
-        g.drawString("Target Here", x1Draw + 3, y1Draw + (height / 2) + 20); 
-      }
+            g.setColor(Color.BLACK);
+            g.drawRect(x1Draw, y1Draw, width, height);
+            g.drawString(roomName, x1Draw + 3, y1Draw + (height / 2) + 5);
+        }
+
+        if (target != null && target.getLocation() != null && roomName.equals(target.getLocation().getRoomName())) {
+            g.setColor(Color.RED);
+            g.fillOval(x1Draw + 10, y1Draw + 10, 10, 10); // Red dot for the target
+            g.drawString("Target: " + target.getCharacterName(), x1Draw + 25, y1Draw + 15);
+        }
+
+        for (Player player : players) {
+            if (player.getLocation() != null && roomName.equals(player.getLocation().getRoomName())) {
+                g.setColor(Color.BLACK);
+                g.fillOval(x1Draw + 10, y1Draw + 30, 10, 10); 
+                g.drawString("Player: " + player.getCharacterName(), x1Draw + 25, y1Draw + 35);
+            }
+        }
     }
 
-    g.dispose(); 
+    g.dispose();
 
     try {
-      File outputfile = new File("res/world.png");
-      ImageIO.write(image, "png", outputfile);
+        File outputfile = new File("res/world.png");
+        ImageIO.write(image, "png", outputfile);
     } catch (IOException e) {
-      throw new IllegalArgumentException("Error saving world image: " + e.getMessage());
+        throw new IllegalArgumentException("Error saving world image: " + e.getMessage());
     }
-  }
-
-
-
+    
+    return image;
+}
 
   /**
    * Generates and update the world text with detailed information about the world.
@@ -365,7 +371,7 @@ public class World implements WorldOutline {
    * @return A new list of room data arrays, each containing details of a room.
    */
   public List<String[]> getRoomData() {
-    return new ArrayList<>(roomData);  // Returns a copy to protect internal data
+    return new ArrayList<>(roomData);  
   }
 
   /**
@@ -376,7 +382,7 @@ public class World implements WorldOutline {
    * @return A new list of item data arrays, each containing details of an item.
    */
   public List<String[]> getItemData() {
-    return new ArrayList<>(itemData);  // Returns a copy to protect internal data
+    return new ArrayList<>(itemData);  
   }
   
   /**
@@ -384,25 +390,26 @@ public class World implements WorldOutline {
    * 
    * @param roomName The name of the room to move the target to.
    */
-  public void moveTargetToRoom(String roomName) {
+  public String moveTargetToRoom(String roomName) {
     for (Room room : rooms) {
       if (room.getRoomName().equals(roomName)) {
         if (this.target != null) {
           this.target.move(room);  
           setWorldText();  
+          return String.format("Target moved to room: %s", roomName);
         } else {
           throw new IllegalArgumentException("No target set in the world.");
         }
-        return;  
       }
     }
+    return String.format("Error: Room with name '%s' not found.", roomName);
   }
   
   /**
    * Moves the target to the next room in sequence or wraps around 
    * to the first room if the end is reached.
    */
-  public void moveTargetToNextRoom() {
+  public String moveTargetToNextRoom() {
     if (this.target != null && this.target.getLocation() != null) {
       int currentRoomId = this.target.getLocation().getRoomId();
       Room nextRoom = null;
@@ -412,8 +419,7 @@ public class World implements WorldOutline {
           break;
         }
       }
-
-      
+  
       if (nextRoom == null) {
         if (rooms.size() > 0) {
           nextRoom = rooms.get(0);  
@@ -423,6 +429,7 @@ public class World implements WorldOutline {
       if (nextRoom != null) {
         this.target.move(nextRoom);
         setWorldText();
+        return String.format("Target moved to next room: %s", nextRoom.getRoomName());
       } else {
         throw new IllegalArgumentException("No rooms available to move the target to.");
       }
@@ -520,18 +527,8 @@ public class World implements WorldOutline {
    * @throws IllegalArgumentException if the room name does not exist.
    */
   public String displayRoomInfo(String roomName) {
-      Room room = null;
-      for (Room r : rooms) {
-          if (r.getRoomName().equalsIgnoreCase(roomName)) {
-              room = r;
-              break;
-          }
-      }
-
-      if (room == null) {
-          throw new IllegalArgumentException("Room with name '" + roomName + "' not found.");
-      }
-
+      Room room = getRoomByName(roomName);
+      
       String roomInfo = room.getInfo();
       String occupants = getRoomOccupants(room);
 
@@ -541,5 +538,227 @@ public class World implements WorldOutline {
 
       return fullInfo.toString();
   }
+  
+  /**
+   * Displays the detailed information of a specific room, including the room's
+   * properties (name, ID, coordinates, neighbors, visible rooms, items) and the occupants (players and target).
+   * 
+   * @param roomId The ID of the room to display.
+   * @return A string containing the room information and occupants.
+   */
+  public String displayRoomInfo(int roomId) {
+      Room room = this.getRoomById(roomId);
+
+      String roomInfo = room.getInfo();
+
+      String occupants = getRoomOccupants(room);
+
+      StringBuilder fullInfo = new StringBuilder();
+      fullInfo.append(roomInfo).append("\n");
+      fullInfo.append("Occupants:\n").append(occupants);
+
+      return fullInfo.toString();
+  }
+  
+  /**
+   * Creates a room in the game world with specified properties.
+   * 
+   * @param roomName The name of the room.
+   * @param roomId The identifier for the room.
+   * @param coordinates The spatial coordinates of the room.
+   * @param allRoomData Additional data for room configurations.
+   * @return A confirmation message stating the room has been created.
+   */
+  @Override
+  public String callCreateRoom(String roomName, int roomId, int[] coordinates, List<String[]> allRoomData) {
+    createRoom(roomName, roomId, coordinates, allRoomData);
+    return String.format("Room [%s] is created", roomName);
+  }
+
+  /**
+   * Creates a target character in the game world.
+   * @param name The name of the target.
+   * @param room The starting room for the target.
+   * @param health The initial health points for the target.
+   * @return A confirmation message stating the target has been created.
+   */
+  @Override
+  public String callCreateTarget(String name, Room room, int health) {
+    createTarget(name, room, health);
+    return String.format("Target [%s] is created", name);
+  }
+  
+  /**
+   * Creates an item and places it within a specified room.
+   * @param name The name of the item.
+   * @param location The index of the room where the item is placed.
+   * @param murderValue The potential damage or effect of the item.
+   * @return A confirmation message stating the item has been created.
+   */
+  @Override
+  public String callCreateItem(String name, int location, int murderValue) {
+    createItem(name, location, murderValue);
+    return String.format("Item [%s] is created", name);
+  }
+  
+  /**
+   * Creates a player in the game world.
+   * @param playerName The name of the player.
+   * @param startRoomIndex The starting room index for the player.
+   * @return A confirmation message stating the player has been created.
+   */
+  @Override
+  public String callCreatePlayer(String playerName, int startRoomIndex) {
+    createPlayer(playerName, startRoomIndex);
+    return String.format("Player [%s] is created", playerName); 
+  }
+  
+  /**
+   * Retrieves detailed information about the current target in the game.
+   * @return Information about the target, otherwise a notification that no target is set.
+   */
+  @Override
+  public String getTargetInfo() {
+      if (this.target == null) {
+          return "No target currently set.";
+      }
+      return this.target.getCharacterInfo();
+  }
+  
+  /**
+   * Retrieves detailed information about a player identified by their ID.
+   * @param playerId The unique identifier of the player.
+   * @return Information about the player, otherwise a notification that no such player exists.
+   */
+  @Override
+  public String getPlayerInfo(int playerId) {
+    for (Player player : players) {
+      if (player.getPlayerId() == playerId) {
+          return player.getCharacterInfo();
+      }
+  }
+  return "Player with ID " + playerId + " not found.";
+  }
+  
+  /**
+   * Gets the maximum allowed turns for the game.
+   * 
+   * @return The maximum allowed turns.
+   */
+  public int getMaxTurn() {
+      return maxTurn;
+  }
+
+  /**
+   * Sets the maximum allowed turns for the game.
+   * 
+   * @param maxTurn The maximum turns to set.
+   */
+  public void setMaxTurn(int maxTurn) {
+      this.maxTurn = maxTurn;
+  }
+  
+  private Player getPlayerById(int playerId) {
+    for (Player player : players) {
+        if (player.getPlayerId() == playerId) {
+            return player;
+        }
+    }
+    throw new IllegalArgumentException("playerID not valid.");
+}
+
+  private Room getRoomById(int roomId) {
+    for (Room room : rooms) {
+        if (room.getRoomId() == roomId) {
+            return room;
+        }
+    }
+    throw new IllegalArgumentException("roomID not valid.");
+}
+  
+  private Room getRoomByName(String roomName) {
+    for (Room room : rooms) {
+        if (room.getRoomName().equalsIgnoreCase(roomName)) {
+            return room;
+        }
+    }
+    throw new IllegalArgumentException("roomName not valid.");
+}
+
+/**
+ * Moves a player to a specified room.
+ *
+ * @param playerId The ID of the player to move.
+ * @param roomId The ID of the room to move the player to.
+ * @throws IllegalArgumentException If input parameters are invalid.
+ * @return A message indicating success or the reason for failure.
+ */
+@Override
+public String movePlayer(int playerId, int roomId) {
+    Player player = getPlayerById(playerId);
+    if (player == null) {
+        throw new IllegalArgumentException("Player not found.");
+    }
+
+    Room targetRoom = getRoomById(roomId);
+    if (targetRoom == null) {
+        throw new IllegalArgumentException("Target room not found.");
+    }
+
+    if (!player.getLocation().getNeighbor().contains(targetRoom)) {
+        throw new IllegalArgumentException("Move not allowed. Target room is not a neighbor.");
+    }
+
+    player.move(targetRoom);
+    return String.format("Player %s moved to room %s.", player.getCharacterName(), targetRoom.getRoomName());
+}
+
+/**
+ * Allows a player to pick up an item from their current location.
+ *
+ * @param playerId The ID of the player picking up the item.
+ * @param itemName The name of the item to pick up.
+ * @throws IllegalArgumentException If input parameters are invalid or the action is not allowed.
+ * @return A message indicating success or the reason for failure.
+ */
+@Override
+public String playerPickUpItem(int playerId, String itemName) {
+    Player player = getPlayerById(playerId);
+    if (player == null) {
+        throw new IllegalArgumentException("Player not found.");
+    }
+
+    Item item = player.getLocation().getItem().stream()
+        .filter(i -> i.getItemName().equals(itemName))
+        .findFirst()
+        .orElse(null);
+
+    if (item == null) {
+        throw new IllegalArgumentException("Item '" + itemName + "' not found in the room.");
+    }
+
+    player.pickItem(item);
+    return String.format("Item '%s' picked up successfully by %s.", itemName, player.getCharacterName());
+}
+
+/**
+ * Provides information about the current room and visible areas from it.
+ *
+ * @param playerId The ID of the player looking around.
+ * @return A string describing the surroundings.
+ * @throws IllegalArgumentException If the player ID is not found.
+ * @return A message indicating success or the reason for failure.
+ */
+@Override
+public String playerLookAround(int playerId) {
+    Player player = getPlayerById(playerId);
+    if (player == null) {
+        throw new IllegalArgumentException("Player not found.");
+    }
+
+    return player.lookAround();
+}
+
+
 
 }

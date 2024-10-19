@@ -166,7 +166,7 @@ public class Player extends AbstractCharacter {
       if (room == null) {
           throw new IllegalArgumentException("Room cannot be null.");
       }
-      if (!currentRoom.getNeighbor().contains(room)) {
+      if (!currentRoom.isAdjacent(room)) {
           throw new IllegalArgumentException("Cannot move to a non-neighboring room.");
       }
       this.currentRoom = room;
@@ -182,5 +182,7 @@ public class Player extends AbstractCharacter {
   public int getItemLimit() {
     return this.itemLimit;
   }
+  
+  
   
 }
