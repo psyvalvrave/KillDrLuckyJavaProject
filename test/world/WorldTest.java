@@ -239,7 +239,7 @@ public class WorldTest {
     
     assertNotNull("Armory should not be null", armory);
     String expectedDetails = "Room Name: Armory\n"
-        + "Room ID: 0\n" 
+        + "Room ID: 1\n" 
         + "Coordinates: [22, 19, 23, 26]\n"
         + "Neighbors: Billiard Room, Dining Hall, Drawing Room\n"
         + "Visible From: Billiard Room, Dining Hall, Drawing Room, "
@@ -546,7 +546,7 @@ public class WorldTest {
       String roomInfo = world.displayRoomInfo("Armory");
       assertNotNull("Room info should not be null", roomInfo);
       assertTrue("Room info should contain the room name", roomInfo.contains("Armory"));
-      assertTrue("Room info should contain the room ID", roomInfo.contains("Room ID: 0"));
+      assertTrue("Room info should contain the room ID", roomInfo.contains("Room ID: 1"));
       assertTrue("Room info should list coordinates", roomInfo.contains("Coordinates: [22, 19, 23, 26]"));
       assertTrue("Room info should list items (if any set up in setup)", roomInfo.contains("Items: Revolver"));
       assertTrue("Room info should list occupants (if any set up in setup)", roomInfo.contains("Target: Doctor Lucky"));

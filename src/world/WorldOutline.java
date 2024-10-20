@@ -139,9 +139,9 @@ public interface WorldOutline {
    * Creates a player in the game world.
    * @param playerName The name of the player.
    * @param startRoomIndex The starting room index for the player.
-   * @return A confirmation message stating the player has been created.
+   * @return A created playerId.
    */
-  String callCreatePlayer(String playerName, int startRoomIndex);
+  int callCreatePlayer(String playerName, int startRoomIndex);
 
   /**
    * Retrieves detailed information about the current target in the game.
@@ -190,4 +190,19 @@ public interface WorldOutline {
    * @return A descriptive message about what the player sees around them.
    */
   String playerLookAround(int playerId);
+  
+  /**
+   * Retrieves a list of item names from a specific room identified by its room ID.
+   * @param roomId The ID of the room whose items are to be listed.
+   * @return A list containing the names of items in the specified room.
+   */
+  List<String> getRoomItems(int roomId);
+  
+  /**
+   * Retrieves the room ID where the specified player is currently located.
+   *
+   * @param playerId The unique identifier of the player.
+   * @return The room ID where the player is located, or throws an exception if not found.
+   */
+  int getPlayerRoomId(int playerId);
 }
