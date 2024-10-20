@@ -9,7 +9,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
+import java.util.stream.Collectors;
+
 import javax.imageio.ImageIO;
 
 /**
@@ -32,6 +35,7 @@ public class World implements WorldOutline {
   private int itemLimit = 3;
   private int nextPlayerId = 0;
   private int maxTurn;
+  private Map<Integer, Room> roomsMap;
 
   /**
    * Constructor for World that initializes the game from a file.
@@ -807,7 +811,17 @@ public int getPlayerRoomId(int playerId) {
     throw new IllegalArgumentException("Player with ID " + playerId + " not found.");
 }
 
-
+public List<Integer> getNeighborRooms(int roomId) {
+  Room room = rooms.get(roomId);
+  if (room != null) {
+      // Stream the neighbors, map to their IDs, and collect as a list
+      return room.getNeighbor().stream()
+                 .map(Room::getRoomId)
+                 .collect(Collectors.toList());
+  } else {
+      return new ArrayList<>(); // Return an empty list if the room does not exist
+  }
+}
 
 
 

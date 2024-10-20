@@ -205,4 +205,6 @@ public interface WorldOutline {
    * @return The room ID where the player is located, or throws an exception if not found.
    */
   int getPlayerRoomId(int playerId);
+  
+  List<Integer> getNeighborRooms(int roomId);
 }
