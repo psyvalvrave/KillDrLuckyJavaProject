@@ -56,7 +56,7 @@ public class WorldTest {
   public void testLoadWorldFileNotFound() {
     assertThrows(FileNotFoundException.class, () -> {
       Readable fileInput = new FileReader("nonexistentfile.txt");
-      World myworld = new World(fileInput);
+      new World(fileInput);
     });
   }
   
@@ -64,7 +64,7 @@ public class WorldTest {
   public void testLoadWorldFileWrongType() {
     assertThrows(FileNotFoundException.class, () -> {
       Readable fileInput = new FileReader("mansion.docx");
-      World myworld = new World(fileInput);
+      new World(fileInput);
     });
   }
 
@@ -135,7 +135,7 @@ public class WorldTest {
   
   @Test(expected = IllegalArgumentException.class)
   public void testCreateTargetInvalidhp() {
-    Target target = world.createTarget("Test Target", testRoom, 0);
+    world.createTarget("Test Target", testRoom, 0);
   }
 
 
@@ -435,7 +435,7 @@ public class WorldTest {
   
   @Test
   public void testCreatePlayer() {
-      Player player = world.createPlayer("Alice", 0);  
+      Player player = world.createPlayer("Alice", 1);  
       assertNotNull("Player should be created", player);
       assertEquals("Player's name should be Alice", "Alice", player.getCharacterName());
       assertEquals("Player should start in the first room", world.getRooms().get(0), player.getLocation());
@@ -447,9 +447,9 @@ public class WorldTest {
       int initialItemLimit = 3;
       world.setItemLimit(initialItemLimit); 
 
-      Player player1 = world.createPlayer("Alice", 0);
-      Player player2 = world.createPlayer("Bob", 1);
-      Player player3 = world.createPlayer("Charlie", 2);
+      Player player1 = world.createPlayer("Alice", 1);
+      Player player2 = world.createPlayer("Bob", 2);
+      Player player3 = world.createPlayer("Charlie", 3);
 
       assertNotNull("Player 1 should be created", player1);
       assertNotNull("Player 2 should be created", player2);
@@ -476,7 +476,7 @@ public class WorldTest {
   @Test
   public void testSetItemLimit() {
       world.setItemLimit(3); 
-      Player player = world.createPlayer("Bob", 0);
+      Player player = world.createPlayer("Bob", 1);
       assertEquals("Item limit should be updated to 3", 3, player.getItemLimit());
 
       Player existingPlayer = world.createPlayer("Charlie", 1);
@@ -487,12 +487,12 @@ public class WorldTest {
   @Test
   public void testCreatePlayerWithInvalidRoom() {
       int invalidRoomIndex = world.getRooms().size(); 
-      assertThrows(IllegalArgumentException.class, () -> world.createPlayer("Dave", invalidRoomIndex));
+      assertThrows(IllegalArgumentException.class, () -> world.createPlayer("Dave", invalidRoomIndex+1));
   }
 
   @Test
   public void testAdjustItemLimitWithItems() {
-      Player player = world.createPlayer("Eve", 0);
+      Player player = world.createPlayer("Eve", 1);
       Room startingRoom = world.getRooms().get(0);
       Item sword = new Item("Sword", startingRoom, 10);
       Item shield = new Item("Shield", startingRoom, 5);
@@ -509,7 +509,7 @@ public class WorldTest {
 
   @Test
   public void testReduceItemLimitAndRemoveExcessItems() {
-      Player player = world.createPlayer("Frank", 0);
+      Player player = world.createPlayer("Frank", 1);
       Room startingRoom = world.getRooms().get(0); 
       Item sword = new Item("Sword", startingRoom, 10);
       Item shield = new Item("Shield", startingRoom, 5);
@@ -533,8 +533,8 @@ public class WorldTest {
   @Test
   public void testGetRoomOccupants() {
     Room armory = world.getRooms().get(0);
-    world.createPlayer("Alice", 0);
-    world.createPlayer("Bob", 0);
+    world.createPlayer("Alice", 1);
+    world.createPlayer("Bob", 1);
       String occupants = world.getRoomOccupants(armory);
       assertTrue("Occupants should include the target", occupants.contains("Target: Doctor Lucky"));
       assertTrue("Occupants should include player Alice", occupants.contains("Player: Alice"));

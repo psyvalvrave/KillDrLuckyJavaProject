@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
@@ -35,7 +34,6 @@ public class World implements WorldOutline {
   private int itemLimit = 3;
   private int nextPlayerId = 0;
   private int maxTurn;
-  private Map<Integer, Room> roomsMap;
 
   /**
    * Constructor for World that initializes the game from a file.
@@ -310,7 +308,7 @@ public class World implements WorldOutline {
     g.dispose();
 
     try {
-        File outputfile = new File("res/world.png");
+        File outputfile = new File("../res/world.png");
         ImageIO.write(image, "png", outputfile);
     } catch (IOException e) {
         throw new IllegalArgumentException("Error saving world image: " + e.getMessage());
@@ -811,15 +809,20 @@ public int getPlayerRoomId(int playerId) {
     throw new IllegalArgumentException("Player with ID " + playerId + " not found.");
 }
 
+/**
+ * Retrieves the all room ID as list where the specified room.
+ *
+ * @param roomId The unique identifier of the room.
+ * @return The room ID of all the neighbors for certain room, or throws an exception if not found.
+ */
 public List<Integer> getNeighborRooms(int roomId) {
-  Room room = rooms.get(roomId);
+  Room room = rooms.get(roomId-1);
   if (room != null) {
-      // Stream the neighbors, map to their IDs, and collect as a list
       return room.getNeighbor().stream()
                  .map(Room::getRoomId)
                  .collect(Collectors.toList());
   } else {
-      return new ArrayList<>(); // Return an empty list if the room does not exist
+      return new ArrayList<>(); 
   }
 }
 

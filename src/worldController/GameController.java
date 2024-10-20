@@ -17,13 +17,16 @@ public class GameController {
     private int currentPlayerIndex = 0;
     private Map<Integer, Boolean> isComputer;
     private RandomNumberGenerator rng;
+    private Map<Integer, String> playerNames = new HashMap<>();
 
-    public GameController(Readable input, Appendable output, RandomNumberGenerator rng) {
+
+    public GameController(Readable input, Appendable output, RandomNumberGenerator rng, int maxTurns) {
         this.scanner = new Scanner(input);
         this.output = output;
         this.playerIds = new ArrayList<>();
         this.isComputer = new HashMap<>();
         this.rng = rng;
+        this.maxTurns = maxTurns;
     }
 
     public void playGame(WorldOutline world) throws InterruptedException {
@@ -35,9 +38,7 @@ public class GameController {
 
     private void setupGame(WorldOutline world) throws InterruptedException {
       print("Setting up the game.");
-      print("Please enter the maximum number of turns:");
       try {
-          maxTurns = Integer.parseInt(scanner.nextLine());
           world.setMaxTurn(maxTurns);
       } catch (NumberFormatException e) {
           print("Invalid input for maximum turns. Setting to default of 20 turns.");
@@ -50,38 +51,54 @@ public class GameController {
           print("Add players:");
           print("1. Add Human-Controlled Player");
           print("2. Add Computer-Controlled Player");
-          print("3. Start Game");
+          print("3. Save the World Map, Check It to Know Where You Want to Start");
+          print("4. Start Game");
           String input = scanner.nextLine();
           try {
               int choice = Integer.parseInt(input);
               switch (choice) {
                 case 1: // Human-Controlled Player
-                    print("Enter player name and starting room index:");
+                    print("Enter player name:");
                     String humanPlayerName = scanner.nextLine();
                     try {
+                      print("Enter player starting room id:");
                         int humanRoomIndex = Integer.parseInt(scanner.nextLine());
+                        if (humanRoomIndex < 1 || humanRoomIndex > world.getRoomCount()) {
+                          print("Invalid room index. Please enter a number between 1 and " + world.getRoomCount());
+                          break;
+                      }
                         int humanPlayerId = world.callCreatePlayer(humanPlayerName, humanRoomIndex);
                         playerIds.add(humanPlayerId);
-                        isComputer.put(humanPlayerId, false); // Explicitly mark as human-controlled
+                        playerNames.put(humanPlayerId, humanPlayerName);
+                        isComputer.put(humanPlayerId, false); 
                         print("Human player added with ID: " + humanPlayerId);
                     } catch (NumberFormatException e) {
                         print("Invalid room index, please enter a valid number.");
                     }
                     break;
                 case 2: // Computer-Controlled Player
-                    print("Enter player name and starting room index:");
+                  print("Enter computer player name:");
                     String computerPlayerName = scanner.nextLine();
                     try {
+                      print("Enter computer player starting room id:");
                         int computerRoomIndex = Integer.parseInt(scanner.nextLine());
+                        if (computerRoomIndex < 1 || computerRoomIndex > world.getRoomCount()) {
+                          print("Invalid room index. Please enter a number between 1 and " + world.getRoomCount());
+                          break;
+                      }
                         int computerPlayerId = world.callCreatePlayer(computerPlayerName, computerRoomIndex);
                         playerIds.add(computerPlayerId);
-                        isComputer.put(computerPlayerId, true); // Explicitly mark as computer-controlled
+                        playerNames.put(computerPlayerId, computerPlayerName);
+                        isComputer.put(computerPlayerId, true); 
                         print("Computer player added with ID: " + computerPlayerId);
                     } catch (NumberFormatException e) {
                         print("Invalid room index, please enter a valid number.");
                     }
                     break;
-                case 3:
+                case 3:  
+                  saveWorldMap(world);
+                  break;
+                case 4:
                     if (playerIds.isEmpty()) {
                         print("No players added. Cannot start game.");
                     } else {
@@ -107,15 +124,12 @@ public class GameController {
       while (isRunning && currentTurn < maxTurns) {
           int currentPlayerId = playerIds.get(currentPlayerIndex);
           if (isComputer.get(currentPlayerId)) {
-              // Simulate computer player actions
               computerPlayerActions(world, currentPlayerId);
           } else {
-              // Normal player actions
               displayMenu();
               String input = scanner.nextLine();
               processPlayerInput(input, world, currentPlayerId);
           }
-          // Check if the game should continue or not after actions
           if (currentTurn >= maxTurns) {
               print("Game over: Maximum number of turns reached.");
               isRunning = false;
@@ -182,25 +196,27 @@ public class GameController {
   }
     private void computerPlayerActions(WorldOutline world, int playerId) throws InterruptedException {
       try {
-          int currentRoomId = world.getPlayerRoomId(playerId);  
-          List<Integer> neighbors = world.getNeighborRooms(currentRoomId);  
-
-          if (neighbors.isEmpty()) {
-              print("No available moves for player " + playerId);
-              return;
-          }
-
           int action = rng.nextInt(3);  // Assuming 0: Move, 1: Pick Up Item, 2: Look Around
           switch (action) {
               case 0:
+                int currentRoomId = world.getPlayerRoomId(playerId); 
+                List<Integer> neighbors = world.getNeighborRooms(currentRoomId); 
+                print("Current Room ID: " + currentRoomId);
+                print("Neighbor Rooms: " + neighbors);
+                if (neighbors.isEmpty()) {
+                    print("No available moves for player " + playerNames.get(playerId));
+                    return;
+                }
                   int roomIndex = rng.nextInt(neighbors.size());
                   int targetRoomId = neighbors.get(roomIndex);
+                  print("Computer player try to move to " + targetRoomId);
                   world.movePlayer(playerId, targetRoomId);
                   print("Computer player " + playerId + " moved to room " + targetRoomId);
                   Thread.sleep(1000);
                   advanceTurn(world);
                   break;
               case 1:
+                print("Start Picking Item Up");
                 int roomId = world.getPlayerRoomId(playerId);
                 List<String> itemsInRoom = world.getRoomItems(roomId);
                 if (!itemsInRoom.isEmpty()) {
@@ -215,6 +231,7 @@ public class GameController {
                   advanceTurn(world);
                   break;
               case 2:
+                print("Start Looking Around");
                   print(world.playerLookAround(playerId));
                   Thread.sleep(1000);
                   advanceTurn(world);
@@ -263,8 +280,9 @@ public class GameController {
       currentTurn++;
       if (currentTurn < maxTurns) {
           currentPlayerIndex = (currentPlayerIndex + 1) % playerIds.size();
-          print("Turn " + currentTurn + ". Now Player ID " + playerIds.get(currentPlayerIndex) + "'s turn.");
-          world.moveTargetToNextRoom();  // Move the target at the end of each player's turn
+          String currentPlayerName = playerNames.get(currentPlayerIndex);
+          print("Turn " + currentTurn + ". Now Player " + currentPlayerName + " with ID " + playerIds.get(currentPlayerIndex) + "'s turn.");
+          world.moveTargetToNextRoom();  
       } else {
           print("Maximum turns reached. Ending game.");
       }
@@ -288,8 +306,9 @@ public class GameController {
 
     private void displayMenu() {
         int currentPlayerId = playerIds.get(currentPlayerIndex);
+        String currentPlayerName = playerNames.get(currentPlayerId);
         print("\n--- Game Menu ---");
-        print("Current player's turn: Player ID " + currentPlayerId);
+        print("Current player's turn: Player ID " + currentPlayerId + " Player Name " + currentPlayerName);
         print("1. Display Room Info");
         print("2. Save World Map");
         print("5. Move Player");

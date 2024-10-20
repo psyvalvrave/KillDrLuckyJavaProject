@@ -206,5 +206,11 @@ public interface WorldOutline {
    */
   int getPlayerRoomId(int playerId);
   
+  /**
+   * Retrieves the all room ID as list where the specified room.
+   *
+   * @param roomId The unique identifier of the room.
+   * @return The room ID of all the neighbors for certain room, or throws an exception if not found.
+   */
   List<Integer> getNeighborRooms(int roomId);
 }
