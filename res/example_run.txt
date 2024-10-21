@@ -1,0 +1,591 @@
+eclipse-workspace\KillDoctorLucky\src> java controller.ControllerDriver ../res/mansion.txt 1000
+Setting up the game.
+Add players:
+1. Add Human-Controlled Player
+2. Add Computer-Controlled Player
+3. Save the World Map, Check It to Know Where You Want to Start
+4. Start Game
+3
+World map saved to 'res/world.png'.
+Add players:
+1. Add Human-Controlled Player
+2. Add Computer-Controlled Player
+3. Save the World Map, Check It to Know Where You Want to Start
+4. Start Game
+1
+Enter player name:
+Human
+Enter player starting room id:
+1
+Human player added with ID: 0
+Add players:
+1. Add Human-Controlled Player
+2. Add Computer-Controlled Player
+3. Save the World Map, Check It to Know Where You Want to Start
+4. Start Game
+2
+Enter computer player name:
+Computer
+Enter computer player starting room id:
+1
+Computer player added with ID: 1
+Add players:
+1. Add Human-Controlled Player
+2. Add Computer-Controlled Player
+3. Save the World Map, Check It to Know Where You Want to Start
+4. Start Game
+2
+Enter computer player name:
+Bot
+Enter computer player starting room id:
+21
+Computer player added with ID: 2
+Add players:
+1. Add Human-Controlled Player
+2. Add Computer-Controlled Player
+3. Save the World Map, Check It to Know Where You Want to Start
+4. Start Game
+4
+Game will start with 3 players.
+Game started. Manage your turns.
+
+--- Game Menu ---
+Current player's turn: Player ID 0 Player Name Human
+1. Display Room Info
+2. Save World Map
+5. Move Player
+6. Player Pick Up Item
+7. Player Look Around
+8. Display Player Info
+9. Do Nothing
+0. Quit Game
+Select an option:
+1
+Enter room ID:
+1
+Room Name: Armory
+Room ID: 1
+Coordinates: [22, 19, 23, 26]
+Neighbors: Billiard Room, Dining Hall, Drawing Room
+Visible From: Billiard Room, Dining Hall, Drawing Room, Library, Master Suite, Nursery, Tennessee Room, Trophy Room, Wine Cellar
+Items: Revolver
+Occupants:
+Target: Doctor Lucky
+, Player: Human, Player: Computer
+
+--- Game Menu ---
+Current player's turn: Player ID 0 Player Name Human
+1. Display Room Info
+2. Save World Map
+5. Move Player
+6. Player Pick Up Item
+7. Player Look Around
+8. Display Player Info
+9. Do Nothing
+0. Quit Game
+Select an option:
+2
+World map saved to 'res/world.png'.
+
+--- Game Menu ---
+Current player's turn: Player ID 0 Player Name Human
+1. Display Room Info
+2. Save World Map
+5. Move Player
+6. Player Pick Up Item
+7. Player Look Around
+8. Display Player Info
+9. Do Nothing
+0. Quit Game
+Select an option:
+8
+Enter the player ID to view their information:
+1
+ID: 1, Name: Computer, Current Room: Armory, Items: None
+
+--- Game Menu ---
+Current player's turn: Player ID 0 Player Name Human
+1. Display Room Info
+2. Save World Map
+5. Move Player
+6. Player Pick Up Item
+7. Player Look Around
+8. Display Player Info
+9. Do Nothing
+0. Quit Game
+Select an option:
+1
+Enter room ID:
+22
+Error processing command: roomID not valid.
+
+--- Game Menu ---
+Current player's turn: Player ID 0 Player Name Human
+1. Display Room Info
+2. Save World Map
+5. Move Player
+6. Player Pick Up Item
+7. Player Look Around
+8. Display Player Info
+9. Do Nothing
+0. Quit Game
+Select an option:
+8
+Enter the player ID to view their information:
+999
+No player found with ID: 999
+
+--- Game Menu ---
+Current player's turn: Player ID 0 Player Name Human
+1. Display Room Info
+2. Save World Map
+5. Move Player
+6. Player Pick Up Item
+7. Player Look Around
+8. Display Player Info
+9. Do Nothing
+0. Quit Game
+Select an option:
+8
+Enter the player ID to view their information:
+a
+Invalid input, please enter a valid player ID number.
+
+--- Game Menu ---
+Current player's turn: Player ID 0 Player Name Human
+1. Display Room Info
+2. Save World Map
+5. Move Player
+6. Player Pick Up Item
+7. Player Look Around
+8. Display Player Info
+9. Do Nothing
+0. Quit Game
+Select an option:
+8
+Enter the player ID to view their information:
+3
+No player found with ID: 3
+
+--- Game Menu ---
+Current player's turn: Player ID 0 Player Name Human
+1. Display Room Info
+2. Save World Map
+5. Move Player
+6. Player Pick Up Item
+7. Player Look Around
+8. Display Player Info
+9. Do Nothing
+0. Quit Game
+Select an option:
+8
+Enter the player ID to view their information:
+2
+ID: 2, Name: Bot, Current Room: Winter Garden, Items: None
+
+--- Game Menu ---
+Current player's turn: Player ID 0 Player Name Human
+1. Display Room Info
+2. Save World Map
+5. Move Player
+6. Player Pick Up Item
+7. Player Look Around
+8. Display Player Info
+9. Do Nothing
+0. Quit Game
+Select an option:
+6
+Items available to pick up:
+1: Revolver
+Enter the index of the item to pick up:
+1
+Item 'Revolver' picked up successfully by Human.
+Turn 2. Now Player Computer with ID 1's turn.
+Current Room ID: 1
+Neighbor Rooms: [2, 4, 5]
+Computer player try to move to 5
+Computer player: Player Computer moved to room Drawing Room.
+Turn 3. Now Player Bot with ID 2's turn.
+Current Room ID: 21
+Neighbor Rooms: [3, 16]
+Computer player try to move to 3
+Computer player: Player Bot moved to room Carriage House.
+Turn 4. Now Player Human with ID 0's turn.
+
+--- Game Menu ---
+Current player's turn: Player ID 0 Player Name Human
+1. Display Room Info
+2. Save World Map
+5. Move Player
+6. Player Pick Up Item
+7. Player Look Around
+8. Display Player Info
+9. Do Nothing
+0. Quit Game
+Select an option:
+7
+You are in Room Armory.
+Current Room ID: 1
+Current Room Name: Armory
+Current Room Items: None
+Neighboring and Visible Rooms:
+  Room ID: 2, Room Name: Billiard Room, Items: Billiard Cue
+  Room ID: 4, Room Name: Dining Hall, Items: None
+  Room ID: 5, Room Name: Drawing Room, Items: Letter Opener
+Other Visible Rooms:
+  Room ID: 11, Room Name: Library, Items: None
+  Room ID: 13, Room Name: Master Suite, Items: Shoe Horn
+  Room ID: 14, Room Name: Nursery, Items: Bad Cream
+  Room ID: 18, Room Name: Tennessee Room, Items: None
+  Room ID: 19, Room Name: Trophy Room, Items: Duck Decoy, Monkey Hand
+  Room ID: 20, Room Name: Wine Cellar, Items: Rat Poison, Piece of Rope
+Player: Human
+Visible rooms from here:
+Room Billiard Room: No occupants
+Room Dining Hall: Target: Doctor Lucky
+
+Room Drawing Room: Player: Computer
+Room Library: No occupants
+Room Master Suite: No occupants
+Room Nursery: No occupants
+Room Tennessee Room: No occupants
+Room Trophy Room: No occupants
+Room Wine Cellar: No occupants
+Turn 5. Now Player Computer with ID 1's turn.
+Start Looking Around
+Computer player: You are in Room Drawing Room.
+Current Room ID: 5
+Current Room Name: Drawing Room
+Current Room Items: Letter Opener
+Neighboring and Visible Rooms:
+  Room ID: 1, Room Name: Armory, Items: None
+  Room ID: 4, Room Name: Dining Hall, Items: None
+  Room ID: 6, Room Name: Foyer, Items: None
+  Room ID: 20, Room Name: Wine Cellar, Items: Rat Poison, Piece of Rope
+Other Visible Rooms:
+  Room ID: 12, Room Name: Lilac Room, Items: Tight Hat
+  Room ID: 13, Room Name: Master Suite, Items: Shoe Horn
+  Room ID: 16, Room Name: Piazza, Items: Civil War Cannon
+  Room ID: 18, Room Name: Tennessee Room, Items: None
+Target: Doctor Lucky
+, Player: Computer
+Visible rooms from here:
+Room Armory: Player: Human
+Room Dining Hall: No occupants
+Room Foyer: No occupants
+Room Lilac Room: No occupants
+Room Master Suite: No occupants
+Room Piazza: No occupants
+Room Tennessee Room: No occupants
+Room Wine Cellar: No occupants
+Turn 6. Now Player Bot with ID 2's turn.
+Start Looking Around
+Computer player: You are in Room Carriage House.
+Current Room ID: 3
+Current Room Name: Carriage House
+Current Room Items: Chain Saw, Big Red Hammer
+Neighboring and Visible Rooms:
+  Room ID: 21, Room Name: Winter Garden, Items: None
+Other Visible Rooms:
+  Room ID: 7, Room Name: Green House, Items: Trowel, Pinking Shears
+  Room ID: 8, Room Name: Hedge Maze, Items: Loud Noise
+  Room ID: 16, Room Name: Piazza, Items: Civil War Cannon
+Player: Bot
+Visible rooms from here:
+Room Green House: No occupants
+Room Hedge Maze: No occupants
+Room Piazza: No occupants
+Room Winter Garden: No occupants
+Turn 7. Now Player Human with ID 0's turn.
+
+--- Game Menu ---
+Current player's turn: Player ID 0 Player Name Human
+1. Display Room Info
+2. Save World Map
+5. Move Player
+6. Player Pick Up Item
+7. Player Look Around
+8. Display Player Info
+9. Do Nothing
+0. Quit Game
+Select an option:
+2
+World map saved to 'res/world.png'.
+
+--- Game Menu ---
+Current player's turn: Player ID 0 Player Name Human
+1. Display Room Info
+2. Save World Map
+5. Move Player
+6. Player Pick Up Item
+7. Player Look Around
+8. Display Player Info
+9. Do Nothing
+0. Quit Game
+Select an option:
+5
+Enter target room ID:
+6
+Error processing command: Move not allowed. Target room is not a neighbor.
+
+--- Game Menu ---
+Current player's turn: Player ID 0 Player Name Human
+1. Display Room Info
+2. Save World Map
+5. Move Player
+6. Player Pick Up Item
+7. Player Look Around
+8. Display Player Info
+9. Do Nothing
+0. Quit Game
+Select an option:
+5
+Enter target room ID:
+5
+Player Human moved to room Drawing Room.
+Turn 8. Now Player Computer with ID 1's turn.
+Start Picking Item Up
+Computer player: Item 'Letter Opener' picked up successfully by Computer.
+Turn 9. Now Player Bot with ID 2's turn.
+Start Picking Item Up
+Computer player: Item 'Chain Saw' picked up successfully by Bot.
+Turn 10. Now Player Human with ID 0's turn.
+
+--- Game Menu ---
+Current player's turn: Player ID 0 Player Name Human
+1. Display Room Info
+2. Save World Map
+5. Move Player
+6. Player Pick Up Item
+7. Player Look Around
+8. Display Player Info
+9. Do Nothing
+0. Quit Game
+Select an option:
+7
+You are in Room Drawing Room.
+Current Room ID: 5
+Current Room Name: Drawing Room
+Current Room Items: None
+Neighboring and Visible Rooms:
+  Room ID: 1, Room Name: Armory, Items: None
+  Room ID: 4, Room Name: Dining Hall, Items: None
+  Room ID: 6, Room Name: Foyer, Items: None
+  Room ID: 20, Room Name: Wine Cellar, Items: Rat Poison, Piece of Rope
+Other Visible Rooms:
+  Room ID: 12, Room Name: Lilac Room, Items: Tight Hat
+  Room ID: 13, Room Name: Master Suite, Items: Shoe Horn
+  Room ID: 16, Room Name: Piazza, Items: Civil War Cannon
+  Room ID: 18, Room Name: Tennessee Room, Items: None
+Player: Human, Player: Computer
+Visible rooms from here:
+Room Armory: No occupants
+Room Dining Hall: No occupants
+Room Foyer: No occupants
+Room Lilac Room: No occupants
+Room Master Suite: No occupants
+Room Piazza: No occupants
+Room Tennessee Room: No occupants
+Room Wine Cellar: No occupants
+Turn 11. Now Player Computer with ID 1's turn.
+Start Picking Item Up
+No items available to pick up in this room for player 1
+Turn 12. Now Player Bot with ID 2's turn.
+Start Picking Item Up
+Computer player: Item 'Big Red Hammer' picked up successfully by Bot.
+Turn 13. Now Player Human with ID 0's turn.
+
+--- Game Menu ---
+Current player's turn: Player ID 0 Player Name Human
+1. Display Room Info
+2. Save World Map
+5. Move Player
+6. Player Pick Up Item
+7. Player Look Around
+8. Display Player Info
+9. Do Nothing
+0. Quit Game
+Select an option:
+6
+No items available to pick up in this room.
+Turn 14. Now Player Computer with ID 1's turn.
+Start Looking Around
+Computer player: You are in Room Drawing Room.
+Current Room ID: 5
+Current Room Name: Drawing Room
+Current Room Items: None
+Neighboring and Visible Rooms:
+  Room ID: 1, Room Name: Armory, Items: None
+  Room ID: 4, Room Name: Dining Hall, Items: None
+  Room ID: 6, Room Name: Foyer, Items: None
+  Room ID: 20, Room Name: Wine Cellar, Items: Rat Poison, Piece of Rope
+Other Visible Rooms:
+  Room ID: 12, Room Name: Lilac Room, Items: Tight Hat
+  Room ID: 13, Room Name: Master Suite, Items: Shoe Horn
+  Room ID: 16, Room Name: Piazza, Items: Civil War Cannon
+  Room ID: 18, Room Name: Tennessee Room, Items: None
+Player: Human, Player: Computer
+Visible rooms from here:
+Room Armory: No occupants
+Room Dining Hall: No occupants
+Room Foyer: No occupants
+Room Lilac Room: No occupants
+Room Master Suite: No occupants
+Room Piazza: No occupants
+Room Tennessee Room: No occupants
+Room Wine Cellar: No occupants
+Turn 15. Now Player Bot with ID 2's turn.
+Start Looking Around
+Computer player: You are in Room Carriage House.
+Current Room ID: 3
+Current Room Name: Carriage House
+Current Room Items: None
+Neighboring and Visible Rooms:
+  Room ID: 21, Room Name: Winter Garden, Items: None
+Other Visible Rooms:
+  Room ID: 7, Room Name: Green House, Items: Trowel, Pinking Shears
+  Room ID: 8, Room Name: Hedge Maze, Items: Loud Noise
+  Room ID: 16, Room Name: Piazza, Items: Civil War Cannon
+Player: Bot
+Visible rooms from here:
+Room Green House: No occupants
+Room Hedge Maze: No occupants
+Room Piazza: No occupants
+Room Winter Garden: No occupants
+Turn 16. Now Player Human with ID 0's turn.
+
+--- Game Menu ---
+Current player's turn: Player ID 0 Player Name Human
+1. Display Room Info
+2. Save World Map
+5. Move Player
+6. Player Pick Up Item
+7. Player Look Around
+8. Display Player Info
+9. Do Nothing
+0. Quit Game
+Select an option:
+2
+World map saved to 'res/world.png'.
+
+--- Game Menu ---
+Current player's turn: Player ID 0 Player Name Human
+1. Display Room Info
+2. Save World Map
+5. Move Player
+6. Player Pick Up Item
+7. Player Look Around
+8. Display Player Info
+9. Do Nothing
+0. Quit Game
+Select an option:
+7
+You are in Room Drawing Room.
+Current Room ID: 5
+Current Room Name: Drawing Room
+Current Room Items: None
+Neighboring and Visible Rooms:
+  Room ID: 1, Room Name: Armory, Items: None
+  Room ID: 4, Room Name: Dining Hall, Items: None
+  Room ID: 6, Room Name: Foyer, Items: None
+  Room ID: 20, Room Name: Wine Cellar, Items: Rat Poison, Piece of Rope
+Other Visible Rooms:
+  Room ID: 12, Room Name: Lilac Room, Items: Tight Hat
+  Room ID: 13, Room Name: Master Suite, Items: Shoe Horn
+  Room ID: 16, Room Name: Piazza, Items: Civil War Cannon
+  Room ID: 18, Room Name: Tennessee Room, Items: None
+Player: Human, Player: Computer
+Visible rooms from here:
+Room Armory: No occupants
+Room Dining Hall: No occupants
+Room Foyer: No occupants
+Room Lilac Room: No occupants
+Room Master Suite: No occupants
+Room Piazza: Target: Doctor Lucky
+
+Room Tennessee Room: No occupants
+Room Wine Cellar: No occupants
+Turn 17. Now Player Computer with ID 1's turn.
+Current Room ID: 5
+Neighbor Rooms: [1, 4, 6, 20]
+Computer player try to move to 1
+Computer player: Player Computer moved to room Armory.
+Turn 18. Now Player Bot with ID 2's turn.
+Start Picking Item Up
+No items available to pick up in this room for player 2
+Turn 19. Now Player Human with ID 0's turn.
+
+--- Game Menu ---
+Current player's turn: Player ID 0 Player Name Human
+1. Display Room Info
+2. Save World Map
+5. Move Player
+6. Player Pick Up Item
+7. Player Look Around
+8. Display Player Info
+9. Do Nothing
+0. Quit Game
+Select an option:
+9
+Turn 20. Now Player Computer with ID 1's turn.
+Start Looking Around
+Computer player: You are in Room Armory.
+Current Room ID: 1
+Current Room Name: Armory
+Current Room Items: None
+Neighboring and Visible Rooms:
+  Room ID: 2, Room Name: Billiard Room, Items: Billiard Cue
+  Room ID: 4, Room Name: Dining Hall, Items: None
+  Room ID: 5, Room Name: Drawing Room, Items: None
+Other Visible Rooms:
+  Room ID: 11, Room Name: Library, Items: None
+  Room ID: 13, Room Name: Master Suite, Items: Shoe Horn
+  Room ID: 14, Room Name: Nursery, Items: Bad Cream
+  Room ID: 18, Room Name: Tennessee Room, Items: None
+  Room ID: 19, Room Name: Trophy Room, Items: Duck Decoy, Monkey Hand
+  Room ID: 20, Room Name: Wine Cellar, Items: Rat Poison, Piece of Rope
+Player: Computer
+Visible rooms from here:
+Room Billiard Room: No occupants
+Room Dining Hall: No occupants
+Room Drawing Room: Player: Human
+Room Library: No occupants
+Room Master Suite: No occupants
+Room Nursery: No occupants
+Room Tennessee Room: No occupants
+Room Trophy Room: No occupants
+Room Wine Cellar: Target: Doctor Lucky
+
+Turn 21. Now Player Bot with ID 2's turn.
+Start Picking Item Up
+No items available to pick up in this room for player 2
+Turn 22. Now Player Human with ID 0's turn.
+
+--- Game Menu ---
+Current player's turn: Player ID 0 Player Name Human
+1. Display Room Info
+2. Save World Map
+5. Move Player
+6. Player Pick Up Item
+7. Player Look Around
+8. Display Player Info
+9. Do Nothing
+0. Quit Game
+Select an option:
+2
+World map saved to 'res/world.png'.
+
+--- Game Menu ---
+Current player's turn: Player ID 0 Player Name Human
+1. Display Room Info
+2. Save World Map
+5. Move Player
+6. Player Pick Up Item
+7. Player Look Around
+8. Display Player Info
+9. Do Nothing
+0. Quit Game
+Select an option:
+0
+Quitting game.
+PS C:\

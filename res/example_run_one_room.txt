@@ -1,0 +1,98 @@
+\KillDoctorLucky\src> java controller.ControllerDriver ../res/one_room.txt 1000
+Setting up the game.
+Add players:
+1. Add Human-Controlled Player
+2. Add Computer-Controlled Player
+3. Save the World Map, Check It to Know Where You Want to Start
+4. Start Game
+1
+Enter player name:
+Human
+Enter player starting room id:
+1
+Human player added with ID: 0
+Add players:
+1. Add Human-Controlled Player
+2. Add Computer-Controlled Player
+3. Save the World Map, Check It to Know Where You Want to Start
+4. Start Game
+2
+Enter computer player name:
+Computer
+Enter computer player starting room id:
+1
+Computer player added with ID: 1
+Add players:
+1. Add Human-Controlled Player
+2. Add Computer-Controlled Player
+3. Save the World Map, Check It to Know Where You Want to Start
+4. Start Game
+4
+Game will start with 2 players.
+Game started. Manage your turns.
+
+--- Game Menu ---
+Current player's turn: Player ID 0 Player Name Human
+1. Display Room Info
+2. Save World Map
+5. Move Player
+6. Player Pick Up Item
+7. Player Look Around
+8. Display Player Info
+9. Do Nothing
+0. Quit Game
+Select an option:
+1
+Enter room ID:
+1
+Room Name: White Cell
+Room ID: 1
+Coordinates: [6, 3, 9, 8]
+Neighbors: None
+Visible From: None
+Items: Silken Cord, Loud Noise
+Occupants:
+Target: Doctor Lucky
+, Player: Human, Player: Computer
+
+--- Game Menu ---
+Current player's turn: Player ID 0 Player Name Human
+1. Display Room Info
+2. Save World Map
+5. Move Player
+6. Player Pick Up Item
+7. Player Look Around
+8. Display Player Info
+9. Do Nothing
+0. Quit Game
+Select an option:
+7
+You are in Room White Cell.
+Current Room ID: 1
+Current Room Name: White Cell
+Current Room Items: Silken Cord, Loud Noise
+Target: Doctor Lucky
+, Player: Human, Player: Computer
+No visible rooms from your current location.
+Turn 2. Now Player Computer with ID 1's turn.
+Current Room ID: 1
+Neighbor Rooms: []
+No available moves for player Computer
+Start Picking Item Up
+Computer player: Item 'Silken Cord' picked up successfully by Computer.
+Turn 3. Now Player Human with ID 0's turn.
+
+--- Game Menu ---
+Current player's turn: Player ID 0 Player Name Human
+1. Display Room Info
+2. Save World Map
+5. Move Player
+6. Player Pick Up Item
+7. Player Look Around
+8. Display Player Info
+9. Do Nothing
+0. Quit Game
+Select an option:
+0
+Quitting game.
+PS C:\
