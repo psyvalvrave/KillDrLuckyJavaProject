@@ -37,14 +37,12 @@ In this initial milestone, the focus was on adding a cmd controller to play the 
 - **Room and Target Setup:** Rooms are strategically placed within the world, and a target is assigned to one of these rooms.
 - **Controller Class:** Using Command Line to run the game now. 
 
-### How to View the Output
-First able, you have to move KillDoctorLucky.jar in the res folder in to the root directory of this project, which is the same directory as src, test, res folder.
-Then, to see the game board and the target's location, run the provided JAR file with the following command:
-
+### How to Run My Code with Jar file
+Find KillDoctorLucky.jar in the res folder, open the terminal in this folder. Execute the following command in terminal:
 ```bash
-java -jar KillDoctorLucky.jar res/mansion.txt 1000
+java -jar KillDoctorLucky.jar mansion.txt 1000
 ```
-res/mansion.txt can be switch to other world model text file. 
+mansion.txt can be switch to other world model text file. 
 1000 means number of turn, once the turn reach, the game will end. Each player's action represent a turn. 
 There will be a txt file to show the example run to show some text info about how a test run is. The code you are running is in the src/WorldDriver.java
 
