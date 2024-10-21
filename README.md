@@ -49,12 +49,12 @@ res/mansion.txt can be switch to other world model text file.
 There will be a txt file to show the example run to show some text info about how a test run is. The code you are running is in the src/WorldDriver.java
 
 ### Citation
-https://www.codejava.net/ides/eclipse/how-to-create-jar-file-in-eclipse
-https://www.tutorialspoint.com/java_dip/java_buffered_image.htm
-https://introcs.cs.princeton.edu/java/windows/manual.php
-https://www.theserverside.com/blog/Coffee-Talk-Java-News-Stories-and-Opinions/Run-JAR-file-example-windows-linux-ubuntu
-https://www.educative.io/answers/how-to-generate-random-numbers-in-java
-https://dev.to/drathi/how-to-mock-without-using-mockito-or-any-frameworks-1b5g
+1. https://www.codejava.net/ides/eclipse/how-to-create-jar-file-in-eclipse
+2. https://www.tutorialspoint.com/java_dip/java_buffered_image.htm
+3. https://introcs.cs.princeton.edu/java/windows/manual.php
+4. https://www.theserverside.com/blog/Coffee-Talk-Java-News-Stories-and-Opinions/Run-JAR-file-example-windows-linux-ubuntu
+5. https://www.educative.io/answers/how-to-generate-random-numbers-in-java
+6. https://dev.to/drathi/how-to-mock-without-using-mockito-or-any-frameworks-1b5g
 
 ### Assumptions 
 1. The pick up action will consume a turn though there is nothing to pick up.
