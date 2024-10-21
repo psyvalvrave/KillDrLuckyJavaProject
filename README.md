@@ -51,14 +51,14 @@ There will be a txt file to show the example run to show some text info about ho
 ### Citation
 https://www.codejava.net/ides/eclipse/how-to-create-jar-file-in-eclipse
 
-### assumptions 
+### Assumptions 
 1. The pick up action will consume a turn though there is nothing to pick up.
 2. Two rooms are in the same horizontal or vertical line without empty block between them, they can see each other. 
 
-### limitation
+### Limitation
 1. Computer player can only run randomly without trying to approach near Dr. Lucky.  
 
-### Example Run
+### Example Run Explain for M2
 1. example_run.txt show example run with all requirements: adding a human-controlled player to the world
 adding a computer-controlled player to the world
 the player moving around the world
