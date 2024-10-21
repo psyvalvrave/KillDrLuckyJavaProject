@@ -11,7 +11,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
-
 import javax.imageio.ImageIO;
 
 /**
@@ -31,7 +30,7 @@ public class World implements WorldOutline {
   private String targetName;
   private int targetHealth = 0;
   private String worldName;
-  private int itemLimit = 2;
+  private int itemLimit = 3;
   private int nextPlayerId = 0;
   private int maxTurn;
 
@@ -256,7 +255,8 @@ public class World implements WorldOutline {
    */
   @Override
   public BufferedImage drawWorld() {
-    BufferedImage image = new BufferedImage(this.cols * 25, this.rows * 25, BufferedImage.TYPE_INT_RGB);
+    BufferedImage image = new BufferedImage(this.cols * 25, this.rows * 25, 
+        BufferedImage.TYPE_INT_RGB);
     Graphics g = image.createGraphics();
 
     g.setColor(Color.WHITE);
@@ -267,42 +267,44 @@ public class World implements WorldOutline {
 
     
     for (String[] room : roomData) {
-        String roomName = room[0];
-        String roomId = room[2];
-        String[] coordsStr = room[1].replace("[", "").replace("]", "").split(", ");
-        int y1 = Integer.parseInt(coordsStr[0]);
-        int x1 = Integer.parseInt(coordsStr[1]);
-        int y2 = Integer.parseInt(coordsStr[2]);
-        int x2 = Integer.parseInt(coordsStr[3]);
+      String roomName = room[0];
+      String roomId = room[2];
+      String[] coordsStr = room[1].replace("[", "").replace("]", "").split(", ");
+      int y1 = Integer.parseInt(coordsStr[0]);
+      int x1 = Integer.parseInt(coordsStr[1]);
+      int y2 = Integer.parseInt(coordsStr[2]);
+      int x2 = Integer.parseInt(coordsStr[3]);
 
-        int x1Draw = x1 * 25;
-        int y1Draw = y1 * 25;
-        int width = ((x2 - x1 + 1) * 25) - 1;
-        int height = ((y2 - y1 + 1) * 25) - 1;
+      int x1Draw = x1 * 25;
+      int y1Draw = y1 * 25;
+      int width = ((x2 - x1 + 1) * 25) - 1;
+      int height = ((y2 - y1 + 1) * 25) - 1;
 
-        if (width > 0 && height > 0) {
-            g.setColor(Color.WHITE);
-            g.fillRect(x1Draw, y1Draw, width, height);
+      if (width > 0 && height > 0) {
+        g.setColor(Color.WHITE);
+        g.fillRect(x1Draw, y1Draw, width, height);
 
-            g.setColor(Color.BLACK);
-            g.drawRect(x1Draw, y1Draw, width, height);
-            g.drawString(roomName + " (" + roomId + ")", x1Draw + 3, y1Draw + (height / 2) + 5);
+        g.setColor(Color.BLACK);
+        g.drawRect(x1Draw, y1Draw, width, height);
+        g.drawString(roomName + " (" + roomId + ")", x1Draw + 3, y1Draw + (height / 2) + 5);
+      }
+
+      if (target != null && target.getLocation() != null 
+          && roomName.equals(target.getLocation().getRoomName())) {
+        g.setColor(Color.RED);
+        g.fillOval(x1Draw + 10, y1Draw + 10, 10, 10); 
+        g.drawString("Target: " + target.getCharacterName(), x1Draw + 25, y1Draw + 15);
+      }
+      int playerOffset = 0;
+      for (Player player : players) {
+        if (player.getLocation() != null && roomName.equals(player.getLocation().getRoomName())) {
+          g.setColor(Color.BLACK);
+          g.fillOval(x1Draw + 10, y1Draw + 30 + playerOffset, 10, 10); 
+          g.drawString("Player: " + player.getCharacterName(), 
+              x1Draw + 25, y1Draw + 35 + playerOffset);
+
+          playerOffset += 20; 
         }
-
-        if (target != null && target.getLocation() != null && roomName.equals(target.getLocation().getRoomName())) {
-            g.setColor(Color.RED);
-            g.fillOval(x1Draw + 10, y1Draw + 10, 10, 10); 
-            g.drawString("Target: " + target.getCharacterName(), x1Draw + 25, y1Draw + 15);
-        }
-        int playerOffset = 0;
-        for (Player player : players) {
-          if (player.getLocation() != null && roomName.equals(player.getLocation().getRoomName())) {
-              g.setColor(Color.BLACK);
-              g.fillOval(x1Draw + 10, y1Draw + 30 + playerOffset, 10, 10); 
-              g.drawString("Player: " + player.getCharacterName(), x1Draw + 25, y1Draw + 35 + playerOffset);
-
-              playerOffset += 20; 
-          }
       }
     }
 
@@ -311,17 +313,17 @@ public class World implements WorldOutline {
     try {
       File outputDir = new File("../res");
       if (!outputDir.exists()) {
-          outputDir.mkdirs();  
+        outputDir.mkdirs();  
       }
 
       File outputfile = new File(outputDir, "world.png");
       ImageIO.write(image, "png", outputfile);
     } catch (IOException e) {
-        throw new IllegalArgumentException("Error saving world image: " + e.getMessage());
+      throw new IllegalArgumentException("Error saving world image: " + e.getMessage());
     }
     
     return image;
-}
+  }
 
   /**
    * Generates and update the world text with detailed information about the world.
@@ -450,7 +452,8 @@ public class World implements WorldOutline {
         throw new IllegalArgumentException("No rooms available to move the target to.");
       }
     } else {
-      throw new IllegalArgumentException("No target set in the world or target does not have a current room.");
+      throw new IllegalArgumentException("No target set in the world "
+          + "or target does not have a current room.");
     }
   }
   
@@ -485,31 +488,32 @@ public class World implements WorldOutline {
   }
   
   /**
-   * Returns detailed information about which players and whether the target is in the specified room.
+   * Returns detailed information about which players and whether the target 
+   * is in the specified room.
    * @param room The room to check for occupancy details.
    * @return A descriptive string of all occupants in the room.
    */
   @Override
   public String getRoomOccupants(Room room) {
-      StringBuilder occupants = new StringBuilder();
-      boolean isOccupied = false;
+    StringBuilder occupants = new StringBuilder();
+    boolean isOccupied = false;
 
-      if (target != null && target.getLocation().equals(room)) {
-          occupants.append("Target: ").append(target.getCharacterName()).append("\n");
-          isOccupied = true;
+    if (target != null && target.getLocation().equals(room)) {
+      occupants.append("Target: ").append(target.getCharacterName()).append("\n");
+      isOccupied = true;
+    }
+
+    for (Player player : players) {
+      if (player.getLocation().equals(room)) {
+        if (occupants.length() > 0) {
+          occupants.append(", ");
+        }
+        occupants.append("Player: ").append(player.getCharacterName());
+        isOccupied = true;
       }
+    }
 
-      for (Player player : players) {
-          if (player.getLocation().equals(room)) {
-              if (occupants.length() > 0) {
-                  occupants.append(", ");
-              }
-              occupants.append("Player: ").append(player.getCharacterName());
-              isOccupied = true;
-          }
-      }
-
-      return isOccupied ? occupants.toString() : "No occupants";
+    return isOccupied ? occupants.toString() : "No occupants";
   }
   
   
@@ -521,13 +525,14 @@ public class World implements WorldOutline {
    * @throws IllegalArgumentException If the room index is out of the valid range.
    */
   public Player createPlayer(String playerName, int startRoomIndex) {
-      if (startRoomIndex < 1 || startRoomIndex > rooms.size()) {
-          throw new IllegalArgumentException("Invalid room index for player starting room. Valid index is from 1 to " + rooms.size() + ".");
-      }
-      Room startRoom = rooms.get(startRoomIndex - 1);
-      Player newPlayer = new Player(playerName, startRoom, nextPlayerId++, itemLimit);
-      players.add(newPlayer);
-      return newPlayer;
+    if (startRoomIndex < 1 || startRoomIndex > rooms.size()) {
+      throw new IllegalArgumentException("Invalid room index for player starting room."
+          + " Valid index is from 1 to " + rooms.size() + ".");
+    }
+    Room startRoom = rooms.get(startRoomIndex - 1);
+    Player newPlayer = new Player(playerName, startRoom, nextPlayerId++, itemLimit);
+    players.add(newPlayer);
+    return newPlayer;
   }
 
   
@@ -538,15 +543,16 @@ public class World implements WorldOutline {
    */
   @Override
   public void setItemLimit(int newItemLimit) {
-      this.itemLimit = newItemLimit;
-      for (Player player : players) {
-          player.setItemLimit(newItemLimit);
-      }
+    this.itemLimit = newItemLimit;
+    for (Player player : players) {
+      player.setItemLimit(newItemLimit);
+    }
   }
   
   /**
    * Displays the detailed information of a specific room by name, including the room's
-   * properties (name, ID, coordinates, neighbors, visible rooms, items) and the occupants (players and target).
+   * properties (name, ID, coordinates, neighbors, visible rooms, items) and 
+   * the occupants (players and target).
    * 
    * @param roomName The name of the room to display.
    * @return A string containing the room information and occupants.
@@ -554,51 +560,39 @@ public class World implements WorldOutline {
    */
   @Override
   public String displayRoomInfo(String roomName) {
-      Room room = getRoomByName(roomName);
-      
-      String roomInfo = room.getInfo();
-      String occupants = getRoomOccupants(room);
+    Room room = getRoomByName(roomName);
+    
+    String roomInfo = room.getInfo();
+    String occupants = getRoomOccupants(room);
 
-      StringBuilder fullInfo = new StringBuilder();
-      fullInfo.append(roomInfo).append("\n");
-      fullInfo.append("Occupants:\n").append(occupants);
+    StringBuilder fullInfo = new StringBuilder();
+    fullInfo.append(roomInfo).append("\n");
+    fullInfo.append("Occupants:\n").append(occupants);
 
-      return fullInfo.toString();
-  }
-  
-  /**
-   * Displays the detailed information of a specific room by name, including the room's
-   * properties (name, ID, coordinates, neighbors, visible rooms, items) and the occupants (players and target).
-   * 
-   * @param roomName The name of the room to display.
-   * @return A string containing the room information and occupants.
-   * @throws IllegalArgumentException if the room name does not exist.
-   */
-  public String displayPlayerRoomInfo(int playerId) {
-    int roomId = getPlayerRoomId(playerId);
-      return displayRoomInfo(roomId);
+    return fullInfo.toString();
   }
   
   /**
    * Displays the detailed information of a specific room, including the room's
-   * properties (name, ID, coordinates, neighbors, visible rooms, items) and the occupants (players and target).
+   * properties (name, ID, coordinates, neighbors, visible rooms, items) 
+   * and the occupants (players and target).
    * 
    * @param roomId The ID of the room to display.
    * @return A string containing the room information and occupants.
    */
   @Override
   public String displayRoomInfo(int roomId) {
-      Room room = this.getRoomById(roomId);
+    Room room = this.getRoomById(roomId);
 
-      String roomInfo = room.getInfo();
+    String roomInfo = room.getInfo();
 
-      String occupants = getRoomOccupants(room);
+    String occupants = getRoomOccupants(room);
 
-      StringBuilder fullInfo = new StringBuilder();
-      fullInfo.append(roomInfo).append("\n");
-      fullInfo.append("Occupants:\n").append(occupants);
+    StringBuilder fullInfo = new StringBuilder();
+    fullInfo.append(roomInfo).append("\n");
+    fullInfo.append("Occupants:\n").append(occupants);
 
-      return fullInfo.toString();
+    return fullInfo.toString();
   }
   
   
@@ -613,7 +607,8 @@ public class World implements WorldOutline {
    * @return A confirmation message stating the room has been created.
    */
   @Override
-  public String callCreateRoom(String roomName, int roomId, int[] coordinates, List<String[]> allRoomData) {
+  public String callCreateRoom(String roomName, int roomId, 
+      int[] coordinates, List<String[]> allRoomData) {
     createRoom(roomName, roomId, coordinates, allRoomData);
     return String.format("Room [%s] is created", roomName);
   }
@@ -662,10 +657,10 @@ public class World implements WorldOutline {
    */
   @Override
   public String getTargetInfo() {
-      if (this.target == null) {
-          return "No target currently set.";
-      }
-      return this.target.getCharacterInfo();
+    if (this.target == null) {
+      return "No target currently set.";
+    }
+    return this.target.getCharacterInfo();
   }
   
   /**
@@ -676,12 +671,12 @@ public class World implements WorldOutline {
    */
   @Override
   public String getPlayerInfo(int playerId) {
-      for (Player player : players) {
-          if (player.getPlayerId() == playerId) {
-              return player.getCharacterInfo();
-          }
+    for (Player player : players) {
+      if (player.getPlayerId() == playerId) {
+        return player.getCharacterInfo();
       }
-      throw new IllegalArgumentException("Player with ID " + playerId + " not found.");
+    }
+    throw new IllegalArgumentException("Player with ID " + playerId + " not found.");
   }
 
   
@@ -692,87 +687,88 @@ public class World implements WorldOutline {
    */
   @Override
   public int getMaxTurn() {
-      return maxTurn;
+    return maxTurn;
   }
 
   /**
    * Sets the maximum allowed turns for the game.
    * 
-   * @param maxTurn The maximum turns to set.
+   * @param maxTurnInput The maximum turns to set.
    */
   @Override
-  public void setMaxTurn(int maxTurn) {
-      this.maxTurn = maxTurn;
+  public void setMaxTurn(int maxTurnInput) {
+    this.maxTurn = maxTurnInput;
   }
   
   private Player getPlayerById(int playerId) {
     for (Player player : players) {
-        if (player.getPlayerId() == playerId) {
-            return player;
-        }
+      if (player.getPlayerId() == playerId) {
+        return player;
+      }
     }
     throw new IllegalArgumentException("playerID not valid.");
-}
+  }
 
   private Room getRoomById(int roomId) {
     for (Room room : rooms) {
-        if (room.getRoomId() == roomId) {
-            return room;
-        }
+      if (room.getRoomId() == roomId) {
+        return room;
+      }
     }
     throw new IllegalArgumentException("roomID not valid.");
-}
+  }
   
   private Room getRoomByName(String roomName) {
     for (Room room : rooms) {
-        if (room.getRoomName().equalsIgnoreCase(roomName)) {
-            return room;
-        }
+      if (room.getRoomName().equalsIgnoreCase(roomName)) {
+        return room;
+      }
     }
     throw new IllegalArgumentException("roomName not valid.");
-}
+  }
 
-/**
- * Moves a player to a specified room.
- *
- * @param playerId The ID of the player to move.
- * @param roomId The ID of the room to move the player to.
- * @throws IllegalArgumentException If input parameters are invalid.
- * @return A message indicating success or the reason for failure.
- */
-@Override
-public String movePlayer(int playerId, int roomId) {
+  /**
+   * Moves a player to a specified room.
+   *
+   * @param playerId The ID of the player to move.
+   * @param roomId The ID of the room to move the player to.
+   * @return A message indicating success or the reason for failure.
+   * @throws IllegalArgumentException If input parameters are invalid.
+   */
+  @Override
+  public String movePlayer(int playerId, int roomId) {
     Player player = getPlayerById(playerId);
     if (player == null) {
-        throw new IllegalArgumentException("Player not found.");
+      throw new IllegalArgumentException("Player not found.");
     }
 
     Room targetRoom = getRoomById(roomId);
     if (targetRoom == null) {
-        throw new IllegalArgumentException("Target room not found.");
+      throw new IllegalArgumentException("Target room not found.");
     }
 
     if (!player.getLocation().getNeighbor().contains(targetRoom)) {
-        throw new IllegalArgumentException("Move not allowed. Target room is not a neighbor.");
+      throw new IllegalArgumentException("Move not allowed. Target room is not a neighbor.");
     }
 
     player.move(targetRoom);
-    return String.format("Player %s moved to room %s.", player.getCharacterName(), targetRoom.getRoomName());
-}
+    return String.format("Player %s moved to room %s.", 
+        player.getCharacterName(), targetRoom.getRoomName());
+  }
 
-/**
- * Allows a player to pick up an item from their current location.
- *
- * @param playerId The ID of the player picking up the item.
- * @param itemName The name of the item to pick up.
- * @throws IllegalArgumentException If input parameters are invalid or the action is not allowed.
- * @return A message indicating success or the reason for failure.
- */
-@Override
-public String playerPickUpItem(int playerId, String itemName) {
+  /**
+   * Allows a player to pick up an item from their current location.
+   *
+   * @param playerId The ID of the player picking up the item.
+   * @param itemName The name of the item to pick up.
+   * @return A message indicating success or the reason for failure.
+   * @throws IllegalArgumentException If input parameters are invalid or the action is not allowed.
+   */
+  @Override
+  public String playerPickUpItem(int playerId, String itemName) {
     Player player = getPlayerById(playerId);
     if (player == null) {
-        throw new IllegalArgumentException("Player not found.");
+      throw new IllegalArgumentException("Player not found.");
     }
 
     Item item = player.getLocation().getItem().stream()
@@ -781,26 +777,26 @@ public String playerPickUpItem(int playerId, String itemName) {
         .orElse(null);
 
     if (item == null) {
-        throw new IllegalArgumentException("Item '" + itemName + "' not found in the room.");
+      throw new IllegalArgumentException("Item '" + itemName + "' not found in the room.");
     }
 
     player.pickItem(item);
-    return String.format("Item '%s' picked up successfully by %s.", itemName, player.getCharacterName());
-}
+    return String.format("Item '%s' picked up successfully by %s.", 
+        itemName, player.getCharacterName());
+  }
 
-/**
- * Provides information about the current room and visible areas from it.
- *
- * @param playerId The ID of the player looking around.
- * @return A string describing the surroundings.
- * @throws IllegalArgumentException If the player ID is not found.
- * @return A message indicating success or the reason for failure.
- */
-@Override
-public String playerLookAround(int playerId) {
+  /**
+   * Provides information about the current room and visible areas from it.
+   *
+   * @param playerId The ID of the player looking around.
+   * @return A string describing the surroundings.
+   * @throws IllegalArgumentException If the player ID is not found.
+   */
+  @Override
+  public String playerLookAround(int playerId) {
     Player player = getPlayerById(playerId);
     if (player == null) {
-        throw new IllegalArgumentException("Player not found.");
+      throw new IllegalArgumentException("Player not found.");
     }
     int roomId = getPlayerRoomId(playerId);
     Room room = this.getRoomById(roomId);
@@ -809,69 +805,83 @@ public String playerLookAround(int playerId) {
     description.append(getRoomOccupants(room));
     List<Room> visibleRooms = room.getVisibleFrom();
     if (visibleRooms.isEmpty()) {
-        description.append("\nNo visible rooms from your current location.");
+      description.append("\nNo visible rooms from your current location.");
     } else {
-        description.append("\nVisible rooms from here: ");
-        for (Room visibleRoom : visibleRooms) {
-            description.append("\nRoom ").append(visibleRoom.getRoomName()).append(": ");
-            description.append(getRoomOccupants(visibleRoom));
-        }
+      description.append("\nVisible rooms from here: ");
+      for (Room visibleRoom : visibleRooms) {
+        description.append("\nRoom ").append(visibleRoom.getRoomName()).append(": ");
+        description.append(getRoomOccupants(visibleRoom));
+      }
     }
     return description.toString();
-}
+  }
 
-/**
- * Retrieves a list of item names from a specific room identified by its room ID.
- * @param roomId The ID of the room whose items are to be listed.
- * @return A list containing the names of items in the specified room.
- * @throws IllegalArgumentException if the room ID does not correspond to an existing room.
- */
-@Override
-public List<String> getRoomItems(int roomId) {
+  /**
+   * Retrieves a list of item names from a specific room identified by its room ID.
+   * @param roomId The ID of the room whose items are to be listed.
+   * @return A list containing the names of items in the specified room.
+   * @throws IllegalArgumentException if the room ID does not correspond to an existing room.
+   */
+  @Override
+  public List<String> getRoomItems(int roomId) {
     Room room = getRoomById(roomId); 
     if (room == null) {
-        throw new IllegalArgumentException("Room with ID " + roomId + " not found.");
+      throw new IllegalArgumentException("Room with ID " + roomId + " not found.");
     }
     List<String> itemNames = new ArrayList<>();
     for (Item item : room.getItem()) { 
-        itemNames.add(item.getItemName()); 
+      itemNames.add(item.getItemName()); 
     }
     return itemNames;
-}
+  }
 
-/**
- * Retrieves the room ID where the specified player is currently located.
- *
- * @param playerId The unique identifier of the player.
- * @return The room ID where the player is located, or throws an exception if not found.
- */
-@Override
-public int getPlayerRoomId(int playerId) {
+  /**
+   * Retrieves the room ID where the specified player is currently located.
+   *
+   * @param playerId The unique identifier of the player.
+   * @return The room ID where the player is located, or throws an exception if not found.
+   */
+  @Override
+  public int getPlayerRoomId(int playerId) {
     for (Player player : players) {
-        if (player.getPlayerId() == playerId) {
-            return player.getLocation().getRoomId();  
-        }
+      if (player.getPlayerId() == playerId) {
+        return player.getLocation().getRoomId();  
+      }
     }
     throw new IllegalArgumentException("Player with ID " + playerId + " not found.");
-}
+  }
 
-/**
- * Retrieves the all room ID as list where the specified room.
- *
- * @param roomId The unique identifier of the room.
- * @return The room ID of all the neighbors for certain room, or throws an exception if not found.
- */
-@Override
-public List<Integer> getNeighborRooms(int roomId) {
-  Room room = rooms.get(roomId-1);
-  if (room != null) {
+  /**
+   * Retrieves the all room ID as list where the specified room.
+   *
+   * @param roomId The unique identifier of the room.
+   * @return The room ID of all the neighbors for certain room, or throws an exception if not found.
+   */
+  @Override
+  public List<Integer> getNeighborRooms(int roomId) {
+    Room room = rooms.get(roomId - 1);
+    if (room != null) {
       return room.getNeighbor().stream()
                  .map(Room::getRoomId)
                  .collect(Collectors.toList());
-  } else {
+    } else {
       return new ArrayList<>(); 
+    }
   }
-}
+
+  /**
+   * Displays the detailed information of a specific room by name, including the room's
+   * properties (name, ID, coordinates, neighbors, visible rooms, items) 
+   * and the occupants (players and target).
+   * 
+   * @param playerId The id of the player to display.
+   * @return A string containing the room information and occupants.
+   * @throws IllegalArgumentException if the room name does not exist.
+   */
+  public String displayPlayerRoomInfo(int playerId) {
+    int roomId = getPlayerRoomId(playerId);
+    return displayRoomInfo(roomId);
+  }
 
 
 

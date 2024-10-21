@@ -265,30 +265,30 @@ public class Room implements Block {
 
     info.append("Neighbors: ");
     if (neighbors.isEmpty()) {
-        info.append("None");
+      info.append("None");
     } else {
-        for (Room neighbor : neighbors) {
-            info.append(neighbor.getRoomName()).append(", ");
-        }
-        info.setLength(info.length() - 2);  
+      for (Room neighbor : neighbors) {
+        info.append(neighbor.getRoomName()).append(", ");
+      }
+      info.setLength(info.length() - 2);  
     }
     info.append("\n");
 
     info.append("Visible From: ");
     if (visibleFrom.isEmpty()) {
-        info.append("None");
+      info.append("None");
     } else {
-        for (Room visible : visibleFrom) {
-            info.append(visible.getRoomName()).append(", ");
-        }
-        info.setLength(info.length() - 2);  
+      for (Room visible : visibleFrom) {
+        info.append(visible.getRoomName()).append(", ");
+      }
+      info.setLength(info.length() - 2);  
     }
     info.append("\n");
 
     info.append("Items: ").append(listItems());
 
     return info.toString();
-}
+  }
 
   /**
    * Gets the unique identifier for this room.
@@ -304,35 +304,44 @@ public class Room implements Block {
     items.remove(item);
   }
   
+  /**
+   * Gets the list item as string for this room.
+   * 
+   * @return the room item as string
+   */
   public String listItems() {
     if (items.isEmpty()) {
-        return "None";
+      return "None";
     }
     StringBuilder itemsList = new StringBuilder();
     for (Item item : items) {
-        itemsList.append(item.getItemName()).append(", ");
+      itemsList.append(item.getItemName()).append(", ");
     }
     itemsList.setLength(itemsList.length() - 2); 
     return itemsList.toString();
-}
+  }
   
   @Override
   public String toString() {
-      return String.format("Room[name=%s, id=%d, items=%s]",
-              roomName, roomId, items.isEmpty() ? "None" : listItems());
+    return String.format("Room[name=%s, id=%d, items=%s]",
+            roomName, roomId, items.isEmpty() ? "None" : listItems());
   }
   
   @Override
   public boolean equals(Object obj) {
-      if (this == obj) return true;
-      if (obj == null || getClass() != obj.getClass()) return false;
-      Room room = (Room) obj;
-      return roomId == room.roomId;
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null || getClass() != obj.getClass()) {
+      return false;
+    }
+    Room room = (Room) obj;
+    return roomId == room.roomId;
   }
 
   @Override
   public int hashCode() {
-      return Objects.hash(roomId);
+    return Objects.hash(roomId);
   }
 
 
