@@ -74,6 +74,7 @@ public class Room implements Block {
    * 
    * @return Comma-separated names of neighboring rooms.
    */
+  @Override
   public String getNeighborNames() {
     if (neighbors.isEmpty()) {
       return "No neighbors";
@@ -294,6 +295,7 @@ public class Room implements Block {
    * 
    * @return the room ID
    */
+  @Override
   public int getRoomId() {
     return roomId;
   }

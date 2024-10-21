@@ -555,6 +555,21 @@ public class WorldTest {
       assertTrue("Room info should list occupants (if any set up in setup)", roomInfo.contains("No occupants"));
   
   }
+  
+  @Test
+  public void testDisplayRoomInfoValidWithPlayerId() {
+    Player player = world.createPlayer("Alice", 1);
+      String roomInfo = world.displayPlayerRoomInfo(player.getPlayerId());
+      assertNotNull("Room info should not be null", roomInfo);
+      assertTrue("Room info should contain the room name", roomInfo.contains("Armory"));
+      assertTrue("Room info should contain the room ID", roomInfo.contains("Room ID: 1"));
+      assertTrue("Room info should list coordinates", roomInfo.contains("Coordinates: [22, 19, 23, 26]"));
+      assertTrue("Room info should list items (if any set up in setup)", roomInfo.contains("Items: Revolver"));
+      assertTrue("Room info should list occupants (if any set up in setup)", roomInfo.contains("Target: Doctor Lucky"));
+      world.moveTargetToNextRoom();
+      roomInfo = world.displayPlayerRoomInfo(player.getPlayerId());
+      assertTrue("Room info should list occupants (if any set up in setup)", !roomInfo.contains("Target: Doctor Lucky"));
+  }
 
   @Test(expected = IllegalArgumentException.class)
   public void testDisplayRoomInfoInvalid() {

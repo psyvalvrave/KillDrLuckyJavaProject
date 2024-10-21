@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-public class GameController {
+public class GameController implements Controller{
     private Scanner scanner;
     private Appendable output;
     private int maxTurns;
@@ -18,6 +18,7 @@ public class GameController {
     private Map<Integer, Boolean> isComputer;
     private RandomNumberGenerator rng;
     private Map<Integer, String> playerNames = new HashMap<>();
+    private boolean isRunning = true;
 
 
     public GameController(Readable input, Appendable output, RandomNumberGenerator rng, int maxTurns) {
@@ -28,12 +29,16 @@ public class GameController {
         this.rng = rng;
         this.maxTurns = maxTurns;
     }
-
-    public void playGame(WorldOutline world) throws InterruptedException {
-        setupGame(world);
-        if (gameStarted) {
-            runGame(world);
-        }
+    
+  @Override
+  public void playGame(WorldOutline world) throws InterruptedException {
+    setupGame(world);
+    if (gameStarted && isRunning) {
+      runGame(world);
+    }
+    if (!isRunning) {
+      return; 
+      }
     }
 
     private void setupGame(WorldOutline world) throws InterruptedException {
@@ -47,7 +52,7 @@ public class GameController {
       }
 
       boolean addingPlayers = true;
-      while (addingPlayers) {
+      while (addingPlayers && isRunning) {
           print("Add players:");
           print("1. Add Human-Controlled Player");
           print("2. Add Computer-Controlled Player");
@@ -57,7 +62,7 @@ public class GameController {
           try {
               int choice = Integer.parseInt(input);
               switch (choice) {
-                case 1: // Human-Controlled Player
+                case 1: 
                     print("Enter player name:");
                     String humanPlayerName = scanner.nextLine();
                     try {
@@ -76,7 +81,7 @@ public class GameController {
                         print("Invalid room index, please enter a valid number.");
                     }
                     break;
-                case 2: // Computer-Controlled Player
+                case 2: 
                   print("Enter computer player name:");
                     String computerPlayerName = scanner.nextLine();
                     try {
@@ -119,7 +124,6 @@ public class GameController {
 
     private void runGame(WorldOutline world) throws InterruptedException {
       print("Game started. Manage your turns.");
-      boolean isRunning = true;
 
       while (isRunning && currentTurn < maxTurns) {
           int currentPlayerId = playerIds.get(currentPlayerIndex);
@@ -132,7 +136,7 @@ public class GameController {
           }
           if (currentTurn >= maxTurns) {
               print("Game over: Maximum number of turns reached.");
-              isRunning = false;
+              setRunning(false);
           }
       }
   }
@@ -141,29 +145,29 @@ public class GameController {
       try {
           int choice = Integer.parseInt(input);
           switch (choice) {
-              case 1:  // Display room information
+              case 1:  
                   print("Enter room ID:");
                   int roomId = Integer.parseInt(scanner.nextLine());
                   print(world.displayRoomInfo(roomId));
                   break;
-              case 2:  // Save world map
+              case 2:  
                   saveWorldMap(world);
                   break;
-              case 5:  // Move player
+              case 5:  
                   print("Enter target room ID:");
                   int targetRoomId = Integer.parseInt(scanner.nextLine());
                   print(world.movePlayer(playerId, targetRoomId));
                   advanceTurn(world);
                   break;
-              case 6:  // Pick up item
+              case 6: 
                   pickUpItem(world, playerId);
                   advanceTurn(world);
                   break;
-              case 7:  // Player look around
+              case 7:  
                   print(world.playerLookAround(playerId));
                   advanceTurn(world);
                   break;
-              case 8:  // Display player info
+              case 8:  
                   print("Enter the player ID to view their information:");
                   try {
                       int targetPlayerId = Integer.parseInt(scanner.nextLine());
@@ -178,12 +182,12 @@ public class GameController {
                       print("Error retrieving player info: " + e.getMessage());
                   }
                   break;
-              case 9:  // Explicitly proceed to next turn
+              case 9: 
                   advanceTurn(world);
                   break;
-              case 0:  // Quit game
+              case 0:  
                   print("Quitting game.");
-                  System.exit(0);  // Exit the game
+                  setRunning(false);  
                   break;
               default:
                   print("Unknown command. Please try again.");
@@ -196,7 +200,7 @@ public class GameController {
   }
     private void computerPlayerActions(WorldOutline world, int playerId) throws InterruptedException {
       try {
-          int action = rng.nextInt(3);  // Assuming 0: Move, 1: Pick Up Item, 2: Look Around
+          int action = rng.nextInt(3);  
           switch (action) {
               case 0:
                 int currentRoomId = world.getPlayerRoomId(playerId); 
@@ -210,9 +214,8 @@ public class GameController {
                   int roomIndex = rng.nextInt(neighbors.size());
                   int targetRoomId = neighbors.get(roomIndex);
                   print("Computer player try to move to " + targetRoomId);
-                  world.movePlayer(playerId, targetRoomId);
-                  print("Computer player " + playerId + " moved to room " + targetRoomId);
-                  Thread.sleep(1000);
+                  print("Computer player: " + (world.movePlayer(playerId, targetRoomId)));
+                  Thread.sleep(300);
                   advanceTurn(world);
                   break;
               case 1:
@@ -222,20 +225,23 @@ public class GameController {
                 if (!itemsInRoom.isEmpty()) {
                     int itemIndex = rng.nextInt(itemsInRoom.size());
                     String itemName = itemsInRoom.get(itemIndex);
-                    print("Computer player " + playerId + " automatically picked up: " + itemName);
-                    print(world.playerPickUpItem(playerId, itemName));
+                    print("Computer player: " + world.playerPickUpItem(playerId, itemName));
                 } else {
                     print("No items available to pick up in this room for player " + playerId);
                 }
-                  Thread.sleep(1000);
+                  Thread.sleep(300);
                   advanceTurn(world);
                   break;
               case 2:
                 print("Start Looking Around");
-                  print(world.playerLookAround(playerId));
-                  Thread.sleep(1000);
+                  print("Computer player: " + world.playerLookAround(playerId));
+                  Thread.sleep(300);
                   advanceTurn(world);
                   break;
+              case 3:
+                print("Computer player " + playerId + " has decided to quit the game.");
+                setRunning(false);
+                break;
           }
       } catch (IllegalArgumentException e) {
           print(e.getMessage());
@@ -293,7 +299,7 @@ public class GameController {
 
     private void saveWorldMap(WorldOutline world) {
         world.drawWorld();
-        print("World map saved to 'world_map.png'.");
+        print("World map saved to 'res/world.png'.");
     }
 
     private void print(String message) {
@@ -315,8 +321,17 @@ public class GameController {
         print("6. Player Pick Up Item");
         print("7. Player Look Around");
         print("8. Display Player Info");
-        print("9. Next Turn");
+        print("9. Do Nothing");
         print("0. Quit Game");
         print("Select an option:");
+    }
+    
+    @Override
+    public boolean getIsRunning() {
+      return isRunning;
+    }
+    
+    private void setRunning(boolean isRunning) {
+      this.isRunning = isRunning;
     }
 }

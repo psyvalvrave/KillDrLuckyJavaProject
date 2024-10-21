@@ -57,18 +57,6 @@ public interface WorldOutline {
   String moveTargetToNextRoom();
   
   /**
-   * Gets the List of all the room object in this world.
-   * @return List of Room objects.
-   */
-  List<Room> getRooms();
-  
-  /**
-   * Gets the List of all the Item object in this world.
-   * @return List of Item objects.
-   */
-  List<Item> getItems();
-  
-  /**
    * Gets the List of String[] which are detail from the part in input text file about rooms.
    * @return List of String[]
    */

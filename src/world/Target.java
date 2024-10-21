@@ -49,6 +49,7 @@ public class Target extends AbstractCharacter {
    * 
    * @return A formatted string containing the name, health, and location of the target.
    */
+  @Override
   public String getCharacterInfo() {
     return String.format("Target Name: %s\nHealth Points: %d\nCurrent Location: %s",
         name, healthPoint, currentRoom.getRoomName());

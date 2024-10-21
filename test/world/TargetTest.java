@@ -14,7 +14,7 @@ import org.junit.Test;
  * For incorrect target creation or function, it should always fails the test. 
  */
 public class TargetTest {
-  private WorldOutline world;
+  private World world;
   private Room startingRoom;
   private Target target;
 

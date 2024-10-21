@@ -1,6 +1,7 @@
 package worldController;
 
 import world.World;
+import mock.MockWorldOutline;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.InputStreamReader;
@@ -33,6 +34,7 @@ public class ControllerDriver {
             Readable consoleInput = new InputStreamReader(System.in);
             RandomNumberGenerator rng = new RandomNumberGenerator();
             World world = new World(fileInput); 
+            MockWorldOutline mockWorldOutline = new MockWorldOutline();
             GameController controller = new GameController(consoleInput, consoleOutput, rng, maxTurns);
             controller.playGame(world);
         } catch (FileNotFoundException e) {

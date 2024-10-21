@@ -9,12 +9,15 @@ import static org.junit.Assert.*;
 public class PlayerTest {
     private World world;
     private Player player;
+    private Player playerFar;
+    private Player secondPlayerInRoom;
     private Room startingRoom;
     private Room closeRoom;
     private Room farRoom;
     private Item item1;
     private Item item2;
     private Target target;
+    
 
     @Before
     public void setUp() throws FileNotFoundException {
@@ -26,8 +29,15 @@ public class PlayerTest {
         item1 = world.getItems().get(0);
         item2 = world.getItems().get(1);
 
-        player = new Player("Test Player", startingRoom, 1, 2);
+        player = world.createPlayer("Test Player", 1);
+        playerFar = world.createPlayer("Test Far Player", 3);
+        secondPlayerInRoom = world.createPlayer("Test Second Player", 1);
         target = new Target("Doctor Lucky", startingRoom, 100);
+    }
+    
+    @Test
+    public void testStartPositionCorret() {
+        assertEquals("Player should start in startingRoom.", startingRoom, player.getLocation());
     }
 
     @Test
@@ -41,7 +51,6 @@ public class PlayerTest {
     @Test(expected = IllegalArgumentException.class)
     public void testMoveToNonNeighborRoom() {
         player.move(farRoom);
-        // This should throw an IllegalArgumentException as "farRoom" is not a neighbor of "startingRoom"
     }
 
     @Test
@@ -54,18 +63,14 @@ public class PlayerTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testPickItem_ItemNotInRoom() {
-        // Create an item that's not added to any room
         Item itemNotInRoom = new Item("Ghost Item", null, 5);
         player.pickItem(itemNotInRoom);
-        // This should throw an IllegalArgumentException as the item is not in the player's current room
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testPickItem_ExceedsLimit() {
-        // Player can only carry 2 items and already has one from previous test
-        player.pickItem(item1);  // First item
-        player.pickItem(item2);  // Second item
-        // Add a third item to test the limit
+        player.pickItem(item1);  
+        player.pickItem(item2); 
         Item item3 = new Item("Excess Item", startingRoom, 5);
         startingRoom.addItem(item3);
         player.pickItem(item3);
@@ -82,6 +87,14 @@ public class PlayerTest {
     }
     
     @Test
+    public void testLookAroundNoItem() {
+        String expectedInfo = "Current Room ID: " + farRoom.getRoomId() + "\n" +
+                              "Current Room Name: " + farRoom.getRoomName() + "\n" +
+                              "Current Room Items: None" + "\n";
+        assertEquals("Look around should provide accurate room info.", expectedInfo, playerFar.lookAround());
+    }
+    
+    @Test
     public void testMurderSuccess() {
         int damage = 25;
         player.murder(target, damage);
@@ -90,9 +103,59 @@ public class PlayerTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testMurderFailureDifferentRoom() {
-        // Move target to a different room
         target.move(farRoom);
         int damage = 25;
-        player.murder(target, damage); // This should throw IllegalArgumentException
+        player.murder(target, damage); 
     }
+    
+    @Test
+    public void testPlayerSeesOtherPlayerInRoom() {
+        String lookAroundOutput = world.playerLookAround(player.getPlayerId());
+        assertTrue("Look around output should contain second player's name.", 
+                   lookAroundOutput.contains(secondPlayerInRoom.getCharacterName()));
+    }
+    
+    @Test
+    public void testPlayerSeesTargetInRoom() {
+      String lookAroundOutput = world.playerLookAround(player.getPlayerId());
+        assertTrue("Look around output should contain target's name.", 
+                   lookAroundOutput.contains(target.getCharacterName()));
+    }
+
+    @Test
+    public void testPlayerSeesOtherPlayerInVisibleRoom() {
+        player.move(closeRoom);
+        String lookAroundOutput = world.playerLookAround(player.getPlayerId());
+        //System.out.println(lookAroundOutput);
+        assertTrue("Look around output should mention visible room containing a player.", 
+                   lookAroundOutput.contains("Visible rooms from here") &&
+                   lookAroundOutput.contains(closeRoom.getRoomName()) &&
+                   lookAroundOutput.contains(secondPlayerInRoom.getCharacterName()));
+    }
+    
+    @Test
+    public void testGetPlayerInfoWithItems() {
+      startingRoom.addItem(item1);
+      player.pickItem(item1);
+        String expectedInfo = String.format("ID: %d, Name: %s, Current Room: %s, Items: %s",
+            player.getPlayerId(), player.getCharacterName(),
+                startingRoom.getRoomName(), item1.getItemName());
+        assertEquals("Player info should include the item.", expectedInfo, player.getCharacterInfo());
+        assertEquals("Player info should include the item.", expectedInfo, world.getPlayerInfo(player.getPlayerId()));
+    }
+
+    @Test
+    public void testGetPlayerInfoWithoutItems() {
+        String expectedInfo = String.format("ID: %d, Name: %s, Current Room: %s, Items: None",
+            secondPlayerInRoom.getPlayerId(), secondPlayerInRoom.getCharacterName(),
+                startingRoom.getRoomName());
+        assertEquals("Player info should indicate no items.", expectedInfo, secondPlayerInRoom.getCharacterInfo());
+        assertEquals("Player info should include the item.", expectedInfo, world.getPlayerInfo(secondPlayerInRoom.getPlayerId()));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetPlayerInfoInvalidPlayer() {
+        world.getPlayerInfo(999);  
+    }
+
 }
