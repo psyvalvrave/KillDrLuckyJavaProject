@@ -35,8 +35,6 @@ public class GameControllerMonkTest {
     gameController.playGame(mockWorld);
 
     String output = consoleOutput.toString();
-
-    System.out.println(output);
     assertTrue(output.contains("Maximum turns reached. Ending game."));
     assertTrue(output.contains("Game over: Maximum number of turns reached."));
 
@@ -61,7 +59,6 @@ public class GameControllerMonkTest {
     gameController.playGame(mockWorld);
 
     String output = consoleOutput.toString();
-
     assertTrue(output.contains("Player moved"));
     assertTrue(output.contains("Turn 2. Now Player ComputerPlayer"));
     assertTrue(output.contains("Start Picking Item Up"));

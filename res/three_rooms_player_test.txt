@@ -1,5 +1,6 @@
 36 30 Two And One
 50 Doctor Lucky
+Fortune the Cat
 3
 22 13 25 18 Close One
 26 13 27 18 Close Two

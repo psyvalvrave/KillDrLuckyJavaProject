@@ -37,15 +37,15 @@ public class PlayerTest {
   public void setUp() throws FileNotFoundException {
     Readable fileInput = new FileReader("res/three_rooms_player_test.txt");
     world = new World(fileInput);
-    startingRoom = world.getRooms().get(0);
-    closeRoom = world.getRooms().get(1);
-    farRoom = world.getRooms().get(2);
-    item1 = world.getItems().get(0);
-    item2 = world.getItems().get(1);
+    startingRoom = (Room) world.getRooms().get(0);
+    closeRoom = (Room) world.getRooms().get(1);
+    farRoom = (Room) world.getRooms().get(2);
+    item1 = (Item) world.getItems().get(0);
+    item2 = (Item) world.getItems().get(1);
 
-    player = world.createPlayer("Test Player", 1);
-    playerFar = world.createPlayer("Test Far Player", 3);
-    secondPlayerInRoom = world.createPlayer("Test Second Player", 1);
+    player = (Player) world.createPlayer("Test Player", 1);
+    playerFar = (Player) world.createPlayer("Test Far Player", 3);
+    secondPlayerInRoom = (Player) world.createPlayer("Test Second Player", 1);
     target = new Target("Doctor Lucky", startingRoom, 100);
   }
   

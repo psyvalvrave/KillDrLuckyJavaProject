@@ -79,7 +79,7 @@ public interface WorldOutline {
    * @param room The room to check for occupants.
    * @return A descriptive string listing all occupants in the specified room.
    */
-  String getRoomOccupants(Room room);
+  String getRoomOccupants(Block room);
 
   /**
    * Displays detailed information about a room identified by its name.
@@ -112,7 +112,7 @@ public interface WorldOutline {
    * @param health The initial health points for the target.
    * @return A confirmation message stating the target has been created.
    */
-  String callCreateTarget(String name, Room room, int health);
+  String callCreateTarget(String name, Block room, int health);
 
   /**
    * Creates an item and places it within a specified room.
@@ -201,4 +201,17 @@ public interface WorldOutline {
    * @return The room ID of all the neighbors for certain room, or throws an exception if not found.
    */
   List<Integer> getNeighborRooms(int roomId);
+
+  String displayPlayerRoomInfo(int playerId);
+
+  List<String> getPlayerNeighborRoom(int playerId);
+
+  String callCharacterPet(String petName, Block initialRoom);
+
+  String getPetInfo();
+
+  String movePetToNextRoom();
+
+  void initializePetDFS();
+  
 }

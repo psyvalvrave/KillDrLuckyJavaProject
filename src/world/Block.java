@@ -19,7 +19,7 @@ public interface Block {
    * 
    * @return a list of rooms that are considered neighbors to this room.
    */
-  List<Room> getNeighbor();
+  List<Block> getNeighbor();
 
   /**
    * Checks if a specified room is adjacent to this room.
@@ -27,7 +27,7 @@ public interface Block {
    * @param room the room to check adjacency against.
    * @return true if the specified room is adjacent, false otherwise.
    */
-  boolean isAdjacent(Room room);
+  boolean isAdjacent(Block room);
 
   /**
    * Checks if this room is visible from another room.
@@ -35,7 +35,7 @@ public interface Block {
    * @param room the room from which visibility is being checked.
    * @return true if this room is visible from the specified room, false otherwise.
    */
-  boolean isVisibleFrom(Room room);
+  boolean isVisibleFrom(Block room);
 
 
   /**
@@ -43,7 +43,7 @@ public interface Block {
    * 
    * @return a list of items currently present in the room.
    */
-  List<Item> getItem();
+  List<Gadget> getItem();
   
   /**
    * Retrieves Name of Neighbors in String.
@@ -64,5 +64,12 @@ public interface Block {
    * 
    * @return a list of rooms that are considered visible to this room.
    */
-  List<Room> getVisibleFrom();
+  List<Block> getVisibleFrom();
+  
+  void addNeighbor(Room room);
+  void addVisibleFromRoom(Room room);
+
+  String getInfo();
+
+  void addItem(Gadget item);
 }

@@ -34,7 +34,7 @@ public class TargetTest {
   public void setUp() throws FileNotFoundException {
     Readable fileInput = new FileReader("res/mansion.txt");
     world = new World(fileInput);
-    Room startingRoomTest = world.getRooms().stream()
+    Room startingRoomTest = (Room) world.getRooms().stream()
         .filter(room -> room.getRoomName().equals("Armory"))
         .findFirst()
         .orElse(null);
@@ -43,7 +43,7 @@ public class TargetTest {
 
   @Test
   public void testTargetConstructorValid() {
-    Room startingRoomTest = world.getRooms().stream()
+    Room startingRoomTest = (Room) world.getRooms().stream()
         .filter(room -> room.getRoomName().equals("Armory"))
         .findFirst()
         .orElse(null);

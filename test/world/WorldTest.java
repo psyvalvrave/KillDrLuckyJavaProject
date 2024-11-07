@@ -107,8 +107,8 @@ public class WorldTest {
   
   @Test
   public void testCreateItemValid() {
-    Item item = world.createItem("Test Item", 0, 10);
-    Room armory = world.getRooms().get(0);
+    Item item = (Item) world.createItem("Test Item", 0, 10);
+    Room armory = (Room) world.getRooms().get(0);
     assertEquals("The room at index 0 should be 'Armory'", "Armory", armory.getRoomName());
     assertNotNull("Item should not be null", item);
     assertEquals("Item name should match", "Test Item", item.getItemName());
@@ -126,7 +126,7 @@ public class WorldTest {
 
   @Test
   public void testCreateTargetValid() {
-    Target target = world.createTarget("Test Target", testRoom, 100);
+    Target target = (Target) world.createTarget("Test Target", testRoom, 100);
     assertNotNull(target);
     assertEquals("Test Target", target.getCharacterName());
     assertEquals(100, target.getHealthPoint());
@@ -142,7 +142,7 @@ public class WorldTest {
   @Test
   public void testCreateRoomValid() {
     int[] coordinates = {0, 0, 5, 5};
-    Room room = world.createRoom("New Room", 2, coordinates, new ArrayList<>());
+    Room room = (Room) world.createRoom("New Room", 2, coordinates, new ArrayList<>());
     assertNotNull(room);
     assertEquals("New Room", room.getRoomName());
     assertArrayEquals(coordinates, room.getCoordinates());
@@ -162,18 +162,18 @@ public class WorldTest {
   
   @Test
   public void testMoveTargetToNextRoom() {
-    world.createTarget("Test Target", world.getRooms().get(0), 10);
-    Room secondRoom = world.getRooms().get(1); 
+    world.createTarget("Test Target", (Room) world.getRooms().get(0), 10);
+    Room secondRoom = (Room) world.getRooms().get(1); 
     world.moveTargetToNextRoom(); 
     assertEquals("Target should be in second room", secondRoom, world.getTarget().getLocation());
   }
   
   @Test
   public void testMoveTargetToFirstRoomWhenInLastRoom() {
-    Room lastRoom = world.getRooms().get(world.getRooms().size() - 1);
+    Room lastRoom = (Room) world.getRooms().get(world.getRooms().size() - 1);
     world.createTarget("Test Target", lastRoom, 10);
     world.moveTargetToNextRoom();
-    Room firstRoom = world.getRooms().get(0);
+    Room firstRoom = (Room) world.getRooms().get(0);
     assertEquals("Target should cycle back to the first "
         + "room", firstRoom, world.getTarget().getLocation());
   }
@@ -184,13 +184,13 @@ public class WorldTest {
     Room billiardRoom = null;
     Room carriageHouse = null;
 
-    for (Room room : world.getRooms()) {
+    for (Block room : world.getRooms()) {
       if (room.getRoomName().equals("Armory")) {
-        armory = room;
+        armory = (Room) room;
       } else if (room.getRoomName().equals("Billiard Room")) {
-        billiardRoom = room;
+        billiardRoom = (Room) room;
       } else if (room.getRoomName().equals("Carriage House")) {
-        carriageHouse = room;
+        carriageHouse = (Room) room;
       }
     }
 
@@ -201,11 +201,11 @@ public class WorldTest {
   
   @Test
   public void testRoomAdjacency() {
-    Room armory = world.getRooms().stream()
+    Room armory = (Room) world.getRooms().stream()
                        .filter(room -> room.getRoomName().equals("Armory"))
                        .findFirst()
                        .orElse(null);
-    Room billiardRoom = world.getRooms().stream()
+    Room billiardRoom = (Room) world.getRooms().stream()
                              .filter(room -> room.getRoomName().equals("Billiard Room"))
                              .findFirst()
                              .orElse(null);
@@ -217,11 +217,11 @@ public class WorldTest {
   
   @Test
   public void testVisibility() {
-    Room armory = world.getRooms().stream()
+    Room armory = (Room) world.getRooms().stream()
                        .filter(room -> room.getRoomName().equals("Armory"))
                        .findFirst()
                        .orElse(null);
-    Room carriageHouse = world.getRooms().stream()
+    Room carriageHouse = (Room) world.getRooms().stream()
                               .filter(room -> room.getRoomName().equals("Carriage House"))
                               .findFirst()
                               .orElse(null);
@@ -232,7 +232,7 @@ public class WorldTest {
   
   @Test
   public void testRoomDetails() {
-    Room armory = world.getRooms().stream()
+    Room armory = (Room) world.getRooms().stream()
                        .filter(room -> room.getRoomName().equals("Armory"))
                        .findFirst()
                        .orElse(null);
@@ -250,7 +250,7 @@ public class WorldTest {
   
   @Test
   public void testGetRoomName() {
-    Room armory = world.getRooms().stream()
+    Room armory = (Room) world.getRooms().stream()
         .filter(room -> room.getRoomName().equals("Armory"))
         .findFirst()
         .orElse(null);
@@ -259,15 +259,15 @@ public class WorldTest {
   
   @Test
   public void testGetNeighbors() {
-    Room armory = world.getRooms().stream()
+    Room armory = (Room) world.getRooms().stream()
         .filter(room -> room.getRoomName().equals("Armory"))
         .findFirst()
         .orElse(null);
-    Room drawingRoom = world.getRooms().stream()
+    Room drawingRoom = (Room) world.getRooms().stream()
         .filter(room -> room.getRoomName().equals("Drawing Room"))
         .findFirst()
         .orElse(null);
-    List<Room> neighbors = armory.getNeighbor();
+    List<Block> neighbors = armory.getNeighbor();
     assertNotNull("Neighbors list should not be null", neighbors);
     assertTrue("Neighbors should contain neighbor1", neighbors.contains(drawingRoom));
     assertEquals("Should have exactly two neighbors", 3, neighbors.size());
@@ -275,7 +275,7 @@ public class WorldTest {
   
   @Test
   public void testGetNeighborNames() {
-    Room armory = world.getRooms().stream()
+    Room armory = (Room) world.getRooms().stream()
         .filter(room -> room.getRoomName().equals("Armory"))
         .findFirst()
         .orElse(null);
@@ -285,11 +285,11 @@ public class WorldTest {
   
   @Test
   public void testIsAdjacentTrue() {
-    Room armory = world.getRooms().stream()
+    Room armory = (Room) world.getRooms().stream()
         .filter(room -> room.getRoomName().equals("Armory"))
         .findFirst()
         .orElse(null);
-    Room adjacentRoom = world.getRooms().stream()
+    Room adjacentRoom = (Room) world.getRooms().stream()
         .filter(room -> room.getRoomName().equals("Drawing Room"))
         .findFirst()
         .orElse(null);
@@ -298,11 +298,11 @@ public class WorldTest {
   
   @Test
   public void testIsAdjacentFalse() {
-    Room armory = world.getRooms().stream()
+    Room armory = (Room) world.getRooms().stream()
         .filter(room -> room.getRoomName().equals("Armory"))
         .findFirst()
         .orElse(null);
-    Room adjacentRoom = world.getRooms().stream()
+    Room adjacentRoom = (Room) world.getRooms().stream()
         .filter(room -> room.getRoomName().equals("Library"))
         .findFirst()
         .orElse(null);
@@ -311,11 +311,11 @@ public class WorldTest {
   
   @Test
   public void testIsVisibleFromTrue() {
-    Room armory = world.getRooms().stream()
+    Room armory = (Room) world.getRooms().stream()
         .filter(room -> room.getRoomName().equals("Armory"))
         .findFirst()
         .orElse(null);
-    Room visibleRoom = world.getRooms().stream()
+    Room visibleRoom = (Room) world.getRooms().stream()
         .filter(room -> room.getRoomName().equals("Library"))
         .findFirst()
         .orElse(null);
@@ -324,11 +324,11 @@ public class WorldTest {
   
   @Test
   public void testIsVisibleFromFalse() {
-    Room armory = world.getRooms().stream()
+    Room armory = (Room) world.getRooms().stream()
         .filter(room -> room.getRoomName().equals("Armory"))
         .findFirst()
         .orElse(null);
-    Room visibleRoom = world.getRooms().stream()
+    Room visibleRoom = (Room) world.getRooms().stream()
         .filter(room -> room.getRoomName().equals("Kitchen"))
         .findFirst()
         .orElse(null);
@@ -337,15 +337,15 @@ public class WorldTest {
   
   @Test
   public void testGetItems() {
-    Room armory = world.getRooms().stream()
+    Room armory = (Room) world.getRooms().stream()
         .filter(room -> room.getRoomName().equals("Armory"))
         .findFirst()
         .orElse(null);
-    Item testItem = world.getItems().stream()
+    Item testItem = (Item) world.getItems().stream()
         .filter(room -> room.getItemName().equals("Revolver"))
         .findFirst()
         .orElse(null);
-    List<Item> items = armory.getItem();
+    List<Gadget> items = armory.getItem();
     assertNotNull("Items list should not be null", items);
     assertTrue("Items list should contain testItem", items.contains(testItem));
     assertEquals("Items list should contain exactly 1 items", 1, items.size());
@@ -353,7 +353,7 @@ public class WorldTest {
   
   @Test
   public void testGetCoordinates() {
-    Room armory = world.getRooms().stream()
+    Room armory = (Room) world.getRooms().stream()
         .filter(room -> room.getRoomName().equals("Armory"))
         .findFirst()
         .orElse(null);
@@ -365,11 +365,11 @@ public class WorldTest {
   
   @Test
   public void testAddNeighborSuccess() {
-    Room armory = world.getRooms().stream()
+    Room armory = (Room) world.getRooms().stream()
         .filter(room -> room.getRoomName().equals("Armory"))
         .findFirst()
         .orElse(null);
-    Room drawingRoom = world.getRooms().stream()
+    Room drawingRoom = (Room) world.getRooms().stream()
         .filter(room -> room.getRoomName().equals("Drawing Room"))
         .findFirst()
         .orElse(null);
@@ -383,11 +383,11 @@ public class WorldTest {
   
   @Test
   public void testAddNeighborFail() {
-    Room armory = world.getRooms().stream()
+    Room armory = (Room) world.getRooms().stream()
         .filter(room -> room.getRoomName().equals("Armory"))
         .findFirst()
         .orElse(null);
-    Room parlor = world.getRooms().stream()
+    Room parlor = (Room) world.getRooms().stream()
         .filter(room -> room.getRoomName().equals("Parlor"))
         .findFirst()
         .orElse(null);
@@ -400,11 +400,11 @@ public class WorldTest {
   
   @Test
   public void testAddVisbleFromSuccess() {
-    Room armory = world.getRooms().stream()
+    Room armory = (Room) world.getRooms().stream()
         .filter(room -> room.getRoomName().equals("Armory"))
         .findFirst()
         .orElse(null);
-    Room drawingRoom = world.getRooms().stream()
+    Room drawingRoom = (Room) world.getRooms().stream()
         .filter(room -> room.getRoomName().equals("Drawing Room"))
         .findFirst()
         .orElse(null);
@@ -418,11 +418,11 @@ public class WorldTest {
   
   @Test
   public void testAddVisbleFromFail() {
-    Room armory = world.getRooms().stream()
+    Room armory = (Room) world.getRooms().stream()
         .filter(room -> room.getRoomName().equals("Armory"))
         .findFirst()
         .orElse(null);
-    Room parlor = world.getRooms().stream()
+    Room parlor = (Room) world.getRooms().stream()
         .filter(room -> room.getRoomName().equals("Parlor"))
         .findFirst()
         .orElse(null);
@@ -435,7 +435,7 @@ public class WorldTest {
   
   @Test
   public void testCreatePlayer() {
-    Player player = world.createPlayer("Alice", 1);  
+    Player player = (Player) world.createPlayer("Alice", 1);  
     assertNotNull("Player should be created", player);
     assertEquals("Player's name should be Alice", "Alice", player.getCharacterName());
     assertEquals("Player should start in the first room", 
@@ -448,9 +448,9 @@ public class WorldTest {
     int initialItemLimit = 3;
     world.setItemLimit(initialItemLimit); 
 
-    Player player1 = world.createPlayer("Alice", 1);
-    Player player2 = world.createPlayer("Bob", 2);
-    Player player3 = world.createPlayer("Charlie", 3);
+    Player player1 = (Player) world.createPlayer("Alice", 1);
+    Player player2 = (Player) world.createPlayer("Bob", 2);
+    Player player3 = (Player) world.createPlayer("Charlie", 3);
 
     assertNotNull("Player 1 should be created", player1);
     assertNotNull("Player 2 should be created", player2);
@@ -483,10 +483,10 @@ public class WorldTest {
   @Test
   public void testSetItemLimit() {
     world.setItemLimit(3); 
-    Player player = world.createPlayer("Bob", 1);
+    Player player = (Player) world.createPlayer("Bob", 1);
     assertEquals("Item limit should be updated to 3", 3, player.getItemLimit());
 
-    Player existingPlayer = world.createPlayer("Charlie", 1);
+    Player existingPlayer = (Player) world.createPlayer("Charlie", 1);
     world.setItemLimit(2);
     assertEquals("Existing player's item limit should be adjusted to 2", 
         2, existingPlayer.getItemLimit());
@@ -501,14 +501,14 @@ public class WorldTest {
 
   @Test
   public void testAdjustItemLimitWithItems() {
-    Room startingRoom = world.getRooms().get(0);
+    Room startingRoom = (Room) world.getRooms().get(0);
     Item sword = new Item("Sword", startingRoom, 10);
     Item shield = new Item("Shield", startingRoom, 5);
     Item bow = new Item("Bow", startingRoom, 7);
     startingRoom.addItem(sword);
     startingRoom.addItem(shield);
     startingRoom.addItem(bow);
-    Player player = world.createPlayer("Eve", 1);
+    Player player = (Player) world.createPlayer("Eve", 1);
     player.pickItem(sword);
     player.pickItem(shield);
     player.pickItem(bow);
@@ -518,14 +518,14 @@ public class WorldTest {
 
   @Test
   public void testReduceItemLimitAndRemoveExcessItems() {
-    Room startingRoom = world.getRooms().get(0); 
+    Room startingRoom = (Room) world.getRooms().get(0); 
     Item sword = new Item("Sword", startingRoom, 10);
     Item shield = new Item("Shield", startingRoom, 5);
     Item bow = new Item("Bow", startingRoom, 7);
     startingRoom.addItem(sword);
     startingRoom.addItem(shield);
     startingRoom.addItem(bow);
-    Player playerFrank = world.createPlayer("Frank", 1);
+    Player playerFrank = (Player) world.createPlayer("Frank", 1);
     playerFrank.pickItem(sword);
     playerFrank.pickItem(shield);
     playerFrank.pickItem(bow);
@@ -542,7 +542,7 @@ public class WorldTest {
   
   @Test
   public void testGetRoomOccupants() {
-    Room armory = world.getRooms().get(0);
+    Room armory = (Room) world.getRooms().get(0);
     world.createPlayer("Alice", 1);
     world.createPlayer("Bob", 1);
     String occupants = world.getRoomOccupants(armory);
@@ -572,7 +572,7 @@ public class WorldTest {
   
   @Test
   public void testDisplayRoomInfoValidWithPlayerId() {
-    Player player = world.createPlayer("Alice", 1);
+    Player player = (Player) world.createPlayer("Alice", 1);
     String roomInfo = world.displayPlayerRoomInfo(player.getPlayerId());
     assertNotNull("Room info should not be null", roomInfo);
     assertTrue("Room info should contain the room name", roomInfo.contains("Armory"));

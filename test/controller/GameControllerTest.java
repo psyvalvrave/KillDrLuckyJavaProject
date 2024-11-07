@@ -156,7 +156,7 @@ public class GameControllerTest {
   
   @Test
   public void testPlayerDisplayInfo() throws InterruptedException, IOException {
-    String simulatedUserInput = "1\nHumanPlayer\n1\n4\n7\n8\n0\n0\n"; 
+    String simulatedUserInput = "1\nHumanPlayer\n1\n4\n8\n0\n0\n"; 
     Readable consoleInput = new StringReader(simulatedUserInput);
     consoleOutput = new StringWriter();
     RandomNumberGenerator rng = new RandomNumberGenerator();

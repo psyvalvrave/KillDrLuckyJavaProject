@@ -3,7 +3,9 @@ package mock;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.List;
-import world.Room;
+
+import world.Block;
+import world.Gadget;
 import world.WorldOutline;
 
 /**
@@ -129,18 +131,13 @@ public class MockWorldOutline implements WorldOutline {
   }
 
   @Override
-  public String getRoomOccupants(Room room) {
-    return null;
-  }
-
-  @Override
   public String callCreateRoom(String roomName, int roomId, int[] coordinates,
       List<String[]> allRoomData) {
     return null;
   }
 
   @Override
-  public String callCreateTarget(String name, Room room, int health) {
+  public String callCreateTarget(String name, Block room, int health) {
     return null;
   }
 
@@ -192,5 +189,47 @@ public class MockWorldOutline implements WorldOutline {
   @Override
   public List<Integer> getNeighborRooms(int roomId) {
     return Arrays.asList(1, 2, 3);
+  }
+
+  @Override
+  public String getRoomOccupants(Block room) {
+    return null;
+  }
+  
+  public List<Gadget> getItems() {
+    return null;
+  }
+  
+  public List<Block> getRooms() {
+    return null;
+  }
+
+  @Override
+  public String displayPlayerRoomInfo(int playerId) {
+    return null;
+  }
+
+  @Override
+  public List<String> getPlayerNeighborRoom(int playerId) {
+    return null;
+  }
+
+  @Override
+  public String callCharacterPet(String petName, Block initialRoom) {
+    return null;
+  }
+
+  @Override
+  public String getPetInfo() {
+    return null;
+  }
+
+  @Override
+  public String movePetToNextRoom() {
+    return null;
+  }
+
+  @Override
+  public void initializePetDFS() {   
   }
 }

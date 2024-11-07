@@ -8,7 +8,7 @@ import java.util.Objects;
  */
 public class Item implements Gadget {
   private String name;
-  private Room location; 
+  private Block location; 
   private int murderValue;
 
   /**
@@ -18,7 +18,7 @@ public class Item implements Gadget {
    * @param locationItem Room where the item is located.
    * @param murderValueItem Value representing the item's potential damage or effect.
    */
-  public Item(String nameItem, Room locationItem, int murderValueItem) {
+  public Item(String nameItem, Block locationItem, int murderValueItem) {
     if (murderValueItem < 0) {
       throw new IllegalArgumentException("Murder value cannot be negative.");
     }
@@ -27,23 +27,13 @@ public class Item implements Gadget {
     this.murderValue = murderValueItem;
   }
 
-  /**
-   * Returns the name of the item.
-   * 
-   * @return The name of the item.
-   */
   @Override
   public String getItemName() {
     return name;
   }
 
-  /**
-   * Returns the room where the item is located.
-   * 
-   * @return The room where the item is located.
-   */
   @Override
-  public Room getLocationItem() {
+  public Block getLocationItem() {
     return location;
   }
 
