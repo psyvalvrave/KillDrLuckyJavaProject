@@ -1,0 +1,7 @@
+36 30 White Cell
+50 Doctor Lucky
+1
+6  3  9  8 White Cell
+2
+0 3 Silken Cord
+0 2 Loud Noise

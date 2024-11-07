@@ -1,0 +1,65 @@
+KillDoctorLucky\src> java controller.ControllerDriver ../res/one_room.txt 3
+Setting up the game.
+Add players:
+1. Add Human-Controlled Player
+2. Add Computer-Controlled Player
+3. Save the World Map, Check It to Know Where You Want to Start
+4. Start Game
+1
+Enter player name:
+EndFast
+Enter player starting room id:
+1
+Human player added with ID: 0
+Add players:
+1. Add Human-Controlled Player
+2. Add Computer-Controlled Player
+3. Save the World Map, Check It to Know Where You Want to Start
+4. Start Game
+4
+Game will start with 1 players.
+Game started. Manage your turns.
+
+--- Game Menu ---
+Current player's turn: Player ID 0 Player Name EndFast
+1. Display Room Info
+2. Save World Map
+5. Move Player
+6. Player Pick Up Item
+7. Player Look Around
+8. Display Player Info
+9. Do Nothing
+0. Quit Game
+Select an option:
+7
+You are in Room White Cell.
+Current Room ID: 1
+Current Room Name: White Cell
+Current Room Items: Silken Cord, Loud Noise
+Target: Doctor Lucky
+, Player: EndFast
+No visible rooms from your current location.
+Turn 2. Now Player EndFast with ID 0's turn.
+
+--- Game Menu ---
+Current player's turn: Player ID 0 Player Name EndFast
+1. Display Room Info
+2. Save World Map
+5. Move Player
+6. Player Pick Up Item
+7. Player Look Around
+8. Display Player Info
+9. Do Nothing
+0. Quit Game
+Select an option:
+7
+You are in Room White Cell.
+Current Room ID: 1
+Current Room Name: White Cell
+Current Room Items: Silken Cord, Loud Noise
+Target: Doctor Lucky
+, Player: EndFast
+No visible rooms from your current location.
+Maximum turns reached. Ending game.
+Game over: Maximum number of turns reached.
+PS C:
