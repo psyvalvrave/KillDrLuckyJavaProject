@@ -16,6 +16,7 @@ public class Player implements CharacterPlayer {
   private final int playerId;
   private List<Gadget> items;
   private int itemLimit;
+  private int murderPoint = 1;
 
   /**
    * Constructor for the Player class.
@@ -44,22 +45,26 @@ public class Player implements CharacterPlayer {
     return currentRoom;
   }
 
-  /**
-   * Attempts to murder a target within the same room.
-   * 
-   * @param target The target to murder.
-   * @param damage The amount of damage to inflict.
-   */
-  public void murder(CharacterTarget target, int damage) {
+  @Override
+  public void murder(CharacterTarget target) {
     if (target == null) {
-      throw new IllegalArgumentException("No target specified.");
+        throw new IllegalArgumentException("No target specified.");
     }
     if (!currentRoom.equals(target.getLocation())) {
-      throw new IllegalArgumentException(name + " cannot attack " 
-    + target.getCharacterName() + " from current location.");
+        throw new IllegalArgumentException(name + " cannot attack " + target.getCharacterName() + " from current location.");
     }
-    target.setHealthPoint(target.getHealthPoint() - damage);
+    target.setHealthPoint(target.getHealthPoint() - murderPoint);
+    this.murderPoint = 1;
   }
+  
+  @Override
+  public void useItem(Gadget item) {
+    if (item == null || !items.contains(item)) {
+        throw new IllegalArgumentException("Specified item is not in possession.");
+    }
+    this.murderPoint = item.getMurderValue();  
+    items.remove(item); 
+}
   
   @Override
   public String getCharacterInfo() {
@@ -257,6 +262,7 @@ public class Player implements CharacterPlayer {
     }
     return false; 
 }
+
 
   
   

@@ -54,6 +54,7 @@ public class World implements WorldOutline {
     establishRoomNeighbors();
     establishRoomVisble();
     initializePetDFS();
+    movePetToNextRoom();
     setWorldText();
   }
 

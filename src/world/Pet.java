@@ -44,7 +44,7 @@ public class Pet implements CharacterPet {
     public void setPath(Stack<Block> pathInput) {
         this.path = new Stack<>();
         if (pathInput != null) {
-            for (int i = pathInput.size() - 1; i > 0; i--) {
+            for (int i = pathInput.size() - 1; i >= 0; i--) {
                 this.path.push(pathInput.get(i)); 
             }
         }

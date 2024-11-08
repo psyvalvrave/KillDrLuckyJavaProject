@@ -27,11 +27,13 @@ public interface CharacterPlayer {
     String getCharacterName();
     
     int getPlayerId();
-    
-    void murder(CharacterTarget target, int damage);
 
     boolean canSee(CharacterPlayer otherPlayer);
 
     String lookAround(List<Block> restrictedRooms);
+
+    void murder(CharacterTarget target);
+
+    void useItem(Gadget item);
 
 }

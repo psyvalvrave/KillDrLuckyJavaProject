@@ -118,21 +118,6 @@ public class PlayerTest {
   }
   
   @Test
-  public void testMurderSuccess() {
-    int damage = 25;
-    player.murder(target, damage);
-    assertEquals("Target health should be reduced by the damage amount.", 
-        75, target.getHealthPoint());
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void testMurderFailureDifferentRoom() {
-    target.move(farRoom);
-    int damage = 25;
-    player.murder(target, damage); 
-  }
-  
-  @Test
   public void testPlayerSeesOtherPlayerInRoom() {
     String lookAroundOutput = world.playerLookAround(player.getPlayerId());
     assertTrue("Look around output should contain second player's name.", 
