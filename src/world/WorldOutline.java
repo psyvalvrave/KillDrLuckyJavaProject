@@ -213,5 +213,7 @@ public interface WorldOutline {
   String movePetToNextRoom();
 
   void initializePetDFS();
+
+  boolean canPlayerBeSeenByAny(int playerId);
   
 }

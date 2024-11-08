@@ -232,4 +232,9 @@ public class MockWorldOutline implements WorldOutline {
   @Override
   public void initializePetDFS() {   
   }
+
+  @Override
+  public boolean canPlayerBeSeenByAny(int playerId) {
+    return false;
+  }
 }

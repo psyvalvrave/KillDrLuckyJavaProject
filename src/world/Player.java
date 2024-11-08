@@ -136,6 +136,7 @@ public class Player implements CharacterPlayer {
     currentRoom.removeItem((Item) item);
   }
   
+  @Override
   public String lookAround() {
     Room currentRoom = (Room) getLocation();
     StringBuilder info = new StringBuilder();
@@ -171,6 +172,35 @@ public class Player implements CharacterPlayer {
 
     return info.toString();
   }
+  
+  @Override
+  public String lookAround(List<Block> restrictedRooms) {
+    Room currentRoom = (Room) getLocation();
+    StringBuilder info = new StringBuilder();
+    info.append("Current Room ID: ").append(currentRoom.getRoomId()).append("\n")
+        .append("Current Room Name: ").append(currentRoom.getRoomName()).append("\n")
+        .append("Current Room Items: ").append(currentRoom.listItems()).append("\n");
+
+    List<Block> visibleRooms = currentRoom.getVisibleFrom();
+    if (!visibleRooms.isEmpty()) {
+        info.append("Visible Rooms:\n");
+        for (Block room : visibleRooms) {
+            if (restrictedRooms.contains(room)) {
+                info.append("  Room ID: ").append(room.getRoomId())
+                    .append(", Room Name: ").append(room.getRoomName())
+                    .append(": Restricted details due to pet presence.\n");
+            } else {
+                info.append("  Room ID: ").append(room.getRoomId())
+                    .append(", Room Name: ").append(room.getRoomName())
+                    .append(", Items: ").append(((Room) room).listItems()).append("\n");
+            }
+        }
+    } else {
+        info.append("No visible rooms from your current location.\n");
+    }
+    return info.toString();
+}
+
   
 
   @Override
@@ -213,23 +243,19 @@ public class Player implements CharacterPlayer {
     return name;
   }
   
+  @Override
   public boolean canSee(CharacterPlayer otherPlayer) {
     Block otherPlayerLocation = otherPlayer.getLocation();
-
-    // Check if the other player is in the same room
     if (this.currentRoom.equals(otherPlayerLocation)) {
         return true;
     }
-
-    // Check if the other player is in a neighboring room
     List<Block> neighbors = this.currentRoom.getNeighbor();
     for (Block neighbor : neighbors) {
         if (neighbor.equals(otherPlayerLocation)) {
             return true;
         }
     }
-
-    return false; // The other player is neither in the same room nor in a neighboring room
+    return false; 
 }
 
   

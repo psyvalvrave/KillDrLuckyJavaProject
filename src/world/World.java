@@ -696,27 +696,42 @@ public class World implements WorldOutline {
 
   @Override
   public String playerLookAround(int playerId) {
-    CharacterPlayer player = getPlayerById(playerId);
-    if (player == null) {
-      throw new IllegalArgumentException("Player not found.");
-    }
-    int roomId = getPlayerRoomId(playerId);
-    Block room = this.getRoomById(roomId);
-    StringBuilder description = new StringBuilder("You are in Room " + room.getRoomName() + ".\n");
-    description.append(player.lookAround());
-    description.append(getRoomOccupants(room));
-    List<Block> visibleRooms = room.getVisibleFrom();
-    if (visibleRooms.isEmpty()) {
-      description.append("\nNo visible rooms from your current location.");
-    } else {
-      description.append("\nVisible rooms from here: ");
-      for (Block visibleRoom : visibleRooms) {
-        description.append("\nRoom ").append(visibleRoom.getRoomName()).append(": ");
-        description.append(getRoomOccupants(visibleRoom));
+      CharacterPlayer player = getPlayerById(playerId);
+      if (player == null) {
+          throw new IllegalArgumentException("Player not found.");
       }
-    }
-    return description.toString();
+      Block playerRoom = player.getLocation();
+      StringBuilder description = new StringBuilder();
+      Block petLocation = pet.getLocation();
+      if (playerRoom.equals(petLocation)) {
+        description.append("You are in the same room as the pet, you can see nothing around.\n");
+        return description.toString();
+      }
+      List<Block> restrictedRooms = new ArrayList<>();
+      restrictedRooms.add(petLocation);
+      if (petLocation.equals(playerRoom)) {
+          description.append("The pet is here, room details are restricted.");
+      } else {
+          description.append(player.lookAround(restrictedRooms));
+          description.append(getRoomOccupants(playerRoom));
+      }
+      List<Block> visibleRooms = playerRoom.getVisibleFrom();
+      if (visibleRooms.isEmpty()) {
+          description.append("\nNo visible rooms from your current location.");
+      } else {
+          description.append("\nVisible rooms from here: ");
+          for (Block visibleRoom : visibleRooms) {
+              if (petLocation.equals(visibleRoom)) {
+                  description.append("\nRoom ").append(visibleRoom.getRoomName()).append(": Presence of pet blocks the view.");
+              } else {
+                  description.append("\nRoom ").append(visibleRoom.getRoomName()).append(": ");
+                  description.append(getRoomOccupants(visibleRoom));
+              }
+          }
+      }
+      return description.toString();
   }
+
 
   @Override
   public List<String> getRoomItems(int roomId) {
@@ -827,10 +842,6 @@ public class World implements WorldOutline {
     Set<Integer> visited = new HashSet<>();
     dfsVisit(startRoom, visited, path);
     pet.setPath(path); 
-    for (Block room: pet.getPath()) {
-      System.out.println(room.getRoomName());
-    }
-    System.out.println("DFS Path initialized with " + path.size() + " rooms.");
 }
   
   private void dfsVisit(Block room, Set<Integer> visited, Stack<Block> path) {
@@ -863,6 +874,30 @@ public String movePetToNextRoom() {
   pet.move(nextRoom);  
   return String.format("Pet moved to room: %s", nextRoom.getRoomName());
 }
+
+@Override
+public boolean canPlayerBeSeenByAny(int playerId) {
+  CharacterPlayer targetPlayer = getPlayerById(playerId);
+  if (targetPlayer == null) {
+      throw new IllegalArgumentException("Player with ID " + playerId + " does not exist.");
+  }
+  Block petLocation = pet.getLocation();
+  if (petLocation.equals(targetPlayer.getLocation())) {
+      return false; 
+  }
+  for (CharacterPlayer player : players) {
+      if (player.getPlayerId() != playerId) {
+          if (petLocation.equals(player.getLocation())) {
+              continue; 
+          }
+          if (player.canSee(targetPlayer)) {
+              return true;  
+          }
+      }
+  }
+  return false;  
+}
+
 
 
 }
