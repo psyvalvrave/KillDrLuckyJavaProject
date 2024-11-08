@@ -247,4 +247,14 @@ public class MockWorldOutline implements WorldOutline {
   public String movePet(int playerId, int targetRoomId) {
     return null;
   }
+
+  @Override
+  public int getTargetHealthPoint() {
+    return 0;
+  }
+
+  @Override
+  public List<String> getPlayerItems(int playerId) {
+    return null;
+  }
 }

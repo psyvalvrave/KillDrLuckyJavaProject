@@ -746,6 +746,20 @@ public class World implements WorldOutline {
     }
     return itemNames;
   }
+  
+  @Override
+  public List<String> getPlayerItems(int playerId) {
+    CharacterPlayer player = getPlayerById(playerId); 
+    if (player == null) {
+      throw new IllegalArgumentException("Player with ID " + player + " not found.");
+    }
+    List<String> itemNames = new ArrayList<>();
+    for (Gadget item : player.getItem()) { 
+      itemNames.add(item.getItemName()); 
+    }
+    return itemNames;
+  }
+
 
   @Override
   public int getPlayerRoomId(int playerId) {
@@ -929,6 +943,35 @@ public boolean canInteractWithPet(int playerId) {
   return currentRoom.equals(petRoom);  
 }
 
+@Override
+public int getTargetHealthPoint() {
+  return this.target.getHealthPoint();  
+}
+
+
+public String murderAttempt(int playerId) {
+  CharacterPlayer player = getPlayerById(playerId);
+  if (!player.getLocation().equals(target.getLocation())) {
+    throw new IllegalArgumentException(
+        "Player " + player.getCharacterName() + " is not in the same room as the target.");
+  }
+  if (player.getLocation().equals(pet.getLocation())) {
+    return "Failed: Player " + player.getCharacterName() + 
+           " cannot attack while in the same room as the pet.";
+}
+  if (canPlayerBeSeenByAny(playerId)) {
+      return "Failed: Player " + player.getCharacterName() + 
+             " was seen and cannot proceed with the attack.";
+  }
+  int healthBefore = target.getHealthPoint();
+  player.murder(target);
+  int healthAfter = target.getHealthPoint();
+  if (healthAfter < healthBefore) {
+      return "Success: Target's health reduced to " + healthAfter + ".";
+  }
+
+  return "Failed: Attack had no effect on the target.";
+}
 
 
 

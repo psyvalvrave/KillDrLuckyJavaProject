@@ -219,5 +219,9 @@ public interface WorldOutline {
   boolean canInteractWithPet(int playerId);
 
   String movePet(int playerId, int targetRoomId);
+
+  int getTargetHealthPoint();
+
+  List<String> getPlayerItems(int playerId);
   
 }
