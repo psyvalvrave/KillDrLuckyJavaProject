@@ -129,6 +129,8 @@ public class GameController implements Controller {
   
   private void processPlayerInput(String input, WorldOutline world, 
       int playerId) throws IOException, InterruptedException {
+    boolean validInput = false;
+    while (!validInput) {
     try {
       int choice = Integer.parseInt(input);
       Command command = null;
@@ -140,6 +142,11 @@ public class GameController implements Controller {
         case 2:  
           command = new SaveWorldMapCommand(world);
           command.execute(output);
+          break;
+        case 4:  
+          command = new MovePetCommand(world, playerId, scanner);
+          command.execute(output);
+          advanceTurn(world);
           break;
         case 5:  
           command = new MovePlayerCommand(world, playerId, scanner);
@@ -170,10 +177,16 @@ public class GameController implements Controller {
         default:
           print("Unknown command. Please try again.");
       }
+      validInput = true;
     } catch (NumberFormatException e) {
       print("Invalid input, please enter a number.");
+      displayMenu();
+      input = scanner.nextLine();
     } catch (IllegalArgumentException e) {
       print("Error processing command: " + e.getMessage());
+      displayMenu();
+      input = scanner.nextLine();
+    }
     }
   }
   
@@ -261,6 +274,7 @@ public class GameController implements Controller {
         + "Name " + currentPlayerName);
     print("1. Display Room Info");
     print("2. Save World Map");
+    print("4. Move Pet");
     print("5. Move Player");
     print("6. Player Pick Up Item");
     print("7. Player Look Around");

@@ -704,7 +704,7 @@ public class World implements WorldOutline {
       StringBuilder description = new StringBuilder();
       Block petLocation = pet.getLocation();
       if (playerRoom.equals(petLocation)) {
-        description.append("You are in the same room as the pet, you can see nothing around.\n");
+        description.append("You are in the same room as the pet " + pet.getCharacterName() + ", you can see nothing around.\n");
         return description.toString();
       }
       List<Block> restrictedRooms = new ArrayList<>();
@@ -897,6 +897,38 @@ public boolean canPlayerBeSeenByAny(int playerId) {
   }
   return false;  
 }
+
+@Override
+public String movePet(int playerId, int targetRoomId) {
+  CharacterPlayer player = getPlayerById(playerId);
+  if (player == null) {
+      return "Error: Player not found.";
+  }
+
+    Block currentRoom = player.getLocation();
+    Block petRoom = pet.getLocation();
+    if (!currentRoom.equals(petRoom)) {
+      return "Error: You must be in the same room as the pet to move it.";
+  }
+  Block targetRoom = getRoomById(targetRoomId);
+  if (targetRoom == null) {
+      return "Error: The target room does not exist.";
+  }
+  pet.move(targetRoom);
+  this.initializePetDFS();
+  return "Pet has been moved to " + targetRoom.getRoomName() + ".";
+}
+
+@Override
+public boolean canInteractWithPet(int playerId) {
+  CharacterPlayer player = getPlayerById(playerId);
+  Block currentRoom = player.getLocation();
+  Block petRoom = pet.getLocation();
+
+  return currentRoom.equals(petRoom);  
+}
+
+
 
 
 

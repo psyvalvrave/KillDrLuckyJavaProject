@@ -237,4 +237,14 @@ public class MockWorldOutline implements WorldOutline {
   public boolean canPlayerBeSeenByAny(int playerId) {
     return false;
   }
+
+  @Override
+  public boolean canInteractWithPet(int playerId) {
+    return false;
+  }
+
+  @Override
+  public String movePet(int playerId, int targetRoomId) {
+    return null;
+  }
 }
