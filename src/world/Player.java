@@ -66,15 +66,14 @@ public class Player implements CharacterPlayer {
     items.remove(item); 
   }
   
+  @Override
   public void useHighestItem() {
     if (items.isEmpty()) {
       return; 
   }
-
     Gadget highestValueItem = items.stream()
         .max((item1, item2) -> Integer.compare(item1.getMurderValue(), item2.getMurderValue()))
         .orElse(null);
-
     if (highestValueItem != null) {
       this.murderPoint = highestValueItem.getMurderValue();
       items.remove(highestValueItem);  

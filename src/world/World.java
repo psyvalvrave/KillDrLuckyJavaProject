@@ -948,7 +948,7 @@ public int getTargetHealthPoint() {
   return this.target.getHealthPoint();  
 }
 
-
+@Override
 public String murderAttempt(int playerId) {
   CharacterPlayer player = getPlayerById(playerId);
   if (!player.getLocation().equals(target.getLocation())) {
@@ -972,6 +972,28 @@ public String murderAttempt(int playerId) {
 
   return "Failed: Attack had no effect on the target.";
 }
+
+private Gadget getItemByName(String itemName) {
+  for (Gadget item : items) {
+      if (item.getItemName().equalsIgnoreCase(itemName)) {
+          return item;
+      }
+  }
+  throw new IllegalArgumentException("Item with name " + itemName + " not found.");
+}
+
+@Override
+public void usePlayerItem(int playerId, String itemName) throws IllegalArgumentException {
+  CharacterPlayer player = getPlayerById(playerId);
+  Gadget item = getItemByName(itemName);
+  if (!player.getItem().contains(item)) {
+      throw new IllegalArgumentException("Player does not possess the item: " + itemName);
+  }
+
+  player.useItem(item); 
+}
+
+
 
 
 

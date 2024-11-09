@@ -143,6 +143,16 @@ public class GameController implements Controller {
           command = new SaveWorldMapCommand(world);
           command.execute(output);
           break;
+        case 3:
+          command = new MurderTargetCommand(world, playerId, scanner);  
+          command.execute(output);
+          if (world.getTargetHealthPoint() <= 0) {
+            print("Target eliminated. " + playerNames.get(playerId) + " win!");
+            setRunning(false);
+          } else {
+            advanceTurn(world);
+          }
+          break;
         case 4:  
           command = new MovePetCommand(world, playerId, scanner);
           command.execute(output);
@@ -170,9 +180,10 @@ public class GameController implements Controller {
         case 9: 
           advanceTurn(world);
           break;
-        case 0:  
+        case 'Q':  
+        case 'q':
           print("Quitting game.");
-          setRunning(false);  
+          setRunning(false);
           break;
         default:
           print("Unknown command. Please try again.");
@@ -274,6 +285,7 @@ public class GameController implements Controller {
         + "Name " + currentPlayerName);
     print("1. Display Room Info");
     print("2. Save World Map");
+    print("3. Attempt to Murder Target");
     print("4. Move Pet");
     print("5. Move Player");
     print("6. Player Pick Up Item");

@@ -257,4 +257,14 @@ public class MockWorldOutline implements WorldOutline {
   public List<String> getPlayerItems(int playerId) {
     return null;
   }
+
+  @Override
+  public String murderAttempt(int playerId) {
+    return null;
+  }
+
+  @Override
+  public void usePlayerItem(int playerId, String itemName) throws IllegalArgumentException {
+
+  }
 }

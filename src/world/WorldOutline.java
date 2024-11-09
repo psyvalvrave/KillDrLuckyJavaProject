@@ -223,5 +223,9 @@ public interface WorldOutline {
   int getTargetHealthPoint();
 
   List<String> getPlayerItems(int playerId);
+
+  String murderAttempt(int playerId);
+
+  void usePlayerItem(int playerId, String itemName) throws IllegalArgumentException;
   
 }

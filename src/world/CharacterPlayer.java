@@ -36,4 +36,6 @@ public interface CharacterPlayer {
 
     void useItem(Gadget item);
 
+    void useHighestItem();
+
 }
