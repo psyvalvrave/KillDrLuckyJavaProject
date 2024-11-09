@@ -1,6 +1,7 @@
 package mock;
 
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -211,7 +212,9 @@ public class MockWorldOutline implements WorldOutline {
 
   @Override
   public List<String> getPlayerNeighborRoom(int playerId) {
-    return null;
+    List<String> roomList = new ArrayList<>();
+    roomList.add("room1");
+    return roomList;
   }
 
   @Override
@@ -266,5 +269,20 @@ public class MockWorldOutline implements WorldOutline {
   @Override
   public void usePlayerItem(int playerId, String itemName) throws IllegalArgumentException {
 
+  }
+
+  @Override
+  public boolean canMurderAttempt(int playerId) {
+    return false;
+  }
+
+  @Override
+  public void removePet() {
+    
+  }
+
+  @Override
+  public String getPlayerLocation(int playerId) {
+    return null;
   }
 }

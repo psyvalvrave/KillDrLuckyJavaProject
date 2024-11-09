@@ -35,7 +35,7 @@ public class MurderTargetCommand implements Command {
                     input = scanner.nextLine().trim();
                     int itemIndex = Integer.parseInt(input) - 1;
                     if (itemIndex >= 0 && itemIndex < playerItems.size()) {
-                        String itemName = playerItems.get(itemIndex);
+                        String itemName = playerItems.get(itemIndex).split(": ")[0];;
                         world.usePlayerItem(playerId, itemName);
                         output.append("You have used " + itemName + " to increase your murder point.\n");
                     } else {

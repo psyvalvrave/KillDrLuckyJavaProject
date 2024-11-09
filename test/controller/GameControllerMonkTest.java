@@ -49,15 +49,10 @@ public class GameControllerMonkTest {
     int maxTurns = 3; 
     gameController = new GameController(consoleInput, consoleOutput, fakeRng, maxTurns);
     MockWorldOutline mockWorld = new MockWorldOutline();
-
     mockWorld.setMovePlayerResult("Player moved");
-
     gameController = new GameController(consoleInput, consoleOutput, fakeRng, maxTurns);
-
     fakeRng.setNextIntResult(1);
-
     gameController.playGame(mockWorld);
-
     String output = consoleOutput.toString();
     assertTrue(output.contains("Player moved"));
     assertTrue(output.contains("Turn 2. Now Player ComputerPlayer"));

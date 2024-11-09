@@ -22,7 +22,7 @@ public class MovePlayerCommand implements Command {
       try {
         List<String> neighbors = world.getPlayerNeighborRoom(playerId);
         if (neighbors.isEmpty()) {
-            output.append("There are no available rooms to move to.\n");
+            throw new IllegalArgumentException("There are no available rooms to move to.\n");
         } else {
             output.append("You can move to the following rooms:\n");
             for (String neighbor : neighbors) {

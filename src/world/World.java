@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
@@ -703,26 +704,28 @@ public class World implements WorldOutline {
       }
       Block playerRoom = player.getLocation();
       StringBuilder description = new StringBuilder();
-      Block petLocation = pet.getLocation();
-      if (playerRoom.equals(petLocation)) {
-        description.append("You are in the same room as the pet " + pet.getCharacterName() + ", you can see nothing around.\n");
-        return description.toString();
+      Block petLocation = (pet != null) ? pet.getLocation() : null;
+
+      if (petLocation != null && playerRoom.equals(petLocation)) {
+          description.append("You are in the same room as the pet " + pet.getCharacterName() + ", you can see nothing around.\n");
+          return description.toString();
       }
-      List<Block> restrictedRooms = new ArrayList<>();
-      restrictedRooms.add(petLocation);
-      if (petLocation.equals(playerRoom)) {
-          description.append("The pet is here, room details are restricted.");
+
+      if (petLocation != null && petLocation.equals(playerRoom)) {
+          description.append("The pet is here, room details are restricted.\n");
       } else {
+          List<Block> restrictedRooms = (pet != null) ? Collections.singletonList(petLocation) : Collections.emptyList();
           description.append(player.lookAround(restrictedRooms));
           description.append(getRoomOccupants(playerRoom));
       }
+
       List<Block> visibleRooms = playerRoom.getVisibleFrom();
       if (visibleRooms.isEmpty()) {
           description.append("\nNo visible rooms from your current location.");
       } else {
           description.append("\nVisible rooms from here: ");
           for (Block visibleRoom : visibleRooms) {
-              if (petLocation.equals(visibleRoom)) {
+              if (petLocation != null && petLocation.equals(visibleRoom)) {
                   description.append("\nRoom ").append(visibleRoom.getRoomName()).append(": Presence of pet blocks the view.");
               } else {
                   description.append("\nRoom ").append(visibleRoom.getRoomName()).append(": ");
@@ -740,24 +743,20 @@ public class World implements WorldOutline {
     if (room == null) {
       throw new IllegalArgumentException("Room with ID " + roomId + " not found.");
     }
-    List<String> itemNames = new ArrayList<>();
-    for (Gadget item : room.getItem()) { 
-      itemNames.add(item.getItemName()); 
-    }
-    return itemNames;
+    return room.getItem().stream()
+        .map(item -> item.getItemName() + ": Murder Value " + item.getMurderValue())
+        .collect(Collectors.toList());
   }
   
   @Override
   public List<String> getPlayerItems(int playerId) {
-    CharacterPlayer player = getPlayerById(playerId); 
+    CharacterPlayer player = getPlayerById(playerId);
     if (player == null) {
-      throw new IllegalArgumentException("Player with ID " + player + " not found.");
+        throw new IllegalArgumentException("Player with ID " + playerId + " not found.");
     }
-    List<String> itemNames = new ArrayList<>();
-    for (Gadget item : player.getItem()) { 
-      itemNames.add(item.getItemName()); 
-    }
-    return itemNames;
+    return player.getItem().stream()
+                  .map(item -> item.getItemName() + ": Murder Value " + item.getMurderValue())
+                  .collect(Collectors.toList());
   }
 
 
@@ -944,6 +943,15 @@ public boolean canInteractWithPet(int playerId) {
 }
 
 @Override
+public boolean canMurderAttempt(int playerId) {
+  CharacterPlayer player = getPlayerById(playerId);
+  Block currentRoom = player.getLocation();
+  Block targetRoom = target.getLocation();
+
+  return currentRoom.equals(targetRoom);  
+}
+
+@Override
 public int getTargetHealthPoint() {
   return this.target.getHealthPoint();  
 }
@@ -951,7 +959,7 @@ public int getTargetHealthPoint() {
 @Override
 public String murderAttempt(int playerId) {
   CharacterPlayer player = getPlayerById(playerId);
-  if (!player.getLocation().equals(target.getLocation())) {
+  if (!canMurderAttempt(playerId)) {
     throw new IllegalArgumentException(
         "Player " + player.getCharacterName() + " is not in the same room as the target.");
   }
@@ -992,6 +1000,25 @@ public void usePlayerItem(int playerId, String itemName) throws IllegalArgumentE
 
   player.useItem(item); 
 }
+
+@Override
+public void removePet() {
+  this.pet = null;
+}
+
+@Override
+public String getPlayerLocation(int playerId) {
+  CharacterPlayer player = getPlayerById(playerId);
+  if (player == null) {
+      throw new IllegalArgumentException("Player with ID " + playerId + " does not exist.");
+  }
+  Block playerRoom = player.getLocation();
+  if (playerRoom == null) {
+      throw new IllegalStateException("Player location is not set.");
+  }
+  return "Room ID: " + playerRoom.getRoomId() + ", Room Name: " + playerRoom.getRoomName();
+}
+
 
 
 

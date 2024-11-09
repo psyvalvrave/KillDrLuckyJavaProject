@@ -116,7 +116,7 @@ public class GameController implements Controller {
       if (isComputer.get(currentPlayerId)) {
         computerPlayerActions(world, currentPlayerId);
       } else {
-        displayMenu();
+        displayMenu(world);
         String input = scanner.nextLine();
         processPlayerInput(input, world, currentPlayerId);
       }
@@ -180,10 +180,13 @@ public class GameController implements Controller {
         case 9: 
           advanceTurn(world);
           break;
-        case 'Q':  
-        case 'q':
+        case 0:
           print("Quitting game.");
           setRunning(false);
+          break;
+        case 10:
+          command = new TargetInfoCommand(world);
+          command.execute(output);
           break;
         default:
           print("Unknown command. Please try again.");
@@ -191,11 +194,11 @@ public class GameController implements Controller {
       validInput = true;
     } catch (NumberFormatException e) {
       print("Invalid input, please enter a number.");
-      displayMenu();
+      displayMenu(world);
       input = scanner.nextLine();
     } catch (IllegalArgumentException e) {
       print("Error processing command: " + e.getMessage());
-      displayMenu();
+      displayMenu(world);
       input = scanner.nextLine();
     }
     }
@@ -277,12 +280,14 @@ public class GameController implements Controller {
     }
   }
 
-  private void displayMenu() throws IOException {
+  private void displayMenu(WorldOutline world) throws IOException {
     int currentPlayerId = playerIds.get(currentPlayerIndex);
     String currentPlayerName = playerNames.get(currentPlayerId);
     print("\n--- Game Menu ---");
+    print("Turn " + currentTurn);
     print("Current player's turn: Player ID " + currentPlayerId + " Player "
         + "Name " + currentPlayerName);
+    print(world.getPlayerLocation(currentPlayerId));
     print("1. Display Room Info");
     print("2. Save World Map");
     print("3. Attempt to Murder Target");
@@ -292,6 +297,7 @@ public class GameController implements Controller {
     print("7. Player Look Around");
     print("8. Display Player Info");
     print("9. Do Nothing");
+    print("10. Display Target Info");
     print("0. Quit Game");
     print("Select an option:");
   }

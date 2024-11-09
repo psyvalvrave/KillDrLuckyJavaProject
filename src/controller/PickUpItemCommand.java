@@ -41,7 +41,7 @@ public class PickUpItemCommand implements Command {
                 return;
             }
 
-            String itemName = itemsInRoom.get(itemIndex);
+            String itemName = itemsInRoom.get(itemIndex).split(": ")[0];
             String pickUpResult = world.playerPickUpItem(playerId, itemName);
             output.append(pickUpResult + "\n");
         } catch (NumberFormatException e) {

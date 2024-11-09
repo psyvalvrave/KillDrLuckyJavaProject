@@ -227,5 +227,11 @@ public interface WorldOutline {
   String murderAttempt(int playerId);
 
   void usePlayerItem(int playerId, String itemName) throws IllegalArgumentException;
+
+  boolean canMurderAttempt(int playerId);
+
+  void removePet();
+
+  String getPlayerLocation(int playerId);
   
 }

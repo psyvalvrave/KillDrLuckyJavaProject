@@ -5,7 +5,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.StringReader;
+import java.io.Reader;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -35,7 +36,19 @@ public class PlayerTest {
    */
   @Before
   public void setUp() throws FileNotFoundException {
-    Readable fileInput = new FileReader("res/three_rooms_player_test.txt");
+    String input = 
+        "36 30 Two And One\n" +
+        "50 Doctor Lucky\n" +
+        "Fortune the Cat\n" +
+        "3\n" +
+        "22 13 25 18 Close One\n" +
+        "26 13 27 18 Close Two\n" +
+        "0 23  3 28 Far Away\n" +
+        "3\n" +
+        "0 3 Crepe Pan\n" +
+        "0 2 Letter Opener\n" +
+        "1 2 Shoe Horn\n";
+    Reader fileInput = new StringReader(input);
     world = new World(fileInput);
     startingRoom = (Room) world.getRooms().get(0);
     closeRoom = (Room) world.getRooms().get(1);
@@ -47,6 +60,7 @@ public class PlayerTest {
     playerFar = (Player) world.createPlayer("Test Far Player", 3);
     secondPlayerInRoom = (Player) world.createPlayer("Test Second Player", 1);
     target = new Target("Doctor Lucky", startingRoom, 100);
+    world.removePet();
   }
   
   @Test
