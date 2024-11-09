@@ -285,4 +285,9 @@ public class MockWorldOutline implements WorldOutline {
   public String getPlayerLocation(int playerId) {
     return null;
   }
+
+  @Override
+  public void usePlayerHighestItem(int playerId) {
+    
+  }
 }

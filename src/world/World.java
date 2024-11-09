@@ -1019,6 +1019,12 @@ public String getPlayerLocation(int playerId) {
   return "Room ID: " + playerRoom.getRoomId() + ", Room Name: " + playerRoom.getRoomName();
 }
 
+@Override
+public void usePlayerHighestItem(int playerId) {
+    CharacterPlayer player = getPlayerById(playerId);
+    player.useHighestItem();  
+}
+
 
 
 

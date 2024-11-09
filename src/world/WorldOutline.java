@@ -233,5 +233,7 @@ public interface WorldOutline {
   void removePet();
 
   String getPlayerLocation(int playerId);
+
+  void usePlayerHighestItem(int playerId);
   
 }
