@@ -67,15 +67,14 @@ public class GameComputerControllerTest {
   
   @Test
   public void testComputerPlayerMurderWhenAvailable() throws InterruptedException, IOException {
-    int maxTurns = 2; 
-    String simulatedUserInput = "2\nComputerPlayer\n1\n4\n"; 
-    Readable consoleInput = new java.io.StringReader(simulatedUserInput);
     consoleOutput = new StringWriter();   
     fakeRng = new FakeRandomNumberGenerator();
     MockWorldOutline mockWorld = new MockWorldOutline();
     mockWorld.toggleMurderAttempt();
+    String simulatedUserInput = "2\nComputerPlayer\n1\n4\n"; 
+    Readable consoleInput = new java.io.StringReader(simulatedUserInput);
+    int maxTurns = 2; 
     gameController = new GameController(consoleInput, consoleOutput, fakeRng, maxTurns);
-    //fakeRng.setNextIntResult(2); 
     gameController.playGame(mockWorld);
     String output = consoleOutput.toString();
     System.out.println(output);

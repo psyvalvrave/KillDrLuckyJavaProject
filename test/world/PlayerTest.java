@@ -4,9 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.io.FileNotFoundException;
-import java.io.StringReader;
 import java.io.Reader;
+import java.io.StringReader;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -32,22 +31,22 @@ public class PlayerTest {
    * to facilitate various test scenarios. It also creates multiple players 
    * and a target within the world to simulate interaction.
    *
-   * @throws FileNotFoundException if the configuration file for the world is not found.
    */
   @Before
-  public void setUp() throws FileNotFoundException {
+  public void setUp() {
     String input = 
-        "36 30 Two And One\n" +
-        "50 Doctor Lucky\n" +
-        "Fortune the Cat\n" +
-        "3\n" +
-        "22 13 25 18 Close One\n" +
-        "26 13 27 18 Close Two\n" +
-        "0 23  3 28 Far Away\n" +
-        "3\n" +
-        "0 3 Crepe Pan\n" +
-        "0 2 Letter Opener\n" +
-        "1 2 Shoe Horn\n";
+        "36 30 Two And One\n" 
+            + "50 Doctor Lucky\n" 
+            + "Fortune the Cat\n" 
+            + "3\n" 
+            + "22 13 25 18 Close One\n" 
+            + "26 13 27 18 Close Two\n" 
+            + "0 23  3 28 Far Away\n" 
+            + "3\n" 
+            + "0 3 Crepe Pan\n" 
+            + "0 2 Letter Opener\n" 
+            + "1 2 Shoe Horn\n"
+;
     Reader fileInput = new StringReader(input);
     world = new World(fileInput);
     startingRoom = (Room) world.getRooms().get(0);

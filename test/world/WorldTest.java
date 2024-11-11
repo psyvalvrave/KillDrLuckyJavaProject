@@ -10,12 +10,11 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.StringReader;
 import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -48,54 +47,54 @@ public class WorldTest {
    * @throws FileNotFoundException if the file specified by inputSource does not exist
    */
   @Before
-  public void setUp() throws FileNotFoundException {
+  public void setUp() {
     String input = 
-        "36 30 Doctor Lucky's Mansion\n" +
-        "50 Doctor Lucky\n" +
-        "Fortune the Cat\n" +
-        "21\n" +
-        "22 19 23 26 Armory\n" +
-        "16 21 21 28 Billiard Room\n" +
-        "28  0 35  5 Carriage House\n" +
-        "12 11 21 20 Dining Hall\n" +
-        "22 13 25 18 Drawing Room\n" +
-        "26 13 27 18 Foyer\n" +
-        "28 26 35 29 Green House\n" +
-        "30 20 35 25 Hedge Maze\n" +
-        "16  3 21 10 Kitchen\n" +
-        " 0  3  5  8 Lancaster Room\n" +
-        " 4 23  9 28 Library\n" +
-        " 2  9  7 14 Lilac Room\n" +
-        " 2 15  7 22 Master Suite\n" +
-        " 0 23  3 28 Nursery\n" +
-        "10  5 15 10 Parlor\n" +
-        "28 12 35 19 Piazza\n" +
-        " 6  3  9  8 Servants' Quarters\n" +
-        " 8 11 11 20 Tennessee Room\n" +
-        "10 21 15 26 Trophy Room\n" +
-        "22  5 23 12 Wine Cellar\n" +
-        "30  6 35 11 Winter Garden\n" +
-        "20\n" +
-        "8 3 Crepe Pan\n" +
-        "4 2 Letter Opener\n" +
-        "12 2 Shoe Horn\n" +
-        "8 3 Sharp Knife\n" +
-        "0 3 Revolver\n" +
-        "15 3 Civil War Cannon\n" +
-        "2 4 Chain Saw\n" +
-        "16 2 Broom Stick\n" +
-        "1 2 Billiard Cue\n" +
-        "19 2 Rat Poison\n" +
-        "6 2 Trowel\n" +
-        "2 4 Big Red Hammer\n" +
-        "6 2 Pinking Shears\n" +
-        "18 3 Duck Decoy\n" +
-        "13 2 Bad Cream\n" +
-        "18 2 Monkey Hand\n" +
-        "11 2 Tight Hat\n" +
-        "19 2 Piece of Rope\n" +
-        "9 3 Silken Cord\n" +
-        "7 2 Loud Noise";
+        "36 30 Doctor Lucky's Mansion\n" 
+            + "50 Doctor Lucky\n" 
+            + "Fortune the Cat\n" 
+            + "21\n" 
+            + "22 19 23 26 Armory\n" 
+            + "16 21 21 28 Billiard Room\n" 
+            + "28  0 35  5 Carriage House\n" 
+            + "12 11 21 20 Dining Hall\n" 
+            + "22 13 25 18 Drawing Room\n" 
+            + "26 13 27 18 Foyer\n" 
+            + "28 26 35 29 Green House\n" 
+            + "30 20 35 25 Hedge Maze\n" 
+            + "16  3 21 10 Kitchen\n" 
+            + " 0  3  5  8 Lancaster Room\n" 
+            + " 4 23  9 28 Library\n" 
+            + " 2  9  7 14 Lilac Room\n" 
+            + " 2 15  7 22 Master Suite\n" 
+            + " 0 23  3 28 Nursery\n" 
+            + "10  5 15 10 Parlor\n" 
+            + "28 12 35 19 Piazza\n" 
+            + " 6  3  9  8 Servants' Quarters\n" 
+            + " 8 11 11 20 Tennessee Room\n" 
+            + "10 21 15 26 Trophy Room\n" 
+            + "22  5 23 12 Wine Cellar\n" 
+            + "30  6 35 11 Winter Garden\n" 
+            + "20\n" 
+            + "8 3 Crepe Pan\n" 
+            + "4 2 Letter Opener\n" 
+            + "12 2 Shoe Horn\n" 
+            + "8 3 Sharp Knife\n" 
+            + "0 3 Revolver\n" 
+            + "15 3 Civil War Cannon\n" 
+            + "2 4 Chain Saw\n" 
+            + "16 2 Broom Stick\n" 
+            + "1 2 Billiard Cue\n" 
+            + "19 2 Rat Poison\n" 
+            + "6 2 Trowel\n" 
+            + "2 4 Big Red Hammer\n" 
+            + "6 2 Pinking Shears\n" 
+            + "18 3 Duck Decoy\n" 
+            + "13 2 Bad Cream\n" 
+            + "18 2 Monkey Hand\n" 
+            + "11 2 Tight Hat\n" 
+            + "19 2 Piece of Rope\n" 
+            + "9 3 Silken Cord\n" 
+            + "7 2 Loud Noise\n";
     Reader fileInput = new StringReader(input);
     world = new World(fileInput); 
     testRoom = new Room("Test Room", 1, new int[]{0, 0, 10, 10}, world.getRoomData());
@@ -649,56 +648,56 @@ public class WorldTest {
   @Test
   public void testPetStartingLocation() {
     String input = 
-        "36 30 Doctor Lucky's Mansion\n" +
-        "50 Doctor Lucky\n" +
-        "Fortune the Cat\n" +
-        "21\n" +
-        "22 19 23 26 Armory\n" +
-        "16 21 21 28 Billiard Room\n" +
-        "28  0 35  5 Carriage House\n" +
-        "12 11 21 20 Dining Hall\n" +
-        "22 13 25 18 Drawing Room\n" +
-        "26 13 27 18 Foyer\n" +
-        "28 26 35 29 Green House\n" +
-        "30 20 35 25 Hedge Maze\n" +
-        "16  3 21 10 Kitchen\n" +
-        " 0  3  5  8 Lancaster Room\n" +
-        " 4 23  9 28 Library\n" +
-        " 2  9  7 14 Lilac Room\n" +
-        " 2 15  7 22 Master Suite\n" +
-        " 0 23  3 28 Nursery\n" +
-        "10  5 15 10 Parlor\n" +
-        "28 12 35 19 Piazza\n" +
-        " 6  3  9  8 Servants' Quarters\n" +
-        " 8 11 11 20 Tennessee Room\n" +
-        "10 21 15 26 Trophy Room\n" +
-        "22  5 23 12 Wine Cellar\n" +
-        "30  6 35 11 Winter Garden\n" +
-        "20\n" +
-        "8 3 Crepe Pan\n" +
-        "4 2 Letter Opener\n" +
-        "12 2 Shoe Horn\n" +
-        "8 3 Sharp Knife\n" +
-        "0 3 Revolver\n" +
-        "15 3 Civil War Cannon\n" +
-        "2 4 Chain Saw\n" +
-        "16 2 Broom Stick\n" +
-        "1 2 Billiard Cue\n" +
-        "19 2 Rat Poison\n" +
-        "6 2 Trowel\n" +
-        "2 4 Big Red Hammer\n" +
-        "6 2 Pinking Shears\n" +
-        "18 3 Duck Decoy\n" +
-        "13 2 Bad Cream\n" +
-        "18 2 Monkey Hand\n" +
-        "11 2 Tight Hat\n" +
-        "19 2 Piece of Rope\n" +
-        "9 3 Silken Cord\n" +
-        "7 2 Loud Noise";
+        "36 30 Doctor Lucky's Mansion\n" 
+            + "50 Doctor Lucky\n" 
+            + "Fortune the Cat\n" 
+            + "21\n" 
+            + "22 19 23 26 Armory\n" 
+            + "16 21 21 28 Billiard Room\n" 
+            + "28  0 35  5 Carriage House\n" 
+            + "12 11 21 20 Dining Hall\n" 
+            + "22 13 25 18 Drawing Room\n" 
+            + "26 13 27 18 Foyer\n" 
+            + "28 26 35 29 Green House\n" 
+            + "30 20 35 25 Hedge Maze\n" 
+            + "16  3 21 10 Kitchen\n" 
+            + " 0  3  5  8 Lancaster Room\n" 
+            + " 4 23  9 28 Library\n" 
+            + " 2  9  7 14 Lilac Room\n" 
+            + " 2 15  7 22 Master Suite\n" 
+            + " 0 23  3 28 Nursery\n" 
+            + "10  5 15 10 Parlor\n" 
+            + "28 12 35 19 Piazza\n" 
+            + " 6  3  9  8 Servants' Quarters\n" 
+            + " 8 11 11 20 Tennessee Room\n" 
+            + "10 21 15 26 Trophy Room\n" 
+            + "22  5 23 12 Wine Cellar\n" 
+            + "30  6 35 11 Winter Garden\n" 
+            + "20\n" 
+            + "8 3 Crepe Pan\n" 
+            + "4 2 Letter Opener\n" 
+            + "12 2 Shoe Horn\n" 
+            + "8 3 Sharp Knife\n" 
+            + "0 3 Revolver\n" 
+            + "15 3 Civil War Cannon\n" 
+            + "2 4 Chain Saw\n" 
+            + "16 2 Broom Stick\n" 
+            + "1 2 Billiard Cue\n" 
+            + "19 2 Rat Poison\n" 
+            + "6 2 Trowel\n" 
+            + "2 4 Big Red Hammer\n" 
+            + "6 2 Pinking Shears\n" 
+            + "18 3 Duck Decoy\n" 
+            + "13 2 Bad Cream\n" 
+            + "18 2 Monkey Hand\n" 
+            + "11 2 Tight Hat\n" 
+            + "19 2 Piece of Rope\n" 
+            + "9 3 Silken Cord\n" 
+            + "7 2 Loud Noise\n";
     Reader fileInput = new StringReader(input);
     world = new World(fileInput); 
     Block armory = world.getRooms().get(0);
-      assertEquals("Initial location should be 'Aromry'", armory, world.getPet().getLocation());
+    assertEquals("Initial location should be 'Aromry'", armory, world.getPet().getLocation());
   }
   
   @Test
@@ -719,58 +718,61 @@ public class WorldTest {
   @Test
   public void testMovePetToDifferentRoom() {
     world.createPlayer("Alice", 2); 
-      String moveResult = world.movePet(0, 2); 
-      assertEquals("Pet has been moved to Billiard Room.", moveResult);
+    String moveResult = world.movePet(0, 2); 
+    assertEquals("Pet has been moved to Billiard Room.", moveResult);
   }
   
   @Test
-  public void testInitializePetDFS() {
-      world.initializePetDFS(); 
-      CharacterPet pet = world.getPet(); 
-      Stack<Block> path = pet.getPath();
-      StringBuilder pathString = new StringBuilder();
-      while (!path.isEmpty()) {
-        Block room = path.pop();
-        pathString.append(room.getRoomName()).append(" -> ");
+  public void testinitializePetDfs() {
+    world.initializePetDfs(); 
+    CharacterPet pet = world.getPet(); 
+    Stack<Block> path = pet.getPath();
+    StringBuilder pathString = new StringBuilder();
+    while (!path.isEmpty()) {
+      Block room = path.pop();
+      pathString.append(room.getRoomName()).append(" -> ");
     }
-      String expectedPath = "Billiard Room -> Armory -> Dining Hall -> Drawing Room -> Foyer -> Piazza -> "
-          + "Hedge Maze -> Green House -> Hedge Maze -> Piazza -> Winter Garden -> Carriage House -> "
-          + "Winter Garden -> Piazza -> Foyer -> Drawing Room -> Wine Cellar -> Kitchen -> Parlor -> "
-          + "Servants' Quarters -> Lancaster Room -> Lilac Room -> Master Suite -> Library -> Nursery -> "
-          + "Library -> Trophy Room -> Tennessee Room";  
-      String actualPath = pathString.toString().trim();
-      if (actualPath.endsWith("->")) {
-          actualPath = actualPath.substring(0, actualPath.length() - 3);
-      }
-      assertEquals("DFS path does not match expected", expectedPath.trim(), actualPath);
+    String expectedPath = "Billiard Room -> Armory -> Dining Hall -> "
+        + "Drawing Room -> Foyer -> Piazza -> "
+        + "Hedge Maze -> Green House -> Hedge Maze -> Piazza -> Winter Garden -> Carriage House -> "
+        + "Winter Garden -> Piazza -> Foyer -> Drawing Room -> Wine Cellar -> Kitchen -> Parlor -> "
+        + "Servants' Quarters -> Lancaster Room -> Lilac Room -> "
+        + "Master Suite -> Library -> Nursery -> "
+        + "Library -> Trophy Room -> Tennessee Room";  
+    String actualPath = pathString.toString().trim();
+    if (actualPath.endsWith("->")) {
+      actualPath = actualPath.substring(0, actualPath.length() - 3);
+    }
+    assertEquals("DFS path does not match expected", expectedPath.trim(), actualPath);
   }
   
   @Test
-  public void testDFSResetsOnPetMove() {
+  public void testDfsResetsOnPetMove() {
     world.createPlayer("Alice", 2); 
-      String moveResult = world.movePet(0, 21);
-      assertTrue("Move message should confirm the move", moveResult.contains("Pet has been moved"));
-      CharacterPet pet = world.getPet(); 
-      world.initializePetDFS();
-      Stack<Block> newPath = pet.getPath();
-      assertFalse("Path should not be empty after move", newPath.isEmpty());
-      StringBuilder pathString = new StringBuilder();
-      while (!newPath.isEmpty()) {
-          pathString.append(newPath.pop().getRoomName()).append(" -> ");
-      }
-      String expectedPath = "Winter Garden -> Carriage House -> Winter Garden -> Piazza -> Foyer -> "
-          + "Drawing Room -> Armory -> Billiard Room -> Dining Hall -> Kitchen -> Parlor -> "
-          + "Servants' Quarters -> Lancaster Room -> Lilac Room -> Master Suite -> Library -> Nursery -> "
-          + "Library -> Trophy Room -> Tennessee Room -> Trophy Room ->";  
-      assertTrue("Path should start with the expected initial rooms",
-          pathString.toString().startsWith(expectedPath));
+    String moveResult = world.movePet(0, 21);
+    assertTrue("Move message should confirm the move", moveResult.contains("Pet has been moved"));
+    CharacterPet pet = world.getPet(); 
+    world.initializePetDfs();
+    Stack<Block> newPath = pet.getPath();
+    assertFalse("Path should not be empty after move", newPath.isEmpty());
+    StringBuilder pathString = new StringBuilder();
+    while (!newPath.isEmpty()) {
+      pathString.append(newPath.pop().getRoomName()).append(" -> ");
+    }
+    String expectedPath = "Winter Garden -> Carriage House -> Winter Garden -> Piazza -> Foyer -> "
+        + "Drawing Room -> Armory -> Billiard Room -> Dining Hall -> Kitchen -> Parlor -> "
+        + "Servants' Quarters -> Lancaster Room -> Lilac Room ->"
+        + " Master Suite -> Library -> Nursery -> "
+        + "Library -> Trophy Room -> Tennessee Room -> Trophy Room ->";  
+    assertTrue("Path should start with the expected initial rooms",
+        pathString.toString().startsWith(expectedPath));
   }
   
   @Test
   public void testVisibilityPlayersWithoutPet() {
     world.createPlayer("Bob", 1);
     world.createPlayer("Eric", 1);
-      assertTrue("Player should be seen by others in the same room", world.canPlayerBeSeenByAny(1));
+    assertTrue("Player should be seen by others in the same room", world.canPlayerBeSeenByAny(1));
   }
   
   @Test
@@ -787,7 +789,8 @@ public class WorldTest {
   public void testVisibilityPlayersNeighborSpaceWithoutPet() {
     world.createPlayer("Bob", 1);
     world.createPlayer("Eric", 5);
-      assertTrue("Player should be seen by others in the neigbor room", world.canPlayerBeSeenByAny(1));
+    assertTrue("Player should be seen by others in the neigbor "
+        + "room", world.canPlayerBeSeenByAny(1));
   }
   
   @Test
@@ -797,8 +800,8 @@ public class WorldTest {
     world.createPlayer("Eric", 21);
     world.createPlayer("Ada", 3);
     System.out.println(world.getPetInfo());
-      assertFalse("Player should not be seen by others in the neigbor "
-          + "room when pet exists as the one being seen", world.canPlayerBeSeenByAny(2));
+    assertFalse("Player should not be seen by others in the neigbor "
+        + "room when pet exists as the one being seen", world.canPlayerBeSeenByAny(2));
   }
   
   @Test
@@ -807,8 +810,8 @@ public class WorldTest {
     world.movePet(0, 21);
     world.createPlayer("Eric", 21);
     world.createPlayer("Ada", 3);
-      assertTrue("Player should be seen by others in the neigbor "
-          + "room when pet exists with other player", world.canPlayerBeSeenByAny(2));
+    assertTrue("Player should be seen by others in the neigbor "
+        + "room when pet exists with other player", world.canPlayerBeSeenByAny(2));
   }
   
   @Test
@@ -830,7 +833,8 @@ public class WorldTest {
     world.usePlayerItem(0, "Revolver");
     for (Block room : world.getRooms()) {
       for (Gadget item : room.getItem()) {
-        assertFalse("Revolver should disappear from the game",item.getItemName() == "Revolver");
+        assertFalse("Revolver should disappear from the game", 
+            item.getItemName().equals("Revolver"));
       }
     }
   }
@@ -842,7 +846,8 @@ public class WorldTest {
     world.usePlayerItem(0, "Revolver");
     for (Block room : world.getRooms()) {
       for (Gadget item : room.getItem()) {
-        assertFalse("Revolver should disappear from the game",item.getItemName() == "Revolver");
+        assertFalse("Revolver should disappear from the game", 
+            item.getItemName().equals("Revolver"));
       }
     }
     world.murderAttempt(0);
@@ -855,7 +860,8 @@ public class WorldTest {
   public void testUseNonCarryingItem() {
     CharacterPlayer bob = world.createPlayer("Bob", 1);
     for (Gadget item : bob.getItem()) {
-      assertFalse("Bob should not have item Machine Gun", item.getItemName() != "Piece of Rope");
+      assertFalse("Bob should not have item Machine Gun", 
+          !item.getItemName().equals("Piece of Rope"));
     }
     world.playerPickUpItem(0, "Revolver");
     assertThrows(IllegalArgumentException.class, () -> {
@@ -882,10 +888,11 @@ public class WorldTest {
   public void testAttackNotInSameSpace() {
     CharacterPlayer bob = world.createPlayer("Bob", 2);
     CharacterTarget target = world.getTarget();
-    assertFalse("Bob and target should not be in the same location", bob.getLocation().equals(target.getLocation()));
+    assertFalse("Bob and target should not be in the same location", 
+        bob.getLocation().equals(target.getLocation()));
     assertThrows(IllegalArgumentException.class, () -> { 
       world.murderAttempt(0); 
-      });
+    });
   }
   
   @Test
@@ -908,10 +915,10 @@ public class WorldTest {
     CharacterTarget target = world.getTarget();
     int initialHealth = target.getHealthPoint();
     String murderResult = world.murderAttempt(0);
-    int finalHealth = target.getHealthPoint();
     assertTrue("The string does contain 'Success'", murderResult.contains("Failed"));
     assertEquals("Pet should be in the same room", ada.getLocation(), world.getPet().getLocation());
     assertEquals("Initial health should be 50", 50, initialHealth);
+    int finalHealth = target.getHealthPoint();
     assertEquals("Final health should be 50 after the failed attack", 50, finalHealth);
   }
   
@@ -923,10 +930,11 @@ public class WorldTest {
     world.movePetToNextRoom();
     int initialHealth = target.getHealthPoint();
     String murderResult = world.murderAttempt(0);
-    int finalHealth = target.getHealthPoint();
     assertTrue("The string does contain 'Success'", murderResult.contains("Failed"));
-    assertNotEquals("Pet should be in the same room", ada.getLocation(), world.getPet().getLocation());
+    assertNotEquals("Pet should be in the same room", 
+        ada.getLocation(), world.getPet().getLocation());
     assertEquals("Initial health should be 50", 50, initialHealth);
+    int finalHealth = target.getHealthPoint();
     assertEquals("Final health should be 50 after the failed attack", 50, finalHealth);
   }
   
@@ -938,15 +946,12 @@ public class WorldTest {
     CharacterTarget target = world.getTarget();
     int initialHealth = target.getHealthPoint();
     String murderResult = world.murderAttempt(0);
-    int finalHealth = target.getHealthPoint();
     assertTrue("The string does contain 'Success'", murderResult.contains("Success"));
-    assertEquals("Pet should be in the same room", target.getLocation(), world.getPet().getLocation());
+    assertEquals("Pet should be in the same room", target.getLocation(), 
+        world.getPet().getLocation());
     assertEquals("Initial health should be 50", 50, initialHealth);
+    int finalHealth = target.getHealthPoint();
     assertEquals("Final health should be 50 after the failed attack", 49, finalHealth);
   }
-  
-  
-  
-  
-  
+
 }

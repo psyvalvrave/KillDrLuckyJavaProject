@@ -202,40 +202,144 @@ public interface WorldOutline {
    */
   List<Integer> getNeighborRooms(int roomId);
 
+  /**
+   * Retrieves and displays information about the room in which the player is currently located.
+   * 
+   * @param playerId The ID of the player whose room information is being requested.
+   * @return A string detailing the room's information.
+   */
   String displayPlayerRoomInfo(int playerId);
 
+  /**
+   * Retrieves a list of names or IDs of rooms adjacent to the player's current room.
+   * 
+   * @param playerId The ID of the player.
+   * @return A list of neighboring room names or IDs.
+   */
   List<String> getPlayerNeighborRoom(int playerId);
 
+  /**
+   * Creates a pet character in the game world.
+   * 
+   * @param petName The name of the pet.
+   * @param initialRoom The initial room where the pet will be located.
+   * @return A string indicating the successful creation and placement of the pet.
+   */
   String callCharacterPet(String petName, Block initialRoom);
 
+  /**
+   * Retrieves information about the pet in the game.
+   * 
+   * @return A string containing details about the pet.
+   */
   String getPetInfo();
 
+  /**
+   * Moves the pet to the next room along its path if there is one defined in its path stack.
+   * 
+   * @return A string describing the result of the move operation.
+   */
   String movePetToNextRoom();
 
-  void initializePetDFS();
+  /**
+   * Initializes or reinitializes the Depth-First Search (DFS) path for 
+   * the pet based on its current location.
+   */
+  void initializePetDfs();
 
+  /**
+   * Checks if the specified player can be seen by any other player in the game.
+   * 
+   * @param playerId The ID of the player to check visibility for.
+   * @return True if the player can be seen by at least one other player, otherwise false.
+   */
   boolean canPlayerBeSeenByAny(int playerId);
 
+  /**
+   * Checks if a player can interact with the pet based on their respective locations.
+   * 
+   * @param playerId The ID of the player attempting to interact with the pet.
+   * @return True if the player and pet are in the same room, otherwise false.
+   */
   boolean canInteractWithPet(int playerId);
 
+  /**
+   * Moves the pet to a specified room, if the player requesting 
+   * the move is in the same room as the pet.
+   * 
+   * @param playerId The ID of the player moving the pet.
+   * @param targetRoomId The ID of the room to move the pet to.
+   * @return A string indicating the success or failure of the move.
+   */
   String movePet(int playerId, int targetRoomId);
 
+  /**
+   * Retrieves the current health points of the target character.
+   * 
+   * @return The health points of the target.
+   */
   int getTargetHealthPoint();
 
+  /**
+   * Retrieves a list of items currently in possession of the specified player.
+   * 
+   * @param playerId The ID of the player whose items are being listed.
+   * @return A list of item names held by the player.
+   */
   List<String> getPlayerItems(int playerId);
 
+  /**
+   * Attempts a murder action by the specified player against the target.
+   * 
+   * @param playerId The ID of the player attempting the murder.
+   * @return A string describing the outcome of the murder attempt.
+   */
   String murderAttempt(int playerId);
 
+  /**
+   * Allows a player to use a specific item, potentially affecting murder value.
+   * 
+   * @param playerId The ID of the player using the item.
+   * @param itemName The name of the item to use.
+   * @throws IllegalArgumentException If the item is not in the player's possession.
+   */
   void usePlayerItem(int playerId, String itemName) throws IllegalArgumentException;
 
+  /**
+   * Checks if a murder attempt can be made by the specified player based on game rules.
+   * 
+   * @param playerId The ID of the player.
+   * @return True if the conditions for a murder attempt are met, otherwise false.
+   */
   boolean canMurderAttempt(int playerId);
 
+  /**
+   * Removes the pet from the game, clearing any associated state for testing purpose.
+   */
   void removePet();
 
+  /**
+   * Retrieves the location information of a player.
+   * 
+   * @param playerId The ID of the player whose location is being queried.
+   * @return A string representing the player's location.
+   */
   String getPlayerLocation(int playerId);
 
+  /**
+   * Directs a player to use the most powerful item they possess 
+   * to enhance their murder attempt capability.
+   * 
+   * @param playerId The ID of the player.
+   */
   void usePlayerHighestItem(int playerId);
 
+  /**
+   * Retrieves detailed information about all items held by a player.
+   * 
+   * @param playerId The ID of the player.
+   * @return A string listing all items along with their details such as murder values.
+   */
   String getPlayerItemsInfo(int playerId);
   
 }

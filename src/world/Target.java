@@ -4,7 +4,7 @@ package world;
  * Represents a target in the game, capable of basic movement and interactions,
  * by implementing the Character interface.
  */
-public class Target implements CharacterTarget{
+public class Target implements CharacterTarget {
   private final String name;
   private Block currentRoom;
   private int healthPoint; 

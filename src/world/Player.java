@@ -48,10 +48,11 @@ public class Player implements CharacterPlayer {
   @Override
   public void murder(CharacterTarget target) {
     if (target == null) {
-        throw new IllegalArgumentException("No target specified.");
+      throw new IllegalArgumentException("No target specified.");
     }
     if (!currentRoom.equals(target.getLocation())) {
-        throw new IllegalArgumentException(name + " cannot attack " + target.getCharacterName() + " from current location.");
+      throw new IllegalArgumentException(name + " cannot attack "
+          + "" + target.getCharacterName() + " from current location.");
     }
     target.setHealthPoint(target.getHealthPoint() - murderPoint);
     this.murderPoint = 1;
@@ -60,7 +61,7 @@ public class Player implements CharacterPlayer {
   @Override
   public void useItem(Gadget item) {
     if (item == null || !items.contains(item)) {
-        throw new IllegalArgumentException("Specified item is not in possession.");
+      throw new IllegalArgumentException("Specified item is not in possession.");
     }
     this.murderPoint = item.getMurderValue();  
     items.remove(item); 
@@ -70,15 +71,15 @@ public class Player implements CharacterPlayer {
   public void useHighestItem() {
     if (items.isEmpty()) {
       return; 
-  }
+    }
     Gadget highestValueItem = items.stream()
         .max((item1, item2) -> Integer.compare(item1.getMurderValue(), item2.getMurderValue()))
         .orElse(null);
     if (highestValueItem != null) {
       this.murderPoint = highestValueItem.getMurderValue();
       items.remove(highestValueItem);  
+    }
   }
-}
   
   @Override
   public String getCharacterInfo() {
@@ -142,28 +143,28 @@ public class Player implements CharacterPlayer {
         && Objects.equals(items, other.items);
   }
   
-
+  @Override
   public void pickItem(Gadget item) throws IllegalArgumentException {
-    Room currentRoom = (Room) getLocation();
-    if (!currentRoom.getItem().contains(item)) {
+    Room playerCurrentRoom = (Room) getLocation();
+    if (!playerCurrentRoom.getItem().contains(item)) {
       throw new IllegalArgumentException("Item not available in the room.");
     }
     if (items.size() >= itemLimit) {
       throw new IllegalArgumentException("Item limit reached. Cannot pick up any more items.");
     }
     items.add((Item) item);
-    currentRoom.removeItem((Item) item);
+    playerCurrentRoom.removeItem((Item) item);
   }
   
   @Override
   public String lookAround() {
-    Room currentRoom = (Room) getLocation();
+    Room playerCurrentRoom = (Room) getLocation();
     StringBuilder info = new StringBuilder();
-    info.append("Current Room ID: ").append(currentRoom.getRoomId()).append("\n")
-        .append("Current Room Name: ").append(currentRoom.getRoomName()).append("\n")
-        .append("Current Room Items: ").append(currentRoom.listItems()).append("\n");
+    info.append("Current Room ID: ").append(playerCurrentRoom.getRoomId()).append("\n")
+        .append("Current Room Name: ").append(playerCurrentRoom.getRoomName()).append("\n")
+        .append("Current Room Items: ").append(playerCurrentRoom.listItems()).append("\n");
 
-    List<Block> visibleAndNeighbor = currentRoom.getVisibleFrom().stream()
+    List<Block> visibleAndNeighbor = playerCurrentRoom.getVisibleFrom().stream()
         .filter(currentRoom.getNeighbor()::contains)
         .collect(Collectors.toList());
 
@@ -194,31 +195,31 @@ public class Player implements CharacterPlayer {
   
   @Override
   public String lookAround(List<Block> restrictedRooms) {
-    Room currentRoom = (Room) getLocation();
+    Room playerCurrentRoom = (Room) getLocation();
     StringBuilder info = new StringBuilder();
-    info.append("Current Room ID: ").append(currentRoom.getRoomId()).append("\n")
-        .append("Current Room Name: ").append(currentRoom.getRoomName()).append("\n")
-        .append("Current Room Items: ").append(currentRoom.listItems()).append("\n");
+    info.append("Current Room ID: ").append(playerCurrentRoom.getRoomId()).append("\n")
+        .append("Current Room Name: ").append(playerCurrentRoom.getRoomName()).append("\n")
+        .append("Current Room Items: ").append(playerCurrentRoom.listItems()).append("\n");
 
-    List<Block> visibleRooms = currentRoom.getVisibleFrom();
+    List<Block> visibleRooms = playerCurrentRoom.getVisibleFrom();
     if (!visibleRooms.isEmpty()) {
-        info.append("Visible Rooms:\n");
-        for (Block room : visibleRooms) {
-            if (restrictedRooms.contains(room)) {
-                info.append("  Room ID: ").append(room.getRoomId())
-                    .append(", Room Name: ").append(room.getRoomName())
-                    .append(": Restricted details due to pet presence.\n");
-            } else {
-                info.append("  Room ID: ").append(room.getRoomId())
-                    .append(", Room Name: ").append(room.getRoomName())
-                    .append(", Items: ").append(((Room) room).listItems()).append("\n");
-            }
+      info.append("Visible Rooms:\n");
+      for (Block room : visibleRooms) {
+        if (restrictedRooms.contains(room)) {
+          info.append("  Room ID: ").append(room.getRoomId())
+              .append(", Room Name: ").append(room.getRoomName())
+              .append(": Restricted details due to pet presence.\n");
+        } else {
+          info.append("  Room ID: ").append(room.getRoomId())
+              .append(", Room Name: ").append(room.getRoomName())
+              .append(", Items: ").append(((Room) room).listItems()).append("\n");
         }
+      }
     } else {
-        info.append("No visible rooms from your current location.\n");
+      info.append("No visible rooms from your current location.\n");
     }
     return info.toString();
-}
+  }
 
   
 
@@ -241,7 +242,7 @@ public class Player implements CharacterPlayer {
   public void setItemLimit(int newItemLimit) {
     if (newItemLimit < 0) {
       throw new IllegalArgumentException("newItemLimit cannot be negative");
-  }
+    }
     this.itemLimit = newItemLimit;
     while (items.size() > itemLimit) {
       items.remove(items.size() - 1); 
@@ -266,16 +267,16 @@ public class Player implements CharacterPlayer {
   public boolean canSee(CharacterPlayer otherPlayer) {
     Block otherPlayerLocation = otherPlayer.getLocation();
     if (this.currentRoom.equals(otherPlayerLocation)) {
-        return true;
+      return true;
     }
     List<Block> neighbors = this.currentRoom.getNeighbor();
     for (Block neighbor : neighbors) {
-        if (neighbor.equals(otherPlayerLocation)) {
-            return true;
-        }
+      if (neighbor.equals(otherPlayerLocation)) {
+        return true;
+      }
     }
     return false; 
-}
+  }
 
 
   

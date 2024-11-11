@@ -82,7 +82,8 @@ public class GameController implements Controller {
             command.execute(output);
             break;
           case 2: 
-            command = new CreateComputerPlayerCommand(world, scanner, playerIds, playerNames, isComputer);
+            command = new CreateComputerPlayerCommand(world, scanner, 
+                playerIds, playerNames, isComputer);
             command.execute(output);
             break;
           case 3:  
@@ -131,81 +132,81 @@ public class GameController implements Controller {
       int playerId) throws IOException, InterruptedException {
     boolean validInput = false;
     while (!validInput) {
-    try {
-      int choice = Integer.parseInt(input);
-      Command command = null;
-      switch (choice) {
-        case 1:  
-          command = new DisplayRoomInfoCommand(world, scanner);
-          command.execute(output);
-          break;
-        case 2:  
-          command = new SaveWorldMapCommand(world);
-          command.execute(output);
-          break;
-        case 3:
-          command = new MurderTargetCommand(world, playerId, scanner);  
-          command.execute(output);
-          if (world.getTargetHealthPoint() <= 0) {
-            print("Target eliminated. " + playerNames.get(playerId) + " win!");
-            setRunning(false);
-            print("Game Over!");
-          } else {
+      try {
+        int choice = Integer.parseInt(input);
+        Command command = null;
+        switch (choice) {
+          case 1:  
+            command = new DisplayRoomInfoCommand(world, scanner);
+            command.execute(output);
+            break;
+          case 2:  
+            command = new SaveWorldMapCommand(world);
+            command.execute(output);
+            break;
+          case 3:
+            command = new MurderTargetCommand(world, playerId, scanner);  
+            command.execute(output);
+            if (world.getTargetHealthPoint() <= 0) {
+              print("Target eliminated. " + playerNames.get(playerId) + " win!");
+              setRunning(false);
+              print("Game Over!");
+            } else {
+              advanceTurn(world);
+            }
+            break;
+          case 4:  
+            command = new MovePetCommand(world, playerId, scanner);
+            command.execute(output);
             advanceTurn(world);
-          }
-          break;
-        case 4:  
-          command = new MovePetCommand(world, playerId, scanner);
-          command.execute(output);
-          advanceTurn(world);
-          break;
-        case 5:  
-          command = new MovePlayerCommand(world, playerId, scanner);
-          command.execute(output);
-          advanceTurn(world);
-          break;
-        case 6: 
-          command = new PickUpItemCommand(world, playerId, scanner);
-          command.execute(output);
-          advanceTurn(world);
-          break;
-        case 7: 
-        command = new LookAroundCommand(world, playerId);
-        command.execute(output);
-          advanceTurn(world);
-          break;
-        case 8:  
-          command = new PlayerInfoCommand(world, playerIds, scanner);
-          command.execute(output);
-          break;
-        case 9: 
-          advanceTurn(world);
-          break;
-        case 0:
-          print("Quitting game.");
-          setRunning(false);
-          break;
-        case 10:
-          command = new TargetInfoCommand(world);
-          command.execute(output);
-          break;
-        default:
-          print("Unknown command. Please try again.");
+            break;
+          case 5:  
+            command = new MovePlayerCommand(world, playerId, scanner);
+            command.execute(output);
+            advanceTurn(world);
+            break;
+          case 6: 
+            command = new PickUpItemCommand(world, playerId, scanner);
+            command.execute(output);
+            advanceTurn(world);
+            break;
+          case 7: 
+            command = new LookAroundCommand(world, playerId);
+            command.execute(output);
+            advanceTurn(world);
+            break;
+          case 8:  
+            command = new PlayerInfoCommand(world, playerIds, scanner);
+            command.execute(output);
+            break;
+          case 9: 
+            advanceTurn(world);
+            break;
+          case 0:
+            print("Quitting game.");
+            setRunning(false);
+            break;
+          case 10:
+            command = new TargetInfoCommand(world);
+            command.execute(output);
+            break;
+          default:
+            print("Unknown command. Please try again.");
+        }
+        validInput = true;
+      } catch (NumberFormatException e) {
+        print("Invalid input, please enter a number.");
+        displayMenu(world);
+        input = scanner.nextLine();
+      } catch (IllegalArgumentException e) {
+        print("Error processing command: " + e.getMessage());
+        displayMenu(world);
+        input = scanner.nextLine();
+      } catch (IOException e) {
+        print("Error processing command: " + e.getMessage());
+        displayMenu(world);
+        input = scanner.nextLine();
       }
-      validInput = true;
-    } catch (NumberFormatException e) {
-      print("Invalid input, please enter a number.");
-      displayMenu(world);
-      input = scanner.nextLine();
-    } catch (IllegalArgumentException e) {
-      print("Error processing command: " + e.getMessage());
-      displayMenu(world);
-      input = scanner.nextLine();
-    } catch (IOException e) {
-      print("Error processing command: " + e.getMessage());
-      displayMenu(world);
-      input = scanner.nextLine();
-    }
     }
   }
   
@@ -225,51 +226,51 @@ public class GameController implements Controller {
           advanceTurn(world);
         }
       } else {
-      int action = rng.nextInt(3);  
-      switch (action) {
-        case 0:
-          int currentRoomId = world.getPlayerRoomId(playerId); 
-          List<Integer> neighbors = world.getNeighborRooms(currentRoomId); 
-          print("Current Room ID: " + currentRoomId);
-          print("Neighbor Rooms: " + neighbors);
-          if (neighbors.isEmpty()) {
-            print("No available moves for player " + playerNames.get(playerId));
-            return;
-          }
-          int roomIndex = rng.nextInt(neighbors.size());
-          int targetRoomId = neighbors.get(roomIndex);
-          print("Computer player try to move to " + targetRoomId);
-          print("Computer player: " + (world.movePlayer(playerId, targetRoomId)));
-          Thread.sleep(100);
-          advanceTurn(world);
-          break;
-        case 1:
-          print("Start Picking Item Up");
-          int roomId = world.getPlayerRoomId(playerId);
-          List<String> itemsInRoom = world.getRoomItems(roomId);
-          if (!itemsInRoom.isEmpty()) {
-            int itemIndex = rng.nextInt(itemsInRoom.size());
-            String itemName = itemsInRoom.get(itemIndex);
-            print("Computer player: " + world.playerPickUpItem(playerId, itemName));
-          } else {
-            print("No items available to pick up in this room for player " + playerId);
-          }
-          Thread.sleep(100);
-          advanceTurn(world);
-          break;
-        case 2:
-          print("Start Looking Around");
-          print("Computer player: " + world.playerLookAround(playerId));
-          Thread.sleep(100);
-          advanceTurn(world);
-          break;
-        case 3:
-          print("Computer player " + playerId + " has decided to quit the game.");
-          setRunning(false);
-          break;
-        default:
-          break;
-      }
+        int action = rng.nextInt(3);  
+        switch (action) {
+          case 0:
+            int currentRoomId = world.getPlayerRoomId(playerId); 
+            List<Integer> neighbors = world.getNeighborRooms(currentRoomId); 
+            print("Current Room ID: " + currentRoomId);
+            print("Neighbor Rooms: " + neighbors);
+            if (neighbors.isEmpty()) {
+              print("No available moves for player " + playerNames.get(playerId));
+              return;
+            }
+            int roomIndex = rng.nextInt(neighbors.size());
+            int targetRoomId = neighbors.get(roomIndex);
+            print("Computer player try to move to " + targetRoomId);
+            print("Computer player: " + (world.movePlayer(playerId, targetRoomId)));
+            Thread.sleep(100);
+            advanceTurn(world);
+            break;
+          case 1:
+            print("Start Picking Item Up");
+            int roomId = world.getPlayerRoomId(playerId);
+            List<String> itemsInRoom = world.getRoomItems(roomId);
+            if (!itemsInRoom.isEmpty()) {
+              int itemIndex = rng.nextInt(itemsInRoom.size());
+              String itemName = itemsInRoom.get(itemIndex);
+              print("Computer player: " + world.playerPickUpItem(playerId, itemName));
+            } else {
+              print("No items available to pick up in this room for player " + playerId);
+            }
+            Thread.sleep(100);
+            advanceTurn(world);
+            break;
+          case 2:
+            print("Start Looking Around");
+            print("Computer player: " + world.playerLookAround(playerId));
+            Thread.sleep(100);
+            advanceTurn(world);
+            break;
+          case 3:
+            print("Computer player " + playerId + " has decided to quit the game.");
+            setRunning(false);
+            break;
+          default:
+            break;
+        }
       }
     } catch (IllegalArgumentException e) {
       print(e.getMessage());

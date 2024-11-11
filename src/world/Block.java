@@ -66,10 +66,35 @@ public interface Block {
    */
   List<Block> getVisibleFrom();
   
+  /**
+   * Adds a neighboring room to this room. Neighbors are typically adjacent rooms 
+   * to which a player can directly move.
+   * 
+   * @param room The room to be added as a neighbor.
+   */
   void addNeighbor(Room room);
+  
+  /**
+   * Adds a room to the list of rooms that are visible from this room.
+   * Visibility from a room does not necessarily imply physical adjacency, 
+   * but means that actions or events in the visible room can be observed from the current room.
+   * 
+   * @param room The room to be added to the visible from list.
+   */
   void addVisibleFromRoom(Room room);
 
+  /**
+   * Retrieves detailed information about the room, typically including ID, 
+   * name, and other relevant details.
+   * 
+   * @return A string containing detailed information about the room.
+   */
   String getInfo();
 
+  /**
+   * Adds an item to the room. This item can then be interacted with by players in the room.
+   * 
+   * @param item The gadget to be added to the room.
+   */
   void addItem(Gadget item);
 }

@@ -4,7 +4,6 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import world.Block;
 import world.Gadget;
 import world.WorldOutline;
@@ -64,10 +63,19 @@ public class MockWorldOutline implements WorldOutline {
     this.lookAroundResult = result;
   }
   
+  /**
+   * Change the conditional check for murder for test purpose.
+   */
   public void toggleMurderAttempt() {
     this.mockMurderAttempt = !this.mockMurderAttempt;
   }
   
+  /**
+   * Sets the mockTargetHealthPoint for test part. 
+   * The game will not just end when we test with Mock. 
+   *
+   * @param hp the health point for target, this should be > 0.
+   */
   public void setTargetHealthPoint(int hp) {
     this.mockTargetHealthPoint = hp;
   }
@@ -243,7 +251,7 @@ public class MockWorldOutline implements WorldOutline {
   }
 
   @Override
-  public void initializePetDFS() {   
+  public void initializePetDfs() {   
   }
 
   @Override

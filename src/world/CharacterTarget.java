@@ -32,8 +32,18 @@ public interface CharacterTarget {
    */
   String getCharacterInfo();
 
+  /**
+   * Retrieves the current health points of this target.
+   * 
+   * @return The current health points of the character.
+   */
   int getHealthPoint();
   
+  /**
+   * Sets the health points of this target to the specified value.
+   * 
+   * @param hp The new health points value for the character.
+   */
   void setHealthPoint(int hp);
 
 }

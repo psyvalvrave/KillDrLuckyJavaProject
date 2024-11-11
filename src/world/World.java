@@ -32,7 +32,7 @@ public class World implements WorldOutline {
   private List<String[]> roomData;
   private List<String[]> itemData;
   private String targetName;
-  private String petName ;
+  private String petName;
   private int targetHealth = 0;
   private String worldName;
   private int itemLimit = 3;
@@ -54,7 +54,7 @@ public class World implements WorldOutline {
     loadWorld(inputSource);
     establishRoomNeighbors();
     establishRoomVisble();
-    initializePetDFS();
+    initializePetDfs();
     movePetToNextRoom();
     setWorldText();
   }
@@ -198,6 +198,8 @@ public class World implements WorldOutline {
 
   /**
    * Return the target object in the model. 
+   * 
+   * @return the CharacterTarget target
    */
   public CharacterTarget getTarget() {
     return target;
@@ -309,7 +311,8 @@ public class World implements WorldOutline {
         g.drawString("Target: " + target.getCharacterName(), x1Draw + 25, y1Draw + 15);
       }
       int petOffset = 0;
-      if (pet != null && pet.getLocation() != null && roomName.equals(pet.getLocation().getRoomName())) {
+      if (pet != null && pet.getLocation() != null && roomName
+          .equals(pet.getLocation().getRoomName())) {
         g.setColor(Color.BLUE);
         g.fillOval(x1Draw + 10, y1Draw + 25, 10, 10); 
         g.drawString("Pet: " + pet.getCharacterName(), x1Draw + 25, y1Draw + 30);
@@ -346,24 +349,27 @@ public class World implements WorldOutline {
 
   @Override
   public void setWorldText() {
-      String petInfo = (pet != null) ? String.format("Pet: %s\nPet's Location: %s",
-                                                    pet.getCharacterName(),
-                                                    (pet.getLocation() != null ? pet.getLocation().getRoomName() : "Unknown"))
-                                     : "No pet currently set.";
+    String petInfo = (pet != null) ? String.format("Pet: %s\nPet's Location: %s",
+                                                  pet.getCharacterName(),
+                                                  (pet.getLocation() != null 
+                                                  ? pet.getLocation().getRoomName() : "Unknown"))
+                                   : "No pet currently set.";
 
-      this.worldText = String.format("World Name: %s\n" 
-                                    + "World Dimensions: %dx%d\n" 
-                                    + "Number of Rooms: %d\n" 
-                                    + "Number of Items: %d\n" 
-                                    + "Target: %s\n" 
-                                    + "Target's Health: %d\n" 
-                                    + "Target's Location: %s\n"
-                                    + "%s", 
-                                    this.worldName, this.cols, this.rows, getRoomCount(), getItemCount(),
-                                    (target != null ? target.getCharacterName() : "No target"),
-                                    (target != null ? target.getHealthPoint() : 0),
-                                    (target != null && target.getLocation() != null ? target.getLocation().getRoomName() : "Unknown"),
-                                    petInfo);
+    this.worldText = String.format("World Name: %s\n" 
+                                  + "World Dimensions: %dx%d\n" 
+                                  + "Number of Rooms: %d\n" 
+                                  + "Number of Items: %d\n" 
+                                  + "Target: %s\n" 
+                                  + "Target's Health: %d\n" 
+                                  + "Target's Location: %s\n"
+                                  + "%s", 
+                                  this.worldName, this.cols, this.rows, getRoomCount(), 
+                                  getItemCount(),
+                                  (target != null ? target.getCharacterName() : "No target"),
+                                  (target != null ? target.getHealthPoint() : 0),
+                                  (target != null && target.getLocation() != null 
+                                  ? target.getLocation().getRoomName() : "Unknown"),
+                                  petInfo);
   }
 
   
@@ -541,7 +547,7 @@ public class World implements WorldOutline {
     String petRoomName = pet.getLocation().getRoomName();
     if (roomName == petRoomName) {
       return "Pet is currently here; room details are not displayed.";
-  }
+    }
     String roomInfo = room.getInfo();
     String occupants = getRoomOccupants(room);
     StringBuilder fullInfo = new StringBuilder();
@@ -556,7 +562,7 @@ public class World implements WorldOutline {
     int petRoomId = pet.getLocation().getRoomId();
     if (roomId == petRoomId) {
       return "Pet is currently here; room details are not displayed.";
-  }
+    }
     String roomInfo = room.getInfo();
 
     String occupants = getRoomOccupants(room);
@@ -698,42 +704,45 @@ public class World implements WorldOutline {
 
   @Override
   public String playerLookAround(int playerId) {
-      CharacterPlayer player = getPlayerById(playerId);
-      if (player == null) {
-          throw new IllegalArgumentException("Player not found.");
-      }
-      Block playerRoom = player.getLocation();
-      StringBuilder description = new StringBuilder();
-      Block petLocation = (pet != null) ? pet.getLocation() : null;
+    CharacterPlayer player = getPlayerById(playerId);
+    if (player == null) {
+      throw new IllegalArgumentException("Player not found.");
+    }
+    Block playerRoom = player.getLocation();
+    StringBuilder description = new StringBuilder();
+    Block petLocation = (pet != null) ? pet.getLocation() : null;
 
-      if (petLocation != null && playerRoom.equals(petLocation)) {
-          description.append("You are in the same room as the pet " + pet.getCharacterName() + ", you can see nothing around.\n");
-          return description.toString();
-      }
-
-      if (petLocation != null && petLocation.equals(playerRoom)) {
-          description.append("The pet is here, room details are restricted.\n");
-      } else {
-          List<Block> restrictedRooms = (pet != null) ? Collections.singletonList(petLocation) : Collections.emptyList();
-          description.append(player.lookAround(restrictedRooms));
-          description.append(getRoomOccupants(playerRoom));
-      }
-
-      List<Block> visibleRooms = playerRoom.getVisibleFrom();
-      if (visibleRooms.isEmpty()) {
-          description.append("\nNo visible rooms from your current location.");
-      } else {
-          description.append("\nVisible rooms from here: ");
-          for (Block visibleRoom : visibleRooms) {
-              if (petLocation != null && petLocation.equals(visibleRoom)) {
-                  description.append("\nRoom ").append(visibleRoom.getRoomName()).append(": Presence of pet blocks the view.");
-              } else {
-                  description.append("\nRoom ").append(visibleRoom.getRoomName()).append(": ");
-                  description.append(getRoomOccupants(visibleRoom));
-              }
-          }
-      }
+    if (petLocation != null && playerRoom.equals(petLocation)) {
+      description.append("You are in the same room as the pet "
+          + "" + pet.getCharacterName() + ", you can see nothing around.\n");
       return description.toString();
+    }
+
+    if (petLocation != null && petLocation.equals(playerRoom)) {
+      description.append("The pet is here, room details are restricted.\n");
+    } else {
+      List<Block> restrictedRooms = (pet != null) 
+          ? Collections.singletonList(petLocation) : Collections.emptyList();
+      description.append(player.lookAround(restrictedRooms));
+      description.append(getRoomOccupants(playerRoom));
+    }
+
+    List<Block> visibleRooms = playerRoom.getVisibleFrom();
+    if (visibleRooms.isEmpty()) {
+      description.append("\nNo visible rooms from your current location.");
+    } else {
+      description.append("\nVisible rooms from here: ");
+      for (Block visibleRoom : visibleRooms) {
+        if (petLocation != null && petLocation.equals(visibleRoom)) {
+          description.append("\nRoom ").append(visibleRoom.getRoomName())
+          .append(": Presence of pet blocks the view.");
+        } else {
+          description.append("\nRoom ").append(visibleRoom.getRoomName()).append(": ");
+          description.append(getRoomOccupants(visibleRoom));
+        }
+      }
+    }
+    return description.toString();
   }
 
 
@@ -752,7 +761,7 @@ public class World implements WorldOutline {
   public List<String> getPlayerItems(int playerId) {
     CharacterPlayer player = getPlayerById(playerId);
     if (player == null) {
-        throw new IllegalArgumentException("Player with ID " + playerId + " not found.");
+      throw new IllegalArgumentException("Player with ID " + playerId + " not found.");
     }
     return player.getItem().stream()
                   .map(item -> item.getItemName() + ": Murder Value " + item.getMurderValue())
@@ -794,45 +803,48 @@ public class World implements WorldOutline {
     int roomId = getPlayerRoomId(playerId);
     Block room = getRoomById(roomId);
     if (room == null) {
-        neighborDescriptions.add("Room not found for the given player ID.");
-        return neighborDescriptions;
+      neighborDescriptions.add("Room not found for the given player ID.");
+      return neighborDescriptions;
     }
 
     List<Block> neighbors = room.getNeighbor();
     if (neighbors.isEmpty()) {
-        neighborDescriptions.add("No neighboring rooms.");
-        return neighborDescriptions;
+      neighborDescriptions.add("No neighboring rooms.");
+      return neighborDescriptions;
     }
 
     for (Block block : neighbors) {
-        Room neighborRoom = (Room) block; 
-        neighborDescriptions.add("Room ID: " + neighborRoom.getRoomId() + ", Room Name: " + neighborRoom.getRoomName());
+      Room neighborRoom = (Room) block; 
+      neighborDescriptions.add("Room ID: " + neighborRoom.getRoomId() + ", Room "
+          + "Name: " + neighborRoom.getRoomName());
     }
     return neighborDescriptions;
-}
+  }
   
   /**
    * Creates a new pet with a specified name starting in a specified room.
    * 
-   * @param petName The name of the pet.
+   * @param petNameInput The name of the pet.
    * @param initialRoom The room where the pet should start.
    * @return The new CharacterPet object.
    * @throws IllegalArgumentException If the room index is out of the valid range.
    */
-  public CharacterPet createPet(String petName, Block initialRoom) {
-    Pet newPet = new Pet(petName, initialRoom);
+  public CharacterPet createPet(String petNameInput, Block initialRoom) {
+    Pet newPet = new Pet(petNameInput, initialRoom);
     this.pet = newPet;
     return newPet;
   }
   
   @Override
-  public String callCharacterPet(String petName, Block initialRoom) {
-    CharacterPet pet = createPet(petName, initialRoom);
-    return pet.getCharacterName();
+  public String callCharacterPet(String petNameInput, Block initialRoom) {
+    CharacterPet petCreated = createPet(petNameInput, initialRoom);
+    return petCreated.getCharacterName();
   }
   
   /**
    * Return the pet object in the model.
+   * 
+   * @return The CharacterPet object.
    */
   public CharacterPet getPet() {
     return pet;
@@ -840,23 +852,23 @@ public class World implements WorldOutline {
   
   @Override
   public String getPetInfo() {
-      if (this.pet == null) {
-          return "No pet currently set.";
-      }
-      return this.pet.getCharacterInfo();
+    if (this.pet == null) {
+      return "No pet currently set.";
+    }
+    return this.pet.getCharacterInfo();
   }
   
   @Override
-  public void initializePetDFS() {
+  public void initializePetDfs() {
     Block startRoom = pet.getLocation();
     if (startRoom == null) {
-        return; 
+      return; 
     }
     Stack<Block> path = new Stack<>();
     Set<Integer> visited = new HashSet<>();
     dfsVisit(startRoom, visited, path);
     pet.setPath(path); 
-}
+  }
   
   private void dfsVisit(Block room, Set<Integer> visited, Stack<Block> path) {
     visited.add(room.getRoomId());   
@@ -864,195 +876,186 @@ public class World implements WorldOutline {
     
     if (visited.size() == this.getRoomCount()) {
       return; 
-  }
+    }
 
     for (Block neighbor : room.getNeighbor()) {
-        if (!visited.contains(neighbor.getRoomId())) {
-            dfsVisit(neighbor, visited, path);  
-            if (visited.size() == this.getRoomCount()) {
-              return; 
-          }
-            path.push(room); 
+      if (!visited.contains(neighbor.getRoomId())) {
+        dfsVisit(neighbor, visited, path);  
+        if (visited.size() == this.getRoomCount()) {
+          return; 
         }
+        path.push(room); 
+      }
     }
-}
-
-
-
-@Override
-public String movePetToNextRoom() {
-  if (pet.getPath().isEmpty()) {
-    initializePetDFS();
   }
-  Block nextRoom = pet.getPath().pop();  
-  pet.move(nextRoom);  
-  return String.format("Pet moved to room: %s", nextRoom.getRoomName());
-}
 
-@Override
-public boolean canPlayerBeSeenByAny(int playerId) {
-  CharacterPlayer targetPlayer = getPlayerById(playerId);
-  if (targetPlayer == null) {
+  @Override
+  public String movePetToNextRoom() {
+    if (pet.getPath().isEmpty()) {
+      initializePetDfs();
+    }
+    Block nextRoom = pet.getPath().pop();  
+    pet.move(nextRoom);  
+    return String.format("Pet moved to room: %s", nextRoom.getRoomName());
+  }
+  
+  @Override
+  public boolean canPlayerBeSeenByAny(int playerId) {
+    CharacterPlayer targetPlayer = getPlayerById(playerId);
+    if (targetPlayer == null) {
       throw new IllegalArgumentException("Player with ID " + playerId + " does not exist.");
-  }
-  Block petLocation = pet.getLocation();
-  if (petLocation.equals(targetPlayer.getLocation())) {
-    for (CharacterPlayer player : players) {
-      if (player.getPlayerId() != playerId) {
+    }
+    Block petLocation = pet.getLocation();
+    if (petLocation.equals(targetPlayer.getLocation())) {
+      for (CharacterPlayer player : players) {
+        if (player.getPlayerId() != playerId) {
           if (targetPlayer.getLocation().equals(player.getLocation())) {
             return true; 
           }
+        }
       }
-  }
       return false; 
+    }
+    
+    for (CharacterPlayer player : players) {
+      if (player.getPlayerId() != playerId) {
+        if (player.canSee(targetPlayer)) {
+          return true;  
+        }
+      }
+    }
+    return false;  
   }
   
-  for (CharacterPlayer player : players) {
-      if (player.getPlayerId() != playerId) {
-          if (player.canSee(targetPlayer)) {
-              return true;  
-          }
-      }
-  }
-  return false;  
-}
-
-@Override
-public String movePet(int playerId, int targetRoomId) {
-  CharacterPlayer player = getPlayerById(playerId);
-  if (player == null) {
+  @Override
+  public String movePet(int playerId, int targetRoomId) {
+    CharacterPlayer player = getPlayerById(playerId);
+    if (player == null) {
       return "Error: Player not found.";
-  }
-
+    }
     Block currentRoom = player.getLocation();
     Block petRoom = pet.getLocation();
     if (!currentRoom.equals(petRoom)) {
       throw new IllegalArgumentException(
           "Error: You must be in the same room as the pet to move it.");
+    }
+    Block targetRoom = getRoomById(targetRoomId);
+    if (targetRoom == null) {
+      throw new IllegalArgumentException(
+          "Error: Error: The target room does not exist.");
+    }
+    pet.move(targetRoom);
+    this.initializePetDfs();
+    return "Pet has been moved to " + targetRoom.getRoomName() + ".";
   }
-  Block targetRoom = getRoomById(targetRoomId);
-  if (targetRoom == null) {
-    throw new IllegalArgumentException(
-        "Error: Error: The target room does not exist.");
+  
+  @Override
+  public boolean canInteractWithPet(int playerId) {
+    CharacterPlayer player = getPlayerById(playerId);
+    Block currentRoom = player.getLocation();
+    Block petRoom = pet.getLocation();
+  
+    return currentRoom.equals(petRoom);  
   }
-  pet.move(targetRoom);
-  this.initializePetDFS();
-  return "Pet has been moved to " + targetRoom.getRoomName() + ".";
-}
-
-@Override
-public boolean canInteractWithPet(int playerId) {
-  CharacterPlayer player = getPlayerById(playerId);
-  Block currentRoom = player.getLocation();
-  Block petRoom = pet.getLocation();
-
-  return currentRoom.equals(petRoom);  
-}
-
-@Override
-public boolean canMurderAttempt(int playerId) {
-  CharacterPlayer player = getPlayerById(playerId);
-  Block currentRoom = player.getLocation();
-  Block targetRoom = target.getLocation();
-
-  return currentRoom.equals(targetRoom);  
-}
-
-@Override
-public int getTargetHealthPoint() {
-  return this.target.getHealthPoint();  
-}
-
-@Override
-public String murderAttempt(int playerId) {
-  CharacterPlayer player = getPlayerById(playerId);
-  if (!canMurderAttempt(playerId)) {
-    throw new IllegalArgumentException(
-        "Player " + player.getCharacterName() + " is not in the same room as the target.");
+  
+  @Override
+  public boolean canMurderAttempt(int playerId) {
+    CharacterPlayer player = getPlayerById(playerId);
+    Block currentRoom = player.getLocation();
+    Block targetRoom = target.getLocation();
+  
+    return currentRoom.equals(targetRoom);  
   }
-  if (canPlayerBeSeenByAny(playerId)) {
-      return "Failed: Player " + player.getCharacterName() + 
-             " was seen and cannot proceed with the attack.";
+  
+  @Override
+  public int getTargetHealthPoint() {
+    return this.target.getHealthPoint();  
   }
-  int healthBefore = target.getHealthPoint();
-  player.murder(target);
-  int healthAfter = target.getHealthPoint();
-  if (healthAfter < healthBefore) {
+  
+  @Override
+  public String murderAttempt(int playerId) {
+    CharacterPlayer player = getPlayerById(playerId);
+    if (!canMurderAttempt(playerId)) {
+      throw new IllegalArgumentException(
+          "Player " + player.getCharacterName() + " is not in the same room as the target.");
+    }
+    if (canPlayerBeSeenByAny(playerId)) {
+      return "Failed: Player " + player.getCharacterName()  
+             + " was seen and cannot proceed with the attack.";
+    }
+    int healthBefore = target.getHealthPoint();
+    player.murder(target);
+    int healthAfter = target.getHealthPoint();
+    if (healthAfter < healthBefore) {
       return "Success: Target's health reduced to " + healthAfter + ".";
+    }
+  
+    return "Failed: Attack had no effect on the target.";
   }
-
-  return "Failed: Attack had no effect on the target.";
-}
-
-private Gadget getItemByName(String itemName) {
-  for (Gadget item : items) {
+  
+  private Gadget getItemByName(String itemName) {
+    for (Gadget item : items) {
       if (item.getItemName().equalsIgnoreCase(itemName)) {
-          return item;
+        return item;
       }
+    }
+    throw new IllegalArgumentException("Item with name " + itemName + " not found.");
   }
-  throw new IllegalArgumentException("Item with name " + itemName + " not found.");
-}
-
-@Override
-public void usePlayerItem(int playerId, String itemName) throws IllegalArgumentException {
-  CharacterPlayer player = getPlayerById(playerId);
-  Gadget item = getItemByName(itemName);
-  if (!player.getItem().contains(item)) {
+  
+  @Override
+  public void usePlayerItem(int playerId, String itemName) throws IllegalArgumentException {
+    CharacterPlayer player = getPlayerById(playerId);
+    Gadget item = getItemByName(itemName);
+    if (!player.getItem().contains(item)) {
       throw new IllegalArgumentException("Player does not possess the item: " + itemName);
+    }
+  
+    player.useItem(item); 
   }
-
-  player.useItem(item); 
-}
-
-@Override
-public void removePet() {
-  this.pet = null;
-}
-
-@Override
-public String getPlayerLocation(int playerId) {
-  CharacterPlayer player = getPlayerById(playerId);
-  if (player == null) {
+  
+  @Override
+  public void removePet() {
+    this.pet = null;
+  }
+  
+  @Override
+  public String getPlayerLocation(int playerId) {
+    CharacterPlayer player = getPlayerById(playerId);
+    if (player == null) {
       throw new IllegalArgumentException("Player with ID " + playerId + " does not exist.");
-  }
-  Block playerRoom = player.getLocation();
-  if (playerRoom == null) {
+    }
+    Block playerRoom = player.getLocation();
+    if (playerRoom == null) {
       throw new IllegalStateException("Player location is not set.");
+    }
+    return "Room ID: " + playerRoom.getRoomId() + ", Room Name: " + playerRoom.getRoomName();
   }
-  return "Room ID: " + playerRoom.getRoomId() + ", Room Name: " + playerRoom.getRoomName();
-}
-
-@Override
-public String getPlayerItemsInfo(int playerId) {
-  CharacterPlayer player = getPlayerById(playerId);
-  if (player == null) {
+  
+  @Override
+  public String getPlayerItemsInfo(int playerId) {
+    CharacterPlayer player = getPlayerById(playerId);
+    if (player == null) {
       throw new IllegalArgumentException("Player with ID " + playerId + " does not exist.");
-  }
-  List<Gadget> items = player.getItem();
-  if (items.isEmpty()) {
+    }
+    List<Gadget> playerItems = player.getItem();
+    if (playerItems.isEmpty()) {
       return "Player's items: None.";
-  }
-
-  StringBuilder itemsInfo = new StringBuilder("Player's items:\n");
-  for (Gadget item : items) {
+    }
+  
+    StringBuilder itemsInfo = new StringBuilder("Player's items:\n");
+    for (Gadget item : playerItems) {
       itemsInfo.append("Item Name: ").append(item.getItemName())
                .append(", Murder Value: ").append(item.getMurderValue())
                .append("\n");
+    }
+    return itemsInfo.toString();
   }
-  return itemsInfo.toString();
-}
-
-
-@Override
-public void usePlayerHighestItem(int playerId) {
+  
+  
+  @Override
+  public void usePlayerHighestItem(int playerId) {
     CharacterPlayer player = getPlayerById(playerId);
     player.useHighestItem();  
-}
-
-
-
-
-
-
-
+  }
+  
 }
