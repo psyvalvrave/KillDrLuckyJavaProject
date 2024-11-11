@@ -28,7 +28,7 @@ public class PlayerInfoCommand implements Command {
                 output.append(playerInfo + "\n");
             }
         } catch (NumberFormatException e) {
-            output.append("Invalid player ID. Please enter a valid number.\n");
+          throw new NumberFormatException(e.getMessage() + "\n");
         } 
     }
 }

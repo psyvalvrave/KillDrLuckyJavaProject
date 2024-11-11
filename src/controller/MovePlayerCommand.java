@@ -35,7 +35,7 @@ public class MovePlayerCommand implements Command {
         String moveResult = world.movePlayer(playerId, targetRoomId);
         output.append(moveResult + "\n");
     } catch (NumberFormatException e) {
-        output.append("Invalid target room ID. Please enter a number.\n");
+      throw new NumberFormatException(e.getMessage() + "\n");
     }
   }
 }

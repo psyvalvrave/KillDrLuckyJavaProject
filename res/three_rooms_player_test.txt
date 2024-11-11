@@ -6,7 +6,7 @@ Fortune the Cat
 26 13 27 18 Close Two
  0 23  3 28 Far Away
 
-3
+20
 0 3 Crepe Pan
 0 2 Letter Opener
 1 2 Shoe Horn

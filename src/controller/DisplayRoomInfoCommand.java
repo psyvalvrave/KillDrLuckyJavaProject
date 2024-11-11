@@ -22,7 +22,8 @@ public class DisplayRoomInfoCommand implements Command {
           String roomInfo = world.displayRoomInfo(roomId);
           output.append(roomInfo + "\n");
       } catch (NumberFormatException e) {
-          output.append("Invalid room ID. Please enter a number.\n");
+        throw new NumberFormatException(e.getMessage() + "\n");
+          
       }
   }
 }

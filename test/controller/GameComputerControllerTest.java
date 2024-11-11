@@ -29,7 +29,7 @@ public class GameComputerControllerTest {
     fakeRng.setNextIntResult(0); 
     String output = consoleOutput.toString();
     assertTrue(output.contains("Default move result"));
-    assertTrue(output.contains("Game over: Maximum number of turns reached."));
+    assertTrue(output.contains("Game over: Maximum number of turns reached!"));
     assertFalse(gameController.getIsRunning());
   }
   
@@ -62,6 +62,25 @@ public class GameComputerControllerTest {
     gameController.playGame(mockWorld);
     String output = consoleOutput.toString();
     assertTrue(output.contains("Computer player: Default look around info"));
+    assertFalse(gameController.getIsRunning());
+  }
+  
+  @Test
+  public void testComputerPlayerMurderWhenAvailable() throws InterruptedException, IOException {
+    int maxTurns = 2; 
+    String simulatedUserInput = "2\nComputerPlayer\n1\n4\n"; 
+    Readable consoleInput = new java.io.StringReader(simulatedUserInput);
+    consoleOutput = new StringWriter();   
+    fakeRng = new FakeRandomNumberGenerator();
+    MockWorldOutline mockWorld = new MockWorldOutline();
+    mockWorld.toggleMurderAttempt();
+    gameController = new GameController(consoleInput, consoleOutput, fakeRng, maxTurns);
+    //fakeRng.setNextIntResult(2); 
+    gameController.playGame(mockWorld);
+    String output = consoleOutput.toString();
+    System.out.println(output);
+    assertTrue(output.contains("Opportunity for murder identified. "
+        + "Computer player preparing to attack."));
     assertFalse(gameController.getIsRunning());
   }
 

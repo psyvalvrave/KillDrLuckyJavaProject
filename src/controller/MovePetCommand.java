@@ -32,7 +32,7 @@ public class MovePetCommand implements Command {
                 output.append(moveResult + "\n");
             }
         } catch (NumberFormatException e) {
-            output.append("Invalid input. Please enter a valid number.\n");
+          throw new NumberFormatException(e.getMessage() + "\n");
         }
     }
 }

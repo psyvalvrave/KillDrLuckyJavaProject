@@ -235,5 +235,7 @@ public interface WorldOutline {
   String getPlayerLocation(int playerId);
 
   void usePlayerHighestItem(int playerId);
+
+  String getPlayerItemsInfo(int playerId);
   
 }

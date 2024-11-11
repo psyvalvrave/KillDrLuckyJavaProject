@@ -16,7 +16,7 @@ public class SaveWorldMapCommand implements Command {
             world.drawWorld(); 
             output.append("World map saved to 'res/world.png'.\n"); 
         } catch (IOException e) {
-            output.append("Error saving world map: " + e.getMessage() + "\n");
+            throw new IOException(e.getMessage() + "\n");
         }
     }
 }

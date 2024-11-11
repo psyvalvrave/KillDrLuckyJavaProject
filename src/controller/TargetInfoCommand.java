@@ -15,8 +15,8 @@ public class TargetInfoCommand implements Command {
         try {
             String targetInfo = world.getTargetInfo();
             output.append(targetInfo + "\n");
-        } catch (Exception e) {
-            output.append("Error retrieving target info: " + e.getMessage() + "\n");
+        } catch (IllegalArgumentException e) {
+          throw new IllegalArgumentException(e.getMessage() + "\n");
         }
     }
 }

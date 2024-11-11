@@ -37,17 +37,17 @@ public class PickUpItemCommand implements Command {
             int itemIndex = Integer.parseInt(scanner.nextLine()) - 1;
 
             if (itemIndex < 0 || itemIndex >= itemsInRoom.size()) {
-                output.append("Invalid item index, please select a valid number.\n");
-                return;
+              throw new IllegalArgumentException(
+                  "Please enter valid number in range");
             }
 
             String itemName = itemsInRoom.get(itemIndex).split(": ")[0];
             String pickUpResult = world.playerPickUpItem(playerId, itemName);
             output.append(pickUpResult + "\n");
         } catch (NumberFormatException e) {
-            output.append("Invalid input, please enter a number.\n");
+          throw new NumberFormatException(e.getMessage() + "\n");
         } catch (IllegalArgumentException e) {
-            output.append("Error: " + e.getMessage() + "\n");
+          throw new IllegalArgumentException(e.getMessage() + "\n");
         }
     }
 }

@@ -1,5 +1,6 @@
 package controller;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.image.BufferedImage;
@@ -472,11 +473,489 @@ public class GameControllerTest {
     World world = new World(fileInput);  
     world.movePetToNextRoom();
     gameController.playGame(world);
+    assert (consoleOutput.toString().contains("Current Room Items: Revolver"));
+    assert (consoleOutput.toString().contains("Target: Doctor Lucky"));
+    assert (consoleOutput.toString().contains("Visible Rooms:"));
+    assert (consoleOutput.toString().contains("Room ID: 2, Room Name: Billiard Room: "
+        + "Restricted details due to pet presence"));
+    assert (consoleOutput.toString().contains("Player: HumanPlayer"));
+    assert (consoleOutput.toString().contains("Visible rooms from here:"));
+    assert (consoleOutput.toString().contains("Room Billiard Room: Presence of pet blocks the view."));
+    assert (consoleOutput.toString().contains("Room Name: Drawing Room, Items: Letter Opener")); 
+  }
+  
+  @Test
+  public void testPlayerLookAroundWithPet() throws InterruptedException, IOException {
+    String simulatedUserInput = "1\nHumanPlayer\n1\n4\n7\n0\n"; 
+    Readable consoleInput = new StringReader(simulatedUserInput);
+    consoleOutput = new StringWriter();
+    RandomNumberGenerator rng = new RandomNumberGenerator();
+    int maxTurns = 3;  
+    gameController = new GameController(consoleInput, consoleOutput, rng, maxTurns);
+    
+    String input = 
+        "36 30 Doctor Lucky's Mansion\n" +
+        "50 Doctor Lucky\n" +
+        "Fortune the Cat\n" +
+        "21\n" +
+        "22 19 23 26 Armory\n" +
+        "16 21 21 28 Billiard Room\n" +
+        "28  0 35  5 Carriage House\n" +
+        "12 11 21 20 Dining Hall\n" +
+        "22 13 25 18 Drawing Room\n" +
+        "26 13 27 18 Foyer\n" +
+        "28 26 35 29 Green House\n" +
+        "30 20 35 25 Hedge Maze\n" +
+        "16  3 21 10 Kitchen\n" +
+        " 0  3  5  8 Lancaster Room\n" +
+        " 4 23  9 28 Library\n" +
+        " 2  9  7 14 Lilac Room\n" +
+        " 2 15  7 22 Master Suite\n" +
+        " 0 23  3 28 Nursery\n" +
+        "10  5 15 10 Parlor\n" +
+        "28 12 35 19 Piazza\n" +
+        " 6  3  9  8 Servants' Quarters\n" +
+        " 8 11 11 20 Tennessee Room\n" +
+        "10 21 15 26 Trophy Room\n" +
+        "22  5 23 12 Wine Cellar\n" +
+        "30  6 35 11 Winter Garden\n" +
+        "20\n" +
+        "8 3 Crepe Pan\n" +
+        "4 2 Letter Opener\n" +
+        "12 2 Shoe Horn\n" +
+        "8 3 Sharp Knife\n" +
+        "0 3 Revolver\n" +
+        "15 3 Civil War Cannon\n" +
+        "2 4 Chain Saw\n" +
+        "16 2 Broom Stick\n" +
+        "1 2 Billiard Cue\n" +
+        "19 2 Rat Poison\n" +
+        "6 2 Trowel\n" +
+        "2 4 Big Red Hammer\n" +
+        "6 2 Pinking Shears\n" +
+        "18 3 Duck Decoy\n" +
+        "13 2 Bad Cream\n" +
+        "18 2 Monkey Hand\n" +
+        "11 2 Tight Hat\n" +
+        "19 2 Piece of Rope\n" +
+        "9 3 Silken Cord\n" +
+        "7 2 Loud Noise";
+    Reader fileInput = new StringReader(input);
+    World world = new World(fileInput);  
+    gameController.playGame(world);
+    assert (consoleOutput.toString().contains("You are in the same room as the "
+        + "pet Fortune the Cat, you can see nothing around."));
+
+  }
+  
+  @Test
+  public void testPlayerLookAroundNoItems() throws InterruptedException, IOException {
+    String simulatedUserInput = "1\nHumanPlayer\n1\n4\n7\n0\n"; 
+    Readable consoleInput = new StringReader(simulatedUserInput);
+    consoleOutput = new StringWriter();
+    RandomNumberGenerator rng = new RandomNumberGenerator();
+    int maxTurns = 3;  
+    gameController = new GameController(consoleInput, consoleOutput, rng, maxTurns);
+    
+    String input = 
+        "36 30 Doctor Lucky's Mansion\n" +
+        "50 Doctor Lucky\n" +
+        "Fortune the Cat\n" +
+        "21\n" +
+        "22 19 23 26 Armory\n" +
+        "16 21 21 28 Billiard Room\n" +
+        "28  0 35  5 Carriage House\n" +
+        "12 11 21 20 Dining Hall\n" +
+        "22 13 25 18 Drawing Room\n" +
+        "26 13 27 18 Foyer\n" +
+        "28 26 35 29 Green House\n" +
+        "30 20 35 25 Hedge Maze\n" +
+        "16  3 21 10 Kitchen\n" +
+        " 0  3  5  8 Lancaster Room\n" +
+        " 4 23  9 28 Library\n" +
+        " 2  9  7 14 Lilac Room\n" +
+        " 2 15  7 22 Master Suite\n" +
+        " 0 23  3 28 Nursery\n" +
+        "10  5 15 10 Parlor\n" +
+        "28 12 35 19 Piazza\n" +
+        " 6  3  9  8 Servants' Quarters\n" +
+        " 8 11 11 20 Tennessee Room\n" +
+        "10 21 15 26 Trophy Room\n" +
+        "22  5 23 12 Wine Cellar\n" +
+        "30  6 35 11 Winter Garden\n" +
+        "20\n" +
+        "8 3 Crepe Pan\n" +
+        "4 2 Letter Opener\n" +
+        "12 2 Shoe Horn\n" +
+        "8 3 Sharp Knife\n" +
+        "0 3 Revolver\n" +
+        "15 3 Civil War Cannon\n" +
+        "2 4 Chain Saw\n" +
+        "16 2 Broom Stick\n" +
+        "1 2 Billiard Cue\n" +
+        "19 2 Rat Poison\n" +
+        "6 2 Trowel\n" +
+        "2 4 Big Red Hammer\n" +
+        "6 2 Pinking Shears\n" +
+        "18 3 Duck Decoy\n" +
+        "13 2 Bad Cream\n" +
+        "18 2 Monkey Hand\n" +
+        "11 2 Tight Hat\n" +
+        "19 2 Piece of Rope\n" +
+        "9 3 Silken Cord\n" +
+        "7 2 Loud Noise";
+    Reader fileInput = new StringReader(input);
+    World world = new World(fileInput);
+    world.createPlayer("Peter", 1);
+    world.playerPickUpItem(0, "Revolver");
+    world.movePetToNextRoom();
+    gameController.playGame(world);
+    assert (consoleOutput.toString().contains("Current Room Items: None"));
+    assert (consoleOutput.toString().contains("Visible Rooms:"));
+    assert (consoleOutput.toString().contains("Room ID: 2, Room Name: Billiard Room"));
+    assert (consoleOutput.toString().contains("Player: HumanPlayer"));
+    assert (consoleOutput.toString().contains("Visible rooms from here:"));
+  }
+  
+  @Test
+  public void testPlayerLookAroundNoItemInNeigbor() throws InterruptedException, IOException {
+    String simulatedUserInput = "1\nHumanPlayer\n1\n4\n7\n0\n"; 
+    Readable consoleInput = new StringReader(simulatedUserInput);
+    consoleOutput = new StringWriter();
+    RandomNumberGenerator rng = new RandomNumberGenerator();
+    int maxTurns = 3;  
+    gameController = new GameController(consoleInput, consoleOutput, rng, maxTurns);
+    
+    String input = 
+        "36 30 Doctor Lucky's Mansion\n" +
+        "50 Doctor Lucky\n" +
+        "Fortune the Cat\n" +
+        "21\n" +
+        "22 19 23 26 Armory\n" +
+        "16 21 21 28 Billiard Room\n" +
+        "28  0 35  5 Carriage House\n" +
+        "12 11 21 20 Dining Hall\n" +
+        "22 13 25 18 Drawing Room\n" +
+        "26 13 27 18 Foyer\n" +
+        "28 26 35 29 Green House\n" +
+        "30 20 35 25 Hedge Maze\n" +
+        "16  3 21 10 Kitchen\n" +
+        " 0  3  5  8 Lancaster Room\n" +
+        " 4 23  9 28 Library\n" +
+        " 2  9  7 14 Lilac Room\n" +
+        " 2 15  7 22 Master Suite\n" +
+        " 0 23  3 28 Nursery\n" +
+        "10  5 15 10 Parlor\n" +
+        "28 12 35 19 Piazza\n" +
+        " 6  3  9  8 Servants' Quarters\n" +
+        " 8 11 11 20 Tennessee Room\n" +
+        "10 21 15 26 Trophy Room\n" +
+        "22  5 23 12 Wine Cellar\n" +
+        "30  6 35 11 Winter Garden\n" +
+        "20\n" +
+        "8 3 Crepe Pan\n" +
+        "4 2 Letter Opener\n" +
+        "12 2 Shoe Horn\n" +
+        "8 3 Sharp Knife\n" +
+        "0 3 Revolver\n" +
+        "15 3 Civil War Cannon\n" +
+        "2 4 Chain Saw\n" +
+        "16 2 Broom Stick\n" +
+        "1 2 Billiard Cue\n" +
+        "19 2 Rat Poison\n" +
+        "6 2 Trowel\n" +
+        "2 4 Big Red Hammer\n" +
+        "6 2 Pinking Shears\n" +
+        "18 3 Duck Decoy\n" +
+        "13 2 Bad Cream\n" +
+        "18 2 Monkey Hand\n" +
+        "11 2 Tight Hat\n" +
+        "19 2 Piece of Rope\n" +
+        "9 3 Silken Cord\n" +
+        "7 2 Loud Noise";
+    Reader fileInput = new StringReader(input);
+    World world = new World(fileInput);
+    world.createPlayer("Peter", 5);
+    world.playerPickUpItem(0, "Letter Opener");
+    world.movePetToNextRoom();
+    gameController.playGame(world);
     assert (consoleOutput.toString().contains("Current Room Items:"));
     assert (consoleOutput.toString().contains("Visible Rooms:"));
     assert (consoleOutput.toString().contains("Room ID: 2, Room Name: Billiard Room"));
     assert (consoleOutput.toString().contains("Player: HumanPlayer"));
     assert (consoleOutput.toString().contains("Visible rooms from here:"));
+    assert (consoleOutput.toString().contains("Room Name: Drawing Room, Items: None"));
+  }
+  
+  @Test
+  public void testPlayerLookAroundWithOthers() throws InterruptedException, IOException {
+    String simulatedUserInput = "1\nHumanPlayer\n1\n2\nComputerPlayer\n1\n4\n7\n0\n"; 
+    Readable consoleInput = new StringReader(simulatedUserInput);
+    consoleOutput = new StringWriter();
+    RandomNumberGenerator rng = new RandomNumberGenerator();
+    int maxTurns = 3;  
+    gameController = new GameController(consoleInput, consoleOutput, rng, maxTurns);
+    
+    String input = 
+        "36 30 Doctor Lucky's Mansion\n" +
+        "50 Doctor Lucky\n" +
+        "Fortune the Cat\n" +
+        "21\n" +
+        "22 19 23 26 Armory\n" +
+        "16 21 21 28 Billiard Room\n" +
+        "28  0 35  5 Carriage House\n" +
+        "12 11 21 20 Dining Hall\n" +
+        "22 13 25 18 Drawing Room\n" +
+        "26 13 27 18 Foyer\n" +
+        "28 26 35 29 Green House\n" +
+        "30 20 35 25 Hedge Maze\n" +
+        "16  3 21 10 Kitchen\n" +
+        " 0  3  5  8 Lancaster Room\n" +
+        " 4 23  9 28 Library\n" +
+        " 2  9  7 14 Lilac Room\n" +
+        " 2 15  7 22 Master Suite\n" +
+        " 0 23  3 28 Nursery\n" +
+        "10  5 15 10 Parlor\n" +
+        "28 12 35 19 Piazza\n" +
+        " 6  3  9  8 Servants' Quarters\n" +
+        " 8 11 11 20 Tennessee Room\n" +
+        "10 21 15 26 Trophy Room\n" +
+        "22  5 23 12 Wine Cellar\n" +
+        "30  6 35 11 Winter Garden\n" +
+        "20\n" +
+        "8 3 Crepe Pan\n" +
+        "4 2 Letter Opener\n" +
+        "12 2 Shoe Horn\n" +
+        "8 3 Sharp Knife\n" +
+        "0 3 Revolver\n" +
+        "15 3 Civil War Cannon\n" +
+        "2 4 Chain Saw\n" +
+        "16 2 Broom Stick\n" +
+        "1 2 Billiard Cue\n" +
+        "19 2 Rat Poison\n" +
+        "6 2 Trowel\n" +
+        "2 4 Big Red Hammer\n" +
+        "6 2 Pinking Shears\n" +
+        "18 3 Duck Decoy\n" +
+        "13 2 Bad Cream\n" +
+        "18 2 Monkey Hand\n" +
+        "11 2 Tight Hat\n" +
+        "19 2 Piece of Rope\n" +
+        "9 3 Silken Cord\n" +
+        "7 2 Loud Noise";
+    Reader fileInput = new StringReader(input);
+    World world = new World(fileInput);  
+    world.movePetToNextRoom();
+    gameController.playGame(world);
+    assert (consoleOutput.toString().contains("Current Room Items:"));
+    assert (consoleOutput.toString().contains("Visible Rooms:"));
+    assert (consoleOutput.toString().contains("Room ID: 2, Room Name: Billiard Room"));
+    assert (consoleOutput.toString().contains("Player: HumanPlayer, Player: ComputerPlayer"));
+    assert (consoleOutput.toString().contains("Visible rooms from here:"));
+  }
+  
+  @Test
+  public void testPlayerLookAroundWithOthersInNeighbor() throws InterruptedException, IOException {
+    String simulatedUserInput = "1\nHumanPlayer\n1\n2\nComputerPlayer\n5\n4\n7\n0\n"; 
+    Readable consoleInput = new StringReader(simulatedUserInput);
+    consoleOutput = new StringWriter();
+    RandomNumberGenerator rng = new RandomNumberGenerator();
+    int maxTurns = 3;  
+    gameController = new GameController(consoleInput, consoleOutput, rng, maxTurns);
+    
+    String input = 
+        "36 30 Doctor Lucky's Mansion\n" +
+        "50 Doctor Lucky\n" +
+        "Fortune the Cat\n" +
+        "21\n" +
+        "22 19 23 26 Armory\n" +
+        "16 21 21 28 Billiard Room\n" +
+        "28  0 35  5 Carriage House\n" +
+        "12 11 21 20 Dining Hall\n" +
+        "22 13 25 18 Drawing Room\n" +
+        "26 13 27 18 Foyer\n" +
+        "28 26 35 29 Green House\n" +
+        "30 20 35 25 Hedge Maze\n" +
+        "16  3 21 10 Kitchen\n" +
+        " 0  3  5  8 Lancaster Room\n" +
+        " 4 23  9 28 Library\n" +
+        " 2  9  7 14 Lilac Room\n" +
+        " 2 15  7 22 Master Suite\n" +
+        " 0 23  3 28 Nursery\n" +
+        "10  5 15 10 Parlor\n" +
+        "28 12 35 19 Piazza\n" +
+        " 6  3  9  8 Servants' Quarters\n" +
+        " 8 11 11 20 Tennessee Room\n" +
+        "10 21 15 26 Trophy Room\n" +
+        "22  5 23 12 Wine Cellar\n" +
+        "30  6 35 11 Winter Garden\n" +
+        "20\n" +
+        "8 3 Crepe Pan\n" +
+        "4 2 Letter Opener\n" +
+        "12 2 Shoe Horn\n" +
+        "8 3 Sharp Knife\n" +
+        "0 3 Revolver\n" +
+        "15 3 Civil War Cannon\n" +
+        "2 4 Chain Saw\n" +
+        "16 2 Broom Stick\n" +
+        "1 2 Billiard Cue\n" +
+        "19 2 Rat Poison\n" +
+        "6 2 Trowel\n" +
+        "2 4 Big Red Hammer\n" +
+        "6 2 Pinking Shears\n" +
+        "18 3 Duck Decoy\n" +
+        "13 2 Bad Cream\n" +
+        "18 2 Monkey Hand\n" +
+        "11 2 Tight Hat\n" +
+        "19 2 Piece of Rope\n" +
+        "9 3 Silken Cord\n" +
+        "7 2 Loud Noise";
+    Reader fileInput = new StringReader(input);
+    World world = new World(fileInput);  
+    world.movePetToNextRoom();
+    gameController.playGame(world);
+    assert (consoleOutput.toString().contains("Current Room Items:"));
+    assert (consoleOutput.toString().contains("Visible Rooms:"));
+    assert (consoleOutput.toString().contains("Room ID: 2, Room Name: Billiard Room"));
+    assert (consoleOutput.toString().contains("Player: HumanPlayer"));
+    assert (consoleOutput.toString().contains("Visible rooms from here:"));
+    assert (consoleOutput.toString().contains("Room Drawing Room: Player: ComputerPlayer"));
+  }
+  
+  @Test
+  public void testPlayerLookAroundTargetNeigbor() throws InterruptedException, IOException {
+    String simulatedUserInput = "1\nHumanPlayer\n5\n4\n7\n0\n"; 
+    Readable consoleInput = new StringReader(simulatedUserInput);
+    consoleOutput = new StringWriter();
+    RandomNumberGenerator rng = new RandomNumberGenerator();
+    int maxTurns = 3;  
+    gameController = new GameController(consoleInput, consoleOutput, rng, maxTurns);
+    
+    String input = 
+        "36 30 Doctor Lucky's Mansion\n" +
+        "50 Doctor Lucky\n" +
+        "Fortune the Cat\n" +
+        "21\n" +
+        "22 19 23 26 Armory\n" +
+        "16 21 21 28 Billiard Room\n" +
+        "28  0 35  5 Carriage House\n" +
+        "12 11 21 20 Dining Hall\n" +
+        "22 13 25 18 Drawing Room\n" +
+        "26 13 27 18 Foyer\n" +
+        "28 26 35 29 Green House\n" +
+        "30 20 35 25 Hedge Maze\n" +
+        "16  3 21 10 Kitchen\n" +
+        " 0  3  5  8 Lancaster Room\n" +
+        " 4 23  9 28 Library\n" +
+        " 2  9  7 14 Lilac Room\n" +
+        " 2 15  7 22 Master Suite\n" +
+        " 0 23  3 28 Nursery\n" +
+        "10  5 15 10 Parlor\n" +
+        "28 12 35 19 Piazza\n" +
+        " 6  3  9  8 Servants' Quarters\n" +
+        " 8 11 11 20 Tennessee Room\n" +
+        "10 21 15 26 Trophy Room\n" +
+        "22  5 23 12 Wine Cellar\n" +
+        "30  6 35 11 Winter Garden\n" +
+        "20\n" +
+        "8 3 Crepe Pan\n" +
+        "4 2 Letter Opener\n" +
+        "12 2 Shoe Horn\n" +
+        "8 3 Sharp Knife\n" +
+        "0 3 Revolver\n" +
+        "15 3 Civil War Cannon\n" +
+        "2 4 Chain Saw\n" +
+        "16 2 Broom Stick\n" +
+        "1 2 Billiard Cue\n" +
+        "19 2 Rat Poison\n" +
+        "6 2 Trowel\n" +
+        "2 4 Big Red Hammer\n" +
+        "6 2 Pinking Shears\n" +
+        "18 3 Duck Decoy\n" +
+        "13 2 Bad Cream\n" +
+        "18 2 Monkey Hand\n" +
+        "11 2 Tight Hat\n" +
+        "19 2 Piece of Rope\n" +
+        "9 3 Silken Cord\n" +
+        "7 2 Loud Noise";
+    Reader fileInput = new StringReader(input);
+    World world = new World(fileInput);  
+    world.movePetToNextRoom();
+    gameController.playGame(world);
+    System.out.println(consoleOutput);
+    assert (consoleOutput.toString().contains("Current Room Items:"));
+    assert (consoleOutput.toString().contains("Visible Rooms:"));
+    assert (consoleOutput.toString().contains("Player: HumanPlayer"));
+    assert (consoleOutput.toString().contains("Visible rooms from here:"));
+    assert (consoleOutput.toString().contains("Room Armory: Target: Doctor Lucky"));
+  }
+  
+  @Test
+  public void testPlayerLookAroundTargetFar() throws InterruptedException, IOException {
+    String simulatedUserInput = "1\nHumanPlayer\n21\n4\n7\n0\n"; 
+    Readable consoleInput = new StringReader(simulatedUserInput);
+    consoleOutput = new StringWriter();
+    RandomNumberGenerator rng = new RandomNumberGenerator();
+    int maxTurns = 3;  
+    gameController = new GameController(consoleInput, consoleOutput, rng, maxTurns);
+    
+    String input = 
+        "36 30 Doctor Lucky's Mansion\n" +
+        "50 Doctor Lucky\n" +
+        "Fortune the Cat\n" +
+        "21\n" +
+        "22 19 23 26 Armory\n" +
+        "16 21 21 28 Billiard Room\n" +
+        "28  0 35  5 Carriage House\n" +
+        "12 11 21 20 Dining Hall\n" +
+        "22 13 25 18 Drawing Room\n" +
+        "26 13 27 18 Foyer\n" +
+        "28 26 35 29 Green House\n" +
+        "30 20 35 25 Hedge Maze\n" +
+        "16  3 21 10 Kitchen\n" +
+        " 0  3  5  8 Lancaster Room\n" +
+        " 4 23  9 28 Library\n" +
+        " 2  9  7 14 Lilac Room\n" +
+        " 2 15  7 22 Master Suite\n" +
+        " 0 23  3 28 Nursery\n" +
+        "10  5 15 10 Parlor\n" +
+        "28 12 35 19 Piazza\n" +
+        " 6  3  9  8 Servants' Quarters\n" +
+        " 8 11 11 20 Tennessee Room\n" +
+        "10 21 15 26 Trophy Room\n" +
+        "22  5 23 12 Wine Cellar\n" +
+        "30  6 35 11 Winter Garden\n" +
+        "20\n" +
+        "8 3 Crepe Pan\n" +
+        "4 2 Letter Opener\n" +
+        "12 2 Shoe Horn\n" +
+        "8 3 Sharp Knife\n" +
+        "0 3 Revolver\n" +
+        "15 3 Civil War Cannon\n" +
+        "2 4 Chain Saw\n" +
+        "16 2 Broom Stick\n" +
+        "1 2 Billiard Cue\n" +
+        "19 2 Rat Poison\n" +
+        "6 2 Trowel\n" +
+        "2 4 Big Red Hammer\n" +
+        "6 2 Pinking Shears\n" +
+        "18 3 Duck Decoy\n" +
+        "13 2 Bad Cream\n" +
+        "18 2 Monkey Hand\n" +
+        "11 2 Tight Hat\n" +
+        "19 2 Piece of Rope\n" +
+        "9 3 Silken Cord\n" +
+        "7 2 Loud Noise";
+    Reader fileInput = new StringReader(input);
+    World world = new World(fileInput);  
+    world.movePetToNextRoom();
+    gameController.playGame(world);
+    System.out.println(consoleOutput);
+    assert (consoleOutput.toString().contains("Current Room Items:"));
+    assert (consoleOutput.toString().contains("Visible Rooms:"));
+    assert (consoleOutput.toString().contains("Player: HumanPlayer"));
+    assert (consoleOutput.toString().contains("Visible rooms from here:"));
+    assertFalse (consoleOutput.toString().contains("Target: Doctor Lucky"));
   }
   
   @Test

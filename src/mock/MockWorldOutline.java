@@ -21,6 +21,8 @@ public class MockWorldOutline implements WorldOutline {
   private String lookAroundResult = "Default look around info";
   private String pickItemUpResult = "Default pick item up";
   private int mockId = 0;
+  private boolean mockMurderAttempt = false;
+  private int mockTargetHealthPoint = 0;
   
   /**
    * Sets the number of rooms in the mock world.
@@ -60,6 +62,14 @@ public class MockWorldOutline implements WorldOutline {
    */
   public void setLookAroundResult(String result) {
     this.lookAroundResult = result;
+  }
+  
+  public void toggleMurderAttempt() {
+    this.mockMurderAttempt = !this.mockMurderAttempt;
+  }
+  
+  public void setTargetHealthPoint(int hp) {
+    this.mockTargetHealthPoint = hp;
   }
 
   @Override
@@ -154,7 +164,7 @@ public class MockWorldOutline implements WorldOutline {
 
   @Override
   public String getTargetInfo() {
-    return null;
+    return ("Target: Doctor Lucky is currently in the Drawing Room");
   }
 
   @Override
@@ -243,27 +253,28 @@ public class MockWorldOutline implements WorldOutline {
 
   @Override
   public boolean canInteractWithPet(int playerId) {
-    return false;
+    return true;
   }
 
   @Override
   public String movePet(int playerId, int targetRoomId) {
-    return null;
+    String movePet = "Pet has been moved by " + playerId + " to room id " + targetRoomId;
+    return movePet;
   }
 
   @Override
   public int getTargetHealthPoint() {
-    return 0;
+    return mockTargetHealthPoint;
   }
 
   @Override
   public List<String> getPlayerItems(int playerId) {
-    return null;
+    return Arrays.asList();
   }
 
   @Override
   public String murderAttempt(int playerId) {
-    return null;
+    return "Attack is made!";
   }
 
   @Override
@@ -273,7 +284,7 @@ public class MockWorldOutline implements WorldOutline {
 
   @Override
   public boolean canMurderAttempt(int playerId) {
-    return false;
+    return mockMurderAttempt;
   }
 
   @Override
@@ -283,11 +294,16 @@ public class MockWorldOutline implements WorldOutline {
 
   @Override
   public String getPlayerLocation(int playerId) {
-    return null;
+    return "Current Room: Test Chamber";
   }
 
   @Override
   public void usePlayerHighestItem(int playerId) {
     
+  }
+
+  @Override
+  public String getPlayerItemsInfo(int playerId) {
+    return "";
   }
 }

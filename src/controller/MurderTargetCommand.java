@@ -20,6 +20,10 @@ public class MurderTargetCommand implements Command {
     public void execute(Appendable output) throws IOException {
         try {
             output.append("Attempt to murder the target:\n");
+            if(!world.canMurderAttempt(playerId)) {
+              throw new IllegalArgumentException(
+                  "Player is not in the same room as the target.");
+            }
             List<String> playerItems = world.getPlayerItems(playerId);
             if (!playerItems.isEmpty()) {
                 output.append("Your items:\n");
@@ -40,7 +44,8 @@ public class MurderTargetCommand implements Command {
                         output.append("You have used " + itemName + " to increase your murder point.\n");
                     } else {
                         output.append("Invalid item index, please select a valid number.\n");
-                        return;
+                        throw new IllegalArgumentException(
+                            "Please enter valid number in range");
                     }
                 }
             } else {
@@ -49,9 +54,9 @@ public class MurderTargetCommand implements Command {
             String result = world.murderAttempt(playerId);
             output.append(result + "\n");
         } catch (NumberFormatException e) {
-            output.append("Invalid input. Please enter a valid number.\n");
+            throw new NumberFormatException(e.getMessage() + "\n");
         } catch (IllegalArgumentException e) {
-            output.append("Error: " + e.getMessage() + "\n");
+            throw new IllegalArgumentException(e.getMessage() + "\n");
         }
     }
 

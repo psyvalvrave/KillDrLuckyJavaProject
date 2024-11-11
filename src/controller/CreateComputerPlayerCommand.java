@@ -39,7 +39,7 @@ public class CreateComputerPlayerCommand implements Command {
             isComputer.put(playerId, true); 
             output.append("Computer player added with ID: " + playerId + ".\n");
         } catch (NumberFormatException e) {
-            output.append("Invalid room index, please enter a valid number.\n");
+          throw new NumberFormatException(e.getMessage() + "\n");
         }
     }
 }

@@ -121,8 +121,8 @@ public class GameController implements Controller {
         processPlayerInput(input, world, currentPlayerId);
       }
       if (currentTurn >= maxTurns) {
-        print("Game over: Maximum number of turns reached.");
         setRunning(false);
+        print("Game over: Maximum number of turns reached!");
       }
     }
   }
@@ -149,6 +149,7 @@ public class GameController implements Controller {
           if (world.getTargetHealthPoint() <= 0) {
             print("Target eliminated. " + playerNames.get(playerId) + " win!");
             setRunning(false);
+            print("Game Over!");
           } else {
             advanceTurn(world);
           }
@@ -200,6 +201,10 @@ public class GameController implements Controller {
       print("Error processing command: " + e.getMessage());
       displayMenu(world);
       input = scanner.nextLine();
+    } catch (IOException e) {
+      print("Error processing command: " + e.getMessage());
+      displayMenu(world);
+      input = scanner.nextLine();
     }
     }
   }
@@ -207,6 +212,19 @@ public class GameController implements Controller {
   private void computerPlayerActions(WorldOutline world, 
       int playerId) throws InterruptedException, IOException {
     try {
+      if (world.canMurderAttempt(playerId)) {
+        print("Opportunity for murder identified. Computer player preparing to attack.");
+        world.usePlayerHighestItem(playerId);  
+        String murderResult = world.murderAttempt(playerId);
+        print("Murder attempt by computer player: " + murderResult);
+        if (world.getTargetHealthPoint() <= 0) {
+          print("Target eliminated. " + playerNames.get(playerId) + " win!");
+          setRunning(false);
+          print("Game Over!");
+        } else {
+          advanceTurn(world);
+        }
+      } else {
       int action = rng.nextInt(3);  
       switch (action) {
         case 0:
@@ -252,6 +270,7 @@ public class GameController implements Controller {
         default:
           break;
       }
+      }
     } catch (IllegalArgumentException e) {
       print(e.getMessage());
     }
@@ -288,6 +307,7 @@ public class GameController implements Controller {
     print("Current player's turn: Player ID " + currentPlayerId + " Player "
         + "Name " + currentPlayerName);
     print(world.getPlayerLocation(currentPlayerId));
+    print(world.getPlayerItemsInfo(currentPlayerId));
     print("1. Display Room Info");
     print("2. Save World Map");
     print("3. Attempt to Murder Target");

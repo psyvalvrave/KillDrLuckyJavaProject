@@ -17,8 +17,8 @@ public class LookAroundCommand implements Command {
         try {
           String lookAroundInfo = world.playerLookAround(playerId);
             output.append(lookAroundInfo); 
-        } catch (Exception e) {
-            output.append("Error saving world map: " + e.getMessage() + "\n");
+        } catch (IllegalArgumentException e) {
+          throw new IllegalArgumentException(e.getMessage() + "\n");
         }
     }
 }

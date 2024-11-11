@@ -897,13 +897,18 @@ public boolean canPlayerBeSeenByAny(int playerId) {
   }
   Block petLocation = pet.getLocation();
   if (petLocation.equals(targetPlayer.getLocation())) {
+    for (CharacterPlayer player : players) {
+      if (player.getPlayerId() != playerId) {
+          if (targetPlayer.getLocation().equals(player.getLocation())) {
+            return true; 
+          }
+      }
+  }
       return false; 
   }
+  
   for (CharacterPlayer player : players) {
       if (player.getPlayerId() != playerId) {
-          if (petLocation.equals(player.getLocation())) {
-              continue; 
-          }
           if (player.canSee(targetPlayer)) {
               return true;  
           }
@@ -922,11 +927,13 @@ public String movePet(int playerId, int targetRoomId) {
     Block currentRoom = player.getLocation();
     Block petRoom = pet.getLocation();
     if (!currentRoom.equals(petRoom)) {
-      return "Error: You must be in the same room as the pet to move it.";
+      throw new IllegalArgumentException(
+          "Error: You must be in the same room as the pet to move it.");
   }
   Block targetRoom = getRoomById(targetRoomId);
   if (targetRoom == null) {
-      return "Error: The target room does not exist.";
+    throw new IllegalArgumentException(
+        "Error: Error: The target room does not exist.");
   }
   pet.move(targetRoom);
   this.initializePetDFS();
@@ -963,10 +970,6 @@ public String murderAttempt(int playerId) {
     throw new IllegalArgumentException(
         "Player " + player.getCharacterName() + " is not in the same room as the target.");
   }
-  if (player.getLocation().equals(pet.getLocation())) {
-    return "Failed: Player " + player.getCharacterName() + 
-           " cannot attack while in the same room as the pet.";
-}
   if (canPlayerBeSeenByAny(playerId)) {
       return "Failed: Player " + player.getCharacterName() + 
              " was seen and cannot proceed with the attack.";
@@ -1018,6 +1021,27 @@ public String getPlayerLocation(int playerId) {
   }
   return "Room ID: " + playerRoom.getRoomId() + ", Room Name: " + playerRoom.getRoomName();
 }
+
+@Override
+public String getPlayerItemsInfo(int playerId) {
+  CharacterPlayer player = getPlayerById(playerId);
+  if (player == null) {
+      throw new IllegalArgumentException("Player with ID " + playerId + " does not exist.");
+  }
+  List<Gadget> items = player.getItem();
+  if (items.isEmpty()) {
+      return "Player's items: None.";
+  }
+
+  StringBuilder itemsInfo = new StringBuilder("Player's items:\n");
+  for (Gadget item : items) {
+      itemsInfo.append("Item Name: ").append(item.getItemName())
+               .append(", Murder Value: ").append(item.getMurderValue())
+               .append("\n");
+  }
+  return itemsInfo.toString();
+}
+
 
 @Override
 public void usePlayerHighestItem(int playerId) {
