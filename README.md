@@ -59,6 +59,7 @@ java -jar KillDoctorLucky.jar mansion.txt 1000
 mansion.txt can be switch to other world model text file. I have one_room.txt and three_rooms_player_test.txt to play around and test in res folder.
 1000 means number of turn, once the turn reach, the game will end. Each player's action represent a turn. 
 There will be a txt file to show the example run to show some text info about how a test run is. The code you are running is in the src/WorldDriver.java
+Once you see the line say "Setting up the game.", the CLI game is starting, and you can follow the instruction(text) to play the game.
 
 ### Citation
 1. https://www.codejava.net/ides/eclipse/how-to-create-jar-file-in-eclipse
