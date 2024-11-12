@@ -144,7 +144,6 @@ public class GameControllerMonkTest {
     fakeRng.setNextIntResult(1);
     gameController.playGame(mockWorld);
     String output = consoleOutput.toString();
-    System.out.println(output);
     assertTrue(output.contains("Attack is made!"));
     assertTrue(output.contains("Turn 2. Now Player ComputerPlayer"));
   }

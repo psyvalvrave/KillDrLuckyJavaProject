@@ -799,7 +799,6 @@ public class WorldTest {
     world.movePet(0, 3);
     world.createPlayer("Eric", 21);
     world.createPlayer("Ada", 3);
-    System.out.println(world.getPetInfo());
     assertFalse("Player should not be seen by others in the neigbor "
         + "room when pet exists as the one being seen", world.canPlayerBeSeenByAny(2));
   }

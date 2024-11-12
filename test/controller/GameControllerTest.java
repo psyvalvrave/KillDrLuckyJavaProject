@@ -870,7 +870,6 @@ public class GameControllerTest {
     World world = new World(fileInput);  
     world.movePetToNextRoom();
     gameController.playGame(world);
-    System.out.println(consoleOutput);
     assert (consoleOutput.toString().contains("Current Room Items:"));
     assert (consoleOutput.toString().contains("Visible Rooms:"));
     assert (consoleOutput.toString().contains("Player: HumanPlayer"));
@@ -937,7 +936,6 @@ public class GameControllerTest {
     World world = new World(fileInput);  
     world.movePetToNextRoom();
     gameController.playGame(world);
-    System.out.println(consoleOutput);
     assert (consoleOutput.toString().contains("Current Room Items:"));
     assert (consoleOutput.toString().contains("Visible Rooms:"));
     assert (consoleOutput.toString().contains("Player: HumanPlayer"));

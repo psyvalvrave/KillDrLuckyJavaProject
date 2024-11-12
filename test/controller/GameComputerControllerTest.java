@@ -77,7 +77,6 @@ public class GameComputerControllerTest {
     gameController = new GameController(consoleInput, consoleOutput, fakeRng, maxTurns);
     gameController.playGame(mockWorld);
     String output = consoleOutput.toString();
-    System.out.println(output);
     assertTrue(output.contains("Opportunity for murder identified. "
         + "Computer player preparing to attack."));
     assertFalse(gameController.getIsRunning());

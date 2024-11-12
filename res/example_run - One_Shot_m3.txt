@@ -1,0 +1,135 @@
+eclipse-workspace\KillDoctorLucky\src> java controller.ControllerDriver ../res/mansion.txt 1000
+Setting up the game.
+Add players:
+1. Add Human-Controlled Player
+2. Add Computer-Controlled Player
+3. Save the World Map, Check It to Know Where You Want to Start
+4. Start Game
+1
+Enter player name:
+One Shot
+Enter player starting room id:
+3
+Human player added with ID: 0.
+Add players:
+1. Add Human-Controlled Player
+2. Add Computer-Controlled Player
+3. Save the World Map, Check It to Know Where You Want to Start
+4. Start Game
+4
+Game will start with 1 players.
+Game started. Manage your turns.
+
+--- Game Menu ---
+Turn 1
+Current player's turn: Player ID 0 Player Name One Shot
+Room ID: 3, Room Name: Carriage House
+Player's items: None.
+1. Display Room Info
+2. Save World Map
+3. Attempt to Murder Target
+4. Move Pet
+5. Move Player
+6. Player Pick Up Item
+7. Player Look Around
+8. Display Player Info
+9. Do Nothing
+10. Display Target Info
+0. Quit Game
+Select an option:
+6
+Items available to pick up:
+1: Chain Saw: Murder Value 51
+2: Big Red Hammer: Murder Value 51
+Enter the index of the item to pick up:
+2
+Item 'Big Red Hammer' picked up successfully by One Shot.
+Turn 2. Now Player One Shot with ID 0's turn.
+Pet moved to room: Billiard Room
+
+--- Game Menu ---
+Turn 2
+Current player's turn: Player ID 0 Player Name One Shot
+Room ID: 3, Room Name: Carriage House
+Player's items:
+Item Name: Big Red Hammer, Murder Value: 51
+
+1. Display Room Info
+2. Save World Map
+3. Attempt to Murder Target
+4. Move Pet
+5. Move Player
+6. Player Pick Up Item
+7. Player Look Around
+8. Display Player Info
+9. Do Nothing
+10. Display Target Info
+0. Quit Game
+Select an option:
+6
+Items available to pick up:
+1: Chain Saw: Murder Value 51
+Enter the index of the item to pick up:
+1
+Item 'Chain Saw' picked up successfully by One Shot.
+Turn 3. Now Player One Shot with ID 0's turn.
+Pet moved to room: Dining Hall
+
+--- Game Menu ---
+Turn 3
+Current player's turn: Player ID 0 Player Name One Shot
+Room ID: 3, Room Name: Carriage House
+Player's items:
+Item Name: Big Red Hammer, Murder Value: 51
+Item Name: Chain Saw, Murder Value: 51
+
+1. Display Room Info
+2. Save World Map
+3. Attempt to Murder Target
+4. Move Pet
+5. Move Player
+6. Player Pick Up Item
+7. Player Look Around
+8. Display Player Info
+9. Do Nothing
+10. Display Target Info
+0. Quit Game
+Select an option:
+2
+World map saved to 'res/world.png'.
+
+--- Game Menu ---
+Turn 3
+Current player's turn: Player ID 0 Player Name One Shot
+Room ID: 3, Room Name: Carriage House
+Player's items:
+Item Name: Big Red Hammer, Murder Value: 51
+Item Name: Chain Saw, Murder Value: 51
+
+1. Display Room Info
+2. Save World Map
+3. Attempt to Murder Target
+4. Move Pet
+5. Move Player
+6. Player Pick Up Item
+7. Player Look Around
+8. Display Player Info
+9. Do Nothing
+10. Display Target Info
+0. Quit Game
+Select an option:
+3
+Attempt to murder the target:
+Your items:
+1: Big Red Hammer: Murder Value 51
+2: Chain Saw: Murder Value 51
+Would you like to use an item to increase your murder point?
+1: Yes
+0: No
+1
+Select the item number you wish to use:
+2
+You have used Chain Saw to increase your murder point.
+Success: Target's health reduced to -1.
+Target eliminated. One Shot win!
+Game Over!
