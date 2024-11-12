@@ -250,6 +250,11 @@ public class Room implements Block {
     return roomId;
   }
   
+  /**
+   * Return selected item in current room. 
+   * 
+   * @param item the selected item.
+   */
   public void removeItem(Item item) {
     items.remove(item);
   }

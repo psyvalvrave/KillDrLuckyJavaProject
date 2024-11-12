@@ -33,14 +33,19 @@ public class MockWorldOutline implements WorldOutline {
   }
 
   /**
-   * Sets the result for the playerPickUpItem method.
+   * Sets the result for the movePlayer method.
    *
-   * @param result the result to return when playerPickUpItem is called.
+   * @param result the result to return when movePlayer is called.
    */
   public void setMovePlayerResult(String result) {
     this.movePlayerResult = result;
   }
   
+  /**
+   * Sets the result for the playerPickUpItem method.
+   *
+   * @param result the result to return when playerPickUpItem is called.
+   */
   public void setPlayerPickUpItemResult(String result) {
     this.pickItemUpResult = result;
   }
@@ -215,10 +220,20 @@ public class MockWorldOutline implements WorldOutline {
     return null;
   }
   
+  /**
+   * Return nothing as list of all items in Mock for testing purpose.
+   * 
+   * @return Null.
+   */
   public List<Gadget> getItems() {
     return null;
   }
   
+  /**
+   * Return nothing as list of all rooms in Mock for testing purpose.
+   *
+   * @return Null.
+   */
   public List<Block> getRooms() {
     return null;
   }

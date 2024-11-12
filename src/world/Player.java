@@ -87,11 +87,21 @@ public class Player implements CharacterPlayer {
             playerId, getCharacterName(), getLocation().getRoomName(), listItems());
   }
   
+  /**
+   * Return player's inventory as list of gadget.
+   *
+   * @return List of Gadget objects.
+   */
   public List<Gadget> getItem() {
     ArrayList<Gadget> gadgets = new ArrayList<>(items);
     return gadgets;
   }
   
+  /**
+   * Return current player's id.
+   *
+   * @return int number as player id.
+   */
   public int getPlayerId() {
     return playerId;
   }
