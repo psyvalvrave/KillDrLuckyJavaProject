@@ -4,6 +4,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+
+import mock.MockWorldOutline;
 import world.World;
 
 /**
@@ -29,7 +31,7 @@ public class ControllerDriver {
     }
 
     String worldFile = args[0];
-    int maxTurns = 100;
+    int  maxTurns = 100;
 
     try {
       maxTurns = Integer.parseInt(args[1]);
@@ -48,6 +50,7 @@ public class ControllerDriver {
       Readable consoleInput = new InputStreamReader(System.in);
       RandomNumberGenerator rng = new RandomNumberGenerator();
       World world = new World(fileInput); 
+      //MockWorldOutline world = new MockWorldOutline(); 
       world.drawWorld();
       GameController controller = new GameController(consoleInput, consoleOutput, rng, maxTurns);
       controller.playGame(world);

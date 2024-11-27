@@ -23,15 +23,9 @@ public interface Controller {
    *        read data necessary for the game.
    */
   void playGame(WorldOutline world) throws InterruptedException, IOException;
-  
-  /**
-   * Checks if the game is currently running.
-   * This method is typically used to verify the game's active status, 
-   * facilitating checks within game loops or conditional logic.
-   *
-   * @return {@code true} if the game is currently active and running, 
-   *        {@code false} otherwise.
-   */
-  boolean getIsRunning();
 
+  void addPlayer(String playerName, int roomIndex, boolean isComputer) throws IOException, InterruptedException;
+  void startGame();
+  void loadNewWorld(Readable source) throws IOException;
+  void updateWorldInView();
 }

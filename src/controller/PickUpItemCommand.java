@@ -1,9 +1,7 @@
 package controller;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Scanner;
-import world.WorldOutline;
+import world.ReadOnlyWorld;
 
 /**
  * The PickUpItemCommand class implements the Command interface to allow a player
@@ -12,9 +10,9 @@ import world.WorldOutline;
  * player's inventory.
  */
 public class PickUpItemCommand implements Command {
-  private WorldOutline world;
+  private ReadOnlyWorld world;
   private int playerId;
-  private Scanner scanner;
+  private String itemName;
 
   /**
    * Constructs a PickUpItemCommand with necessary details about the game world, player,
@@ -24,43 +22,19 @@ public class PickUpItemCommand implements Command {
    * @param playerIdsInput The ID of the player picking up an item.
    * @param scannerInput A Scanner object for reading user input.
    */
-  public PickUpItemCommand(WorldOutline worldModel, int playerIdsInput, Scanner scannerInput) {
+  public PickUpItemCommand(ReadOnlyWorld worldModel, int playerIdsInput, String itemName) {
     this.world = worldModel;
     this.playerId = playerIdsInput;
-    this.scanner = scannerInput;
+    this.itemName = itemName;
   }
 
   @Override
   public void execute(Appendable output) throws IOException {
-    try {
-      int roomId = world.getPlayerRoomId(playerId);
-      List<String> itemsInRoom = world.getRoomItems(roomId);
-
-      if (itemsInRoom.isEmpty()) {
-        output.append("No items available to pick up in this room.\n");
-        return;
+      try {
+          String pickUpResult = world.playerPickUpItem(playerId, itemName);
+          output.append(pickUpResult + "\n");
+      } catch (IllegalArgumentException e) {
+          output.append("Error picking up item: " + e.getMessage() + "\n");
       }
-
-      output.append("Items available to pick up:\n");
-      for (int i = 0; i < itemsInRoom.size(); i++) {
-        output.append((i + 1) + ": " + itemsInRoom.get(i) + "\n");
-      }
-
-      output.append("Enter the index of the item to pick up:\n");
-      int itemIndex = Integer.parseInt(scanner.nextLine()) - 1;
-
-      if (itemIndex < 0 || itemIndex >= itemsInRoom.size()) {
-        throw new IllegalArgumentException(
-            "Please enter valid number in range");
-      }
-
-      String itemName = itemsInRoom.get(itemIndex).split(": ")[0];
-      String pickUpResult = world.playerPickUpItem(playerId, itemName);
-      output.append(pickUpResult + "\n");
-    } catch (NumberFormatException e) {
-      throw new NumberFormatException(e.getMessage() + "\n");
-    } catch (IllegalArgumentException e) {
-      throw new IllegalArgumentException(e.getMessage() + "\n");
-    }
   }
 }

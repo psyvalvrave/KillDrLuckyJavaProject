@@ -9,8 +9,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.Stack;
@@ -37,8 +39,14 @@ public class World implements WorldOutline {
   private String worldName;
   private int itemLimit = 3;
   private int nextPlayerId = 0;
-  private int maxTurn;
   private CharacterPet pet;
+  private int currentTurn = 1;
+  private int maxTurns = 20;
+  private List<Integer> playerIds = new ArrayList<>();
+  private int currentPlayerIndex = 0;
+  private Map<Integer, Boolean> isComputer = new HashMap<>();
+  private Map<Integer, String> playerNames = new HashMap<>();
+  private boolean isRunning = true;
 
   /**
    * Constructor for World that initializes the game from a file.
@@ -196,23 +204,13 @@ public class World implements WorldOutline {
     return items.size();
   }
 
-  /**
-   * Return the target object in the model. 
-   * 
-   * @return the CharacterTarget target
-   */
+  @Override
   public CharacterTarget getTarget() {
     return target;
   }
 
-  /**
-   * Creates an item and adds it to the world.
-   * 
-   * @param name The name of the item.
-   * @param location The room index where the item is located.
-   * @param murderValue The impact or damage value of the item.
-   * @return The newly created item object.
-   */
+  
+  @Override
   public Gadget createItem(String name, int location, int murderValue) {
     if (location < 0 || location >= rooms.size()) {
       throw new IllegalArgumentException("Invalid room location index: " + location);
@@ -224,29 +222,14 @@ public class World implements WorldOutline {
     return newItem;
   }
 
-  /**
-   * Creates the target character and adds it to the world.
-   * 
-   * @param name The name of the target.
-   * @param room The starting room for the target.
-   * @param health The initial health points for the target.
-   * @return The newly created target object.
-   */
+  @Override
   public CharacterTarget createTarget(String name, Block room, int health) {
     Target newTarget = new Target(name, room, health);
     this.target = newTarget;
     return newTarget;
   }
 
-  /**
-   * Creates a room and adds it to the world.
-   * 
-   * @param roomName The name of the room.
-   * @param roomId The identifier for the room.
-   * @param coordinates The spatial coordinates of the room.
-   * @param allRoomData Additional data for room configurations.
-   * @return The newly created room object.
-   */
+  @Override
   public Block createRoom(String roomName, int roomId, 
       int[] coordinates, List<String[]> allRoomData) {
     if (roomName == null || roomName.trim().isEmpty()) {
@@ -378,25 +361,13 @@ public class World implements WorldOutline {
     return this.worldText;
   }
   
-  /**
-   * Retrieves a list of all rooms in the world.
-   * This method provides a safe copy of the rooms list to 
-   * ensure that the internal list is not modified.
-   * 
-   * @return A new list containing all the rooms currently in the world.
-   */
+  @Override
   public List<Block> getRooms() {
     ArrayList<Block> roomsList = new ArrayList<>(rooms);
     return roomsList;
   }
 
-  /**
-   * Retrieves a list of all items in the world.
-   * This method provides a safe copy of the items list to 
-   * ensure that the internal list is not modified.
-   * 
-   * @return A new list containing all the items currently in the world.
-   */
+  @Override
   public List<Gadget> getItems() {
     ArrayList<Gadget> gadgets = new ArrayList<>(items);
     return gadgets;
@@ -512,15 +483,7 @@ public class World implements WorldOutline {
     return isOccupied ? occupants.toString() : "No occupants";
   }
   
-  
-  /**
-   * Creates a new player with a specified name starting in a specified room.
-   * 
-   * @param playerName The name of the player.
-   * @param startRoomIndex The 1-based index of the room where the player should start.
-   * @return The new player object.
-   * @throws IllegalArgumentException If the room index is out of the valid range.
-   */
+  @Override
   public CharacterPlayer createPlayer(String playerName, int startRoomIndex) {
     if (startRoomIndex < 1 || startRoomIndex > rooms.size()) {
       throw new IllegalArgumentException("Invalid room index for player starting room."
@@ -621,17 +584,6 @@ public class World implements WorldOutline {
     }
     throw new IllegalArgumentException("Player with ID " + playerId + " not found.");
   }
-
-  
-  @Override
-  public int getMaxTurn() {
-    return maxTurn;
-  }
-
-  @Override
-  public void setMaxTurn(int maxTurnInput) {
-    this.maxTurn = maxTurnInput;
-  }
   
   private CharacterPlayer getPlayerById(int playerId) {
     for (CharacterPlayer player : players) {
@@ -642,7 +594,12 @@ public class World implements WorldOutline {
     throw new IllegalArgumentException("playerID not valid.");
   }
 
-  private Block getRoomById(int roomId) {
+  /**
+   * Get the Block Object by filtering its ID. 
+   * 
+   * @param roomId The ID of the room.
+   */
+  public Block getRoomById(int roomId) {
     for (Block room : rooms) {
       if (room.getRoomId() == roomId) {
         return room;
@@ -821,14 +778,7 @@ public class World implements WorldOutline {
     return neighborDescriptions;
   }
   
-  /**
-   * Creates a new pet with a specified name starting in a specified room.
-   * 
-   * @param petNameInput The name of the pet.
-   * @param initialRoom The room where the pet should start.
-   * @return The new CharacterPet object.
-   * @throws IllegalArgumentException If the room index is out of the valid range.
-   */
+  @Override
   public CharacterPet createPet(String petNameInput, Block initialRoom) {
     Pet newPet = new Pet(petNameInput, initialRoom);
     this.pet = newPet;
@@ -841,11 +791,7 @@ public class World implements WorldOutline {
     return petCreated.getCharacterName();
   }
   
-  /**
-   * Return the pet object in the model.
-   * 
-   * @return The CharacterPet object.
-   */
+  @Override
   public CharacterPet getPet() {
     return pet;
   }
@@ -993,7 +939,8 @@ public class World implements WorldOutline {
     return "Failed: Attack had no effect on the target.";
   }
   
-  private Gadget getItemByName(String itemName) {
+  @Override
+  public Gadget getItemByName(String itemName) {
     for (Gadget item : items) {
       if (item.getItemName().equalsIgnoreCase(itemName)) {
         return item;
@@ -1057,5 +1004,75 @@ public class World implements WorldOutline {
     CharacterPlayer player = getPlayerById(playerId);
     player.useHighestItem();  
   }
+  
+  @Override
+  public boolean getIsRunning() {
+    return isRunning;
+  }
+  
+  @Override
+  public void setRunning(boolean running) {
+      this.isRunning = running;
+  }
+  
+  @Override
+  public int getCurrentTurn() {
+      return currentTurn;
+  }
+  
+  @Override
+  public void setCurrentTurn(int currentTurn) {
+      this.currentTurn = currentTurn;
+  }
+  
+  @Override
+  public int getMaxTurns() {
+      return maxTurns;
+  }
+  
+  @Override
+  public void setMaxTurns(int maxTurns) {
+      this.maxTurns = maxTurns;
+  }
+  
+  @Override
+  public String advanceTurn() {
+      currentTurn++;
+      if (currentTurn > maxTurns) {
+          isRunning = false;
+          return "Maximum turns reached. Ending game.";
+      } else {
+          currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
+          this.moveTargetToNextRoom();
+          String result = this.movePetToNextRoom();
+          return result;
+      }
+  }
+  
+  @Override
+  public int getCurrentPlayerId() {
+    return playerIds.get(currentPlayerIndex);
+}
+  
+  @Override
+  public String getPlayerName(int playerId) {
+    return playerNames.get(playerId);
+  }
+
+  @Override
+  public List<Integer> getPlayerIds() {
+    return playerIds;
+  }
+
+  @Override
+  public Map<Integer, String> getPlayerNames() {
+    return playerNames;
+  }
+
+  @Override
+  public Map<Integer, Boolean> getIsComputer() {
+    return isComputer;
+  }
+  
   
 }

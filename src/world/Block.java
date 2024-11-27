@@ -97,4 +97,5 @@ public interface Block {
    * @param item The gadget to be added to the room.
    */
   void addItem(Gadget item);
+
 }

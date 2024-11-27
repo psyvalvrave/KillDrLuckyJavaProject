@@ -1,7 +1,7 @@
 package controller;
 
 import java.io.IOException;
-import world.WorldOutline;
+import world.ReadOnlyWorld;
 
 /**
  * The SaveWorldMapCommand class implements the Command interface to facilitate
@@ -10,14 +10,14 @@ import world.WorldOutline;
  * reviewing the game layout or debugging purposes.
  */
 public class SaveWorldMapCommand implements Command {
-  private WorldOutline world;
+  private ReadOnlyWorld world;
   
   /**
    * Constructs a SaveWorldMapCommand with access to the game world.
    *
    * @param worldModel The game world whose map is to be saved.
    */
-  public SaveWorldMapCommand(WorldOutline worldModel) {
+  public SaveWorldMapCommand(ReadOnlyWorld worldModel) {
     this.world = worldModel;
   }
 

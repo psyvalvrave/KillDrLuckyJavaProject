@@ -1,7 +1,7 @@
 package controller;
 
 import java.io.IOException;
-import world.WorldOutline;
+import world.ReadOnlyWorld;
 
 /**
  * The LookAroundCommand class implements the Command interface to enable players
@@ -10,7 +10,7 @@ import world.WorldOutline;
  * and any visible adjacent rooms.
  */
 public class LookAroundCommand implements Command {
-  private WorldOutline world;
+  private ReadOnlyWorld world;
   private int playerId;
 
   /**
@@ -22,7 +22,7 @@ public class LookAroundCommand implements Command {
    * @param worldModel The game world context where the command is executed.
    * @param playerIdsInput The ID of the player who is looking around.
    */
-  public LookAroundCommand(WorldOutline worldModel, int playerIdsInput) {
+  public LookAroundCommand(ReadOnlyWorld worldModel, int playerIdsInput) {
     this.world = worldModel;
     this.playerId = playerIdsInput;
   }

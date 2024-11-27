@@ -1,8 +1,7 @@
 package controller;
 
 import java.io.IOException;
-import java.util.Scanner;
-import world.WorldOutline;
+import world.ReadOnlyWorld;
 
 /**
  * The DisplayRoomInfoCommand class implements the Command interface to handle the display
@@ -10,8 +9,8 @@ import world.WorldOutline;
  * and displays detailed information about that room.
  */
 public class DisplayRoomInfoCommand implements Command {
-  private WorldOutline world;
-  private Scanner scanner;
+  private ReadOnlyWorld world;
+  private int roomId;
 
   /**
    * Constructs a new DisplayRoomInfoCommand with a reference to the game world and a scanner
@@ -21,22 +20,19 @@ public class DisplayRoomInfoCommand implements Command {
    * @param worldModel The game world from which room information will be retrieved.
    * @param scannerInput A Scanner to read input from the console.
    */
-  public DisplayRoomInfoCommand(WorldOutline worldModel, Scanner scannerInput) {
+  public DisplayRoomInfoCommand(ReadOnlyWorld worldModel, int roomIdInput) {
     this.world = worldModel;
-    this.scanner = scannerInput;
+    this.roomId = roomIdInput;
   }
 
   @Override
   public void execute(Appendable output) throws IOException {
-    try {
-      output.append("Enter room ID:\n");
-      int roomId = Integer.parseInt(scanner.nextLine());
-      String roomInfo = world.displayRoomInfo(roomId);
-      output.append(roomInfo + "\n");
-    } catch (NumberFormatException e) {
-      throw new NumberFormatException(e.getMessage() + "\n");
-        
-    }
+      try {
+          String roomInfo = world.displayRoomInfo(roomId);
+          output.append(roomInfo + "\n");
+      } catch (Exception e) {
+          output.append("Error retrieving room information: " + e.getMessage() + "\n");
+      }
   }
 }
 

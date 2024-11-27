@@ -3,8 +3,7 @@ package controller;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
-import world.WorldOutline;
+import world.ReadOnlyWorld;
 
 /**
  * The CreatePlayerCommand class implements the Command interface to handle the creation of
@@ -12,8 +11,9 @@ import world.WorldOutline;
  * to add a new human player to the game world.
  */
 public class CreatePlayerCommand implements Command {
-  private WorldOutline world;
-  private Scanner scanner;
+  private ReadOnlyWorld world;
+  private String playerName;
+  private int roomIndex;
   private List<Integer> playerIds;
   private Map<Integer, String> playerNames;
   private Map<Integer, Boolean> isComputer;
@@ -29,11 +29,12 @@ public class CreatePlayerCommand implements Command {
    * @param isComputerInput A map indicating whether a player ID corresponds 
    *        to a computer-controlled player.
    */
-  public CreatePlayerCommand(WorldOutline worldModel, Scanner scannerInput, 
+  public CreatePlayerCommand(ReadOnlyWorld worldModel, String playerName, int roomIndex, 
       List<Integer> playerIdsInput, Map<Integer, String> playerNamesInput, 
       Map<Integer, Boolean> isComputerInput) {
     this.world = worldModel;
-    this.scanner = scannerInput;
+    this.playerName = playerName;
+    this.roomIndex = roomIndex;
     this.playerIds = playerIdsInput;
     this.playerNames = playerNamesInput;
     this.isComputer = isComputerInput;
@@ -41,23 +42,14 @@ public class CreatePlayerCommand implements Command {
 
   @Override
   public void execute(Appendable output) throws IOException {
-    output.append("Enter player name:\n");
-    String playerName = scanner.nextLine(); 
-    try {
-      output.append("Enter player starting room id:\n");
-      int roomIndex = Integer.parseInt(scanner.nextLine()); 
       if (roomIndex < 1 || roomIndex > world.getRoomCount()) {
-        output.append("Invalid room index. Please enter a number between 1 "
-            + "and " + world.getRoomCount() + ".\n");
-        return;
+          output.append("Invalid room index. Please enter a number between 1 and " + world.getRoomCount() + ".\n");
+          return;
       }
-      int playerId = world.callCreatePlayer(playerName, roomIndex); 
-      playerIds.add(playerId); 
+      int playerId = world.callCreatePlayer(playerName, roomIndex);
+      playerIds.add(playerId);
       playerNames.put(playerId, playerName);
-      isComputer.put(playerId, false); 
+      isComputer.put(playerId, false);
       output.append("Human player added with ID: " + playerId + ".\n");
-    } catch (NumberFormatException e) {
-      throw new NumberFormatException(e.getMessage() + "\n");
-    }
   }
 }

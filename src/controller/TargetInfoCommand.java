@@ -1,7 +1,7 @@
 package controller;
 
 import java.io.IOException;
-import world.WorldOutline;
+import world.ReadOnlyWorld;
 
 /**
  * The TargetInfoCommand class implements the Command interface to provide
@@ -9,7 +9,7 @@ import world.WorldOutline;
  * This command allows users to view details about the target character within the game.
  */
 public class TargetInfoCommand implements Command {
-  private WorldOutline world;
+  private ReadOnlyWorld world;
 
   /**
    * Constructs a TargetInfoCommand with access to the game world, from which
@@ -17,7 +17,7 @@ public class TargetInfoCommand implements Command {
    *
    * @param worldModel The game world that contains the target's data.
    */
-  public TargetInfoCommand(WorldOutline worldModel) {
+  public TargetInfoCommand(ReadOnlyWorld worldModel) {
     this.world = worldModel;
   }
 

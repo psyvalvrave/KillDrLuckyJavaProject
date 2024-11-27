@@ -197,6 +197,7 @@ public class Room implements Block {
     }
   }
   
+  
   /**
    * Returns the coordinates of this room.
    * 

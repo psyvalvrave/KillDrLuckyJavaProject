@@ -1,11 +1,11 @@
 package controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
+
+import world.ReadOnlyWorld;
+import world.World;
 import world.WorldOutline;
 
 /**
@@ -16,14 +16,8 @@ public class GameController implements Controller {
   private Scanner scanner;
   private Appendable output;
   private int maxTurns;
-  private int currentTurn = 1;
-  private boolean gameStarted = false;
-  private List<Integer> playerIds;
-  private int currentPlayerIndex = 0;
-  private Map<Integer, Boolean> isComputer;
   private RandomNumberGenerator rng;
-  private Map<Integer, String> playerNames = new HashMap<>();
-  private boolean isRunning = true;
+  private ReadOnlyWorld world;
 
   /**
    * Constructs a new GameController with the specified input, 
@@ -38,35 +32,65 @@ public class GameController implements Controller {
       RandomNumberGenerator rngInput, int maxTurnsInput) {
     this.scanner = new Scanner(input);
     this.output = outputInput;
-    this.playerIds = new ArrayList<>();
-    this.isComputer = new HashMap<>();
-    this.rng = rngInput;
     this.maxTurns = maxTurnsInput;
+    this.rng = rngInput;
   }
     
   @Override
   public void playGame(WorldOutline world) throws InterruptedException, IOException {
     setupGame(world);
-    if (gameStarted && isRunning) {
+    if (world.getIsRunning()) {
       runGame(world);
     }
-    if (!isRunning) {
+    if (!world.getIsRunning()) {
       return; 
     }
   }
+  
+  @Override
+  public void addPlayer(String playerName, int roomIndex, boolean isComputer) throws IOException, InterruptedException {
+      Command command;
+      if (isComputer) {
+          command = new CreateComputerPlayerCommand(world, playerName, roomIndex, world.getPlayerIds(), world.getPlayerNames(), world.getIsComputer());
+      } else {
+          command = new CreatePlayerCommand(world, playerName, roomIndex, world.getPlayerIds(), world.getPlayerNames(), world.getIsComputer());
+      }
+      StringBuilder output = new StringBuilder();
+      command.execute(output);
+  }
+
+  @Override
+  public void startGame() {
+      ((WorldOutline) world).setRunning(true);
+  }
+  
+  @Override
+  public void loadNewWorld(Readable source) throws IOException {
+    this.world = new World(source);  
+}
+  
+  @Override
+  public void updateWorldInView() {
+      // Assuming there's a method in WorldPanel to handle this update
+      worldPanel.updateWorld(world);
+  }
+  
+  public ReadOnlyWorld getWorld() {
+    return this.world;
+}
 
   private void setupGame(WorldOutline world) throws InterruptedException, IOException {
     print("Setting up the game.");
     try {
-      world.setMaxTurn(maxTurns);
+      world.setMaxTurns(maxTurns);
     } catch (NumberFormatException e) {
       print("Invalid input for maximum turns. Setting to default of 20 turns.");
       maxTurns = 20;
-      world.setMaxTurn(maxTurns);
+      world.setMaxTurns(maxTurns);
     }
   
     boolean addingPlayers = true;
-    while (addingPlayers && isRunning) {
+    while (addingPlayers && world.getIsRunning()) {
       print("Add players:");
       print("1. Add Human-Controlled Player");
       print("2. Add Computer-Controlled Player");
@@ -75,27 +99,21 @@ public class GameController implements Controller {
       String input = scanner.nextLine(); 
       try {
         int choice = Integer.parseInt(input);
-        Command command = null;
         switch (choice) {
           case 1: 
-            command = new CreatePlayerCommand(world, scanner, playerIds, playerNames, isComputer);
-            command.execute(output);
+            handleAddPlayerCLI(world);
             break;
           case 2: 
-            command = new CreateComputerPlayerCommand(world, scanner, 
-                playerIds, playerNames, isComputer);
-            command.execute(output);
+            handleAddComputerPlayerCLI(world);
             break;
           case 3:  
-            command = new SaveWorldMapCommand(world);
-            command.execute(output);
+            executeSaveWorldMap(world);
             break;
           case 4:
-            if (playerIds.isEmpty()) {
+            if (world.getPlayerIds().isEmpty()) {
               print("No players added. Cannot start game.");
             } else {
-              gameStarted = true;
-              print("Game will start with " + playerIds.size() + " players.");
+              print("Game will start with " + world.getPlayerIds().size() + " players.");
               runGame(world);
             }
             break;
@@ -111,18 +129,19 @@ public class GameController implements Controller {
 
   private void runGame(WorldOutline world) throws InterruptedException, IOException {
     print("Game started. Manage your turns.");
-
-    while (isRunning && currentTurn < maxTurns) {
-      int currentPlayerId = playerIds.get(currentPlayerIndex);
-      if (isComputer.get(currentPlayerId)) {
-        computerPlayerActions(world, currentPlayerId);
+    ComputerPlayer computerPlayerStrategy = new ComputerPlayerStrategy(world, output, rng);
+    while (world.getIsRunning() && world.getCurrentTurn() < maxTurns) {
+      int currentPlayerId = world.getPlayerIds().get(world.getCurrentPlayerId());
+      if (world.getIsComputer().get(currentPlayerId)) {
+        displayMenu(world);
+        computerPlayerStrategy.executeActions(currentPlayerId);
       } else {
         displayMenu(world);
         String input = scanner.nextLine();
         processPlayerInput(input, world, currentPlayerId);
       }
-      if (currentTurn >= maxTurns) {
-        setRunning(false);
+      if (world.getCurrentTurn() >= maxTurns) {
+        world.setRunning(false);
         print("Game over: Maximum number of turns reached!");
       }
     }
@@ -134,61 +153,53 @@ public class GameController implements Controller {
     while (!validInput) {
       try {
         int choice = Integer.parseInt(input);
-        Command command = null;
         switch (choice) {
           case 1:  
-            command = new DisplayRoomInfoCommand(world, scanner);
-            command.execute(output);
+            handleDisplayRoomInfoCLI(world);
             break;
           case 2:  
-            command = new SaveWorldMapCommand(world);
-            command.execute(output);
+            executeSaveWorldMap(world);
             break;
           case 3:
-            command = new MurderTargetCommand(world, playerId, scanner);  
-            command.execute(output);
+            handleMurderTargetCLI(world, playerId);
             if (world.getTargetHealthPoint() <= 0) {
-              print("Target eliminated. " + playerNames.get(playerId) + " win!");
-              setRunning(false);
+              print("Target eliminated. " + world.getPlayerNames().get(playerId) + " win!");
+              world.setRunning(false);
               print("Game Over!");
             } else {
-              advanceTurn(world);
+              print(world.advanceTurn());
             }
             break;
           case 4:  
-            command = new MovePetCommand(world, playerId, scanner);
-            command.execute(output);
-            advanceTurn(world);
+            handleMovePetCLI(world, playerId);
+            print(world.advanceTurn());
             break;
           case 5:  
-            command = new MovePlayerCommand(world, playerId, scanner);
-            command.execute(output);
-            advanceTurn(world);
+            handleMovePlayerCLI(world, playerId);
+            print(world.advanceTurn());
             break;
           case 6: 
-            command = new PickUpItemCommand(world, playerId, scanner);
-            command.execute(output);
-            advanceTurn(world);
+            handlePickUpItemCLI(world, playerId);
+            print(world.advanceTurn());
             break;
           case 7: 
-            command = new LookAroundCommand(world, playerId);
-            command.execute(output);
-            advanceTurn(world);
+            Command lookAroundCommand = new LookAroundCommand(world, playerId);
+            lookAroundCommand.execute(output);
+            print(world.advanceTurn());
             break;
           case 8:  
-            command = new PlayerInfoCommand(world, playerIds, scanner);
-            command.execute(output);
+            handlePlayerInfoCLI(world);
             break;
           case 9: 
-            advanceTurn(world);
+            print(world.advanceTurn());
             break;
           case 0:
             print("Quitting game.");
-            setRunning(false);
+            world.setRunning(false);
             break;
           case 10:
-            command = new TargetInfoCommand(world);
-            command.execute(output);
+            Command targetInfoCommand = new TargetInfoCommand(world);
+            targetInfoCommand.execute(output);
             break;
           default:
             print("Unknown command. Please try again.");
@@ -210,88 +221,6 @@ public class GameController implements Controller {
     }
   }
   
-  private void computerPlayerActions(WorldOutline world, 
-      int playerId) throws InterruptedException, IOException {
-    try {
-      if (world.canMurderAttempt(playerId)) {
-        print("Opportunity for murder identified. Computer player preparing to attack.");
-        world.usePlayerHighestItem(playerId);  
-        String murderResult = world.murderAttempt(playerId);
-        print("Murder attempt by computer player: " + murderResult);
-        if (world.getTargetHealthPoint() <= 0) {
-          print("Target eliminated. " + playerNames.get(playerId) + " win!");
-          setRunning(false);
-          print("Game Over!");
-        } else {
-          advanceTurn(world);
-        }
-      } else {
-        int action = rng.nextInt(3);  
-        switch (action) {
-          case 0:
-            int currentRoomId = world.getPlayerRoomId(playerId); 
-            List<Integer> neighbors = world.getNeighborRooms(currentRoomId); 
-            print("Current Room ID: " + currentRoomId);
-            print("Neighbor Rooms: " + neighbors);
-            if (neighbors.isEmpty()) {
-              print("No available moves for player " + playerNames.get(playerId));
-              return;
-            }
-            int roomIndex = rng.nextInt(neighbors.size());
-            int targetRoomId = neighbors.get(roomIndex);
-            print("Computer player try to move to " + targetRoomId);
-            print("Computer player: " + (world.movePlayer(playerId, targetRoomId)));
-            Thread.sleep(100);
-            advanceTurn(world);
-            break;
-          case 1:
-            print("Start Picking Item Up");
-            int roomId = world.getPlayerRoomId(playerId);
-            List<String> itemsInRoom = world.getRoomItems(roomId);
-            if (!itemsInRoom.isEmpty()) {
-              int itemIndex = rng.nextInt(itemsInRoom.size());
-              String itemName = itemsInRoom.get(itemIndex);
-              print("Computer player: " + world.playerPickUpItem(playerId, itemName));
-            } else {
-              print("No items available to pick up in this room for player " + playerId);
-            }
-            Thread.sleep(100);
-            advanceTurn(world);
-            break;
-          case 2:
-            print("Start Looking Around");
-            print("Computer player: " + world.playerLookAround(playerId));
-            Thread.sleep(100);
-            advanceTurn(world);
-            break;
-          case 3:
-            print("Computer player " + playerId + " has decided to quit the game.");
-            setRunning(false);
-            break;
-          default:
-            break;
-        }
-      }
-    } catch (IllegalArgumentException e) {
-      print(e.getMessage());
-    }
-  }
-
-  private void advanceTurn(WorldOutline world) throws IOException {
-    currentTurn++;
-    if (currentTurn < maxTurns) {
-      currentPlayerIndex = (currentPlayerIndex + 1) % playerIds.size();
-      String currentPlayerName = playerNames.get(currentPlayerIndex);
-      print("Turn " + currentTurn + ". Now Player " + currentPlayerName + " with "
-          + "ID " + playerIds.get(currentPlayerIndex) + "'s turn.");
-      world.moveTargetToNextRoom();  
-      print(world.movePetToNextRoom());
-    } else {
-      print("Maximum turns reached. Ending game.");
-    }
-  }
-
-
   private void print(String message) throws IOException {
     try {
       output.append(message + "\n");
@@ -300,15 +229,18 @@ public class GameController implements Controller {
     }
   }
 
-  private void displayMenu(WorldOutline world) throws IOException {
-    int currentPlayerId = playerIds.get(currentPlayerIndex);
-    String currentPlayerName = playerNames.get(currentPlayerId);
+  private void displayMenu(WorldOutline world) throws IOException, InterruptedException {
+    int currentPlayerId = world.getCurrentPlayerId();
+    String currentPlayerName = world.getPlayerNames().get(currentPlayerId);
     print("\n--- Game Menu ---");
-    print("Turn " + currentTurn);
+    print("Turn " + world.getCurrentTurn());
     print("Current player's turn: Player ID " + currentPlayerId + " Player "
         + "Name " + currentPlayerName);
     print(world.getPlayerLocation(currentPlayerId));
     print(world.getPlayerItemsInfo(currentPlayerId));
+    Command command = null;
+    command = new TargetInfoCommand(world);
+    command.execute(output);
     print("1. Display Room Info");
     print("2. Save World Map");
     print("3. Attempt to Murder Target");
@@ -323,20 +255,200 @@ public class GameController implements Controller {
     print("Select an option:");
   }
   
-  /**
-   * Checks if the game is currently running.
-   * This method is typically used to verify the game's active 
-   * status within game loops or conditional checks.
-   *
-   * @return {@code true} if the game is actively running, 
-   *        {@code false} otherwise.
-   */
-  @Override
-  public boolean getIsRunning() {
-    return isRunning;
-  }
+  private void handleAddPlayerCLI(WorldOutline world) throws IOException, InterruptedException {
+    output.append("Enter player name:\n");
+    String playerName = scanner.nextLine();
+    output.append("Enter player starting room id:\n");
+    int roomIndex;
+    try {
+        roomIndex = Integer.parseInt(scanner.nextLine());
+    } catch (NumberFormatException e) {
+        output.append("Invalid input for room index. Please enter a valid number.\n");
+        return;
+    }
+
+    if (roomIndex < 1 || roomIndex > world.getRoomCount()) {
+        output.append("Invalid room index. Please enter a number between 1 and " + world.getRoomCount() + ".\n");
+        return;
+    }
+
+    Command createPlayerCommand = new CreatePlayerCommand(world, playerName, roomIndex, world.getPlayerIds(), world.getPlayerNames(), world.getIsComputer());
+    createPlayerCommand.execute(output);
+}
   
-  private void setRunning(boolean isRunningInput) {
-    this.isRunning = isRunningInput;
-  }
+  private void handleAddComputerPlayerCLI(WorldOutline world) throws IOException, InterruptedException {
+    output.append("Enter computer player name:\n");
+    String playerName = scanner.nextLine();
+    output.append("Enter computer player starting room id:\n");
+    int roomIndex;
+    try {
+        roomIndex = Integer.parseInt(scanner.nextLine());
+    } catch (NumberFormatException e) {
+        output.append("Invalid input for room index. Please enter a valid number.\n");
+        return;
+    }
+
+    if (roomIndex < 1 || roomIndex > world.getRoomCount()) {
+        output.append("Invalid room index. Please enter a number between 1 and " + world.getRoomCount() + ".\n");
+        return;
+    }
+    Command createComputerPlayerCommand = new CreateComputerPlayerCommand(world, playerName, roomIndex, world.getPlayerIds(), world.getPlayerNames(), world.getIsComputer());
+    createComputerPlayerCommand.execute(output);
+}
+  
+  private void executeSaveWorldMap(WorldOutline world) throws InterruptedException, IOException {
+    Command saveWorldMapCommand = new SaveWorldMapCommand(world);
+    try {
+        saveWorldMapCommand.execute(output);
+    } catch (IOException e) {
+        output.append("Error saving world map: " + e.getMessage() + "\n");
+    }
+}
+  
+  private void handleDisplayRoomInfoCLI(WorldOutline world) throws IOException, InterruptedException {
+    output.append("Enter room ID (From 1 to " + world.getRoomCount() + "):\n");
+    int roomId;
+    try {
+        roomId = Integer.parseInt(scanner.nextLine());
+    } catch (NumberFormatException e) {
+        output.append("Invalid input for room ID. Please enter a valid number.\n");
+        return;
+    }
+
+    Command displayRoomInfoCommand = new DisplayRoomInfoCommand(world, roomId);
+    displayRoomInfoCommand.execute(output);
+}
+  
+  private void handleMurderTargetCLI(WorldOutline world, int playerId) throws IOException, InterruptedException {
+    output.append("Attempt to murder the target:\n");
+    if (!world.canMurderAttempt(playerId)) {
+      throw new IllegalArgumentException(
+          "Player is not in the same room as the target.");
+    }
+    List<String> playerItems = world.getPlayerItems(playerId);
+    String itemName = null;
+    if (!playerItems.isEmpty()) {
+        output.append("Your items:\n");
+        for (int i = 0; i < playerItems.size(); i++) {
+            output.append((i + 1) + ": " + playerItems.get(i) + "\n");
+        }
+        output.append("Would you like to use an item to increase your murder chance? (Enter item number above or any other number to not use any):\n");
+        String input = scanner.nextLine().trim();
+        int choice = Integer.parseInt(input);
+        if (choice > 0 && choice <= playerItems.size()) {
+            itemName = playerItems.get(choice - 1).split(":")[0];
+        }
+    } else {
+        output.append("You have no items to use.\n");
+    }
+
+    Command murderTargetCommand = new MurderTargetCommand(world, playerId, itemName);
+    murderTargetCommand.execute(output);
+}
+
+  private void handleMovePetCLI(WorldOutline world, int playerId) throws IOException, InterruptedException {
+    int maxRooms = world.getRoomCount();
+    output.append("Enter a room ID for the pet to move to (1-" + maxRooms + "):\n");
+    int targetRoomId;
+    try {
+        targetRoomId = Integer.parseInt(scanner.nextLine());
+    } catch (NumberFormatException e) {
+        throw new NumberFormatException("Invalid input for room ID. Please enter a valid number.\n");
+    }
+
+    if (targetRoomId < 1 || targetRoomId > world.getRoomCount()) {
+      throw new IllegalArgumentException("Invalid room ID. "
+          + "Please enter a number between 1 and " + maxRooms + ".");
+    }
+
+    Command movePetCommand = new MovePetCommand(world, playerId, targetRoomId);
+    movePetCommand.execute(output);
+}
+  
+  private void handleMovePlayerCLI(WorldOutline world, int playerId) throws IOException, InterruptedException {
+    List<String> neighbors = world.getPlayerNeighborRoom(playerId);
+    if (neighbors.isEmpty()) {
+      throw new IllegalArgumentException("There are no available rooms to move to.\n");
+    }
+
+    output.append("You can move to the following rooms:\n");
+    for (String neighbor : neighbors) {
+        output.append(neighbor + "\n");
+    }
+
+    output.append("Enter target room ID:\n");
+    int targetRoomId;
+    try {
+        targetRoomId = Integer.parseInt(scanner.nextLine());
+        if (targetRoomId < 1 || targetRoomId > world.getRoomCount()) {
+          throw new IllegalArgumentException("Invalid room index. Please enter a number between "
+              + "1 and " + world.getRoomCount() + ".\n");
+        }
+    } catch (NumberFormatException e) {
+      throw new NumberFormatException(e.getMessage() + "\n");
+    }
+
+    Command movePlayerCommand = new MovePlayerCommand(world, playerId, targetRoomId);
+    movePlayerCommand.execute(output);
+}
+  
+  private void handlePickUpItemCLI(WorldOutline world, int playerId) throws IOException, InterruptedException {
+    int roomId = world.getPlayerRoomId(playerId);
+    List<String> itemsInRoom = world.getRoomItems(roomId);
+
+    if (itemsInRoom.isEmpty()) {
+        output.append("No items available to pick up in this room.\n");
+        return;
+    }
+
+    output.append("Items available to pick up:\n");
+    for (int i = 0; i < itemsInRoom.size(); i++) {
+        output.append((i + 1) + ": " + itemsInRoom.get(i) + "\n");
+    }
+
+    output.append("Enter the index of the item to pick up:\n");
+    int itemIndex;
+    try {
+        itemIndex = Integer.parseInt(scanner.nextLine()) - 1;
+    } catch (NumberFormatException e) {
+      throw new NumberFormatException("Invalid input for item index. Please enter a valid number.\n");
+    }
+
+    if (itemIndex < 0 || itemIndex >= itemsInRoom.size()) {
+      throw new IllegalArgumentException(
+          "Please enter valid number in range");
+    }
+    
+    try {
+    String itemName = itemsInRoom.get(itemIndex).split(": ")[0];
+    Command pickUpItemCommand = new PickUpItemCommand(world, playerId, itemName);
+    pickUpItemCommand.execute(output);
+    } catch (IllegalArgumentException e) {
+      throw new IllegalArgumentException(e.getMessage() + "\n");
+    }
+}
+  
+  private void handlePlayerInfoCLI(WorldOutline world) throws IOException, InterruptedException {
+    int totalPlayerNumber = world.getPlayerIds().size() - 1;
+    output.append("Enter the player ID to view their information (from 0 to " + totalPlayerNumber +"):\n");
+    int targetPlayerId;
+    try {
+        targetPlayerId = Integer.parseInt(scanner.nextLine());
+    } catch (NumberFormatException e) {
+      throw new NumberFormatException(e.getMessage() + "\n");
+    }
+
+    Command playerInfoCommand = new PlayerInfoCommand(world, targetPlayerId);
+    playerInfoCommand.execute(output);
+}
+
+  
+  
+
+
+
+
+
+
+  
 }

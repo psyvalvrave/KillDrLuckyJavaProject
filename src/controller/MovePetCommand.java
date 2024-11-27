@@ -1,8 +1,7 @@
 package controller;
 
 import java.io.IOException;
-import java.util.Scanner;
-import world.WorldOutline;
+import world.ReadOnlyWorld;
 
 /**
  * The MovePetCommand class implements the Command interface to enable players
@@ -11,9 +10,9 @@ import world.WorldOutline;
  * movement rules are followed and providing feedback to the player.
  */
 public class MovePetCommand implements Command {
-  private WorldOutline world;
+  private ReadOnlyWorld world;
   private int playerId;
-  private Scanner scanner;
+  private int targetRoomId;
 
   /**
    * Constructs a MovePetCommand with a reference to the game world, the ID
@@ -25,30 +24,25 @@ public class MovePetCommand implements Command {
    * @param playerIdsInput The ID of the player attempting to move the pet.
    * @param scannerInput The scanner for reading user input during command execution.
    */
-  public MovePetCommand(WorldOutline worldModel, int playerIdsInput, Scanner scannerInput) {
+  public MovePetCommand(ReadOnlyWorld worldModel, int playerIdsInput, int targetRoomId) {
     this.world = worldModel;
     this.playerId = playerIdsInput;
-    this.scanner = scannerInput;
+    this.targetRoomId = targetRoomId;
   }
 
   @Override
   public void execute(Appendable output) throws IOException {
-    try {
-      if (!world.canInteractWithPet(playerId)) {
-        throw new IllegalArgumentException("You must be in the same room as the pet to move it.");
+      try {
+          if (!world.canInteractWithPet(playerId)) {
+              throw new IllegalArgumentException("You must be in the same room as the pet to move it.");
+          }
+          if (targetRoomId < 1 || targetRoomId > world.getRoomCount()) {
+              throw new IllegalArgumentException("Invalid room ID. Please enter a number between 1 and " + world.getRoomCount() + ".");
+          }
+          String moveResult = world.movePet(playerId, targetRoomId);
+          output.append(moveResult + "\n");
+      } catch (IllegalArgumentException e) {
+          output.append("Error: " + e.getMessage() + "\n");
       }
-      int maxRooms = world.getRoomCount();
-      output.append("Enter a room ID for the pet to move to (1-" + maxRooms + "):\n");
-      int targetRoomId = Integer.parseInt(scanner.nextLine());
-      if (targetRoomId < 1 || targetRoomId > maxRooms) {
-        throw new IllegalArgumentException("Invalid room ID. "
-            + "Please enter a number between 1 and " + maxRooms + ".");
-      } else {
-        String moveResult = world.movePet(playerId, targetRoomId);
-        output.append(moveResult + "\n");
-      }
-    } catch (NumberFormatException e) {
-      throw new NumberFormatException(e.getMessage() + "\n");
-    }
   }
 }

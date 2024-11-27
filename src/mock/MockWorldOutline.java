@@ -3,8 +3,14 @@ package mock;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import world.Block;
+import world.CharacterPet;
+import world.CharacterPlayer;
+import world.CharacterTarget;
 import world.Gadget;
 import world.WorldOutline;
 
@@ -20,8 +26,11 @@ public class MockWorldOutline implements WorldOutline {
   private String lookAroundResult = "Default look around info";
   private String pickItemUpResult = "Default pick item up";
   private int mockId = 0;
+  private int id = 0;
+  private int turn = 1;
   private boolean mockMurderAttempt = false;
   private int mockTargetHealthPoint = 0;
+  private boolean mockRunning = true;
   
   /**
    * Sets the number of rooms in the mock world.
@@ -186,16 +195,6 @@ public class MockWorldOutline implements WorldOutline {
   }
 
   @Override
-  public int getMaxTurn() {
-    return 0;
-  }
-
-  @Override
-  public void setMaxTurn(int maxTurn) {
-    
-  }
-
-  @Override
   public String playerPickUpItem(int playerId, String itemName) {
     return pickItemUpResult;
   }
@@ -328,5 +327,127 @@ public class MockWorldOutline implements WorldOutline {
   @Override
   public String getPlayerItemsInfo(int playerId) {
     return "";
+  }
+
+  @Override
+  public boolean getIsRunning() {
+    return mockRunning;
+  }
+
+  @Override
+  public void setRunning(boolean running) {
+    mockRunning = running;
+  }
+
+  @Override
+  public int getCurrentTurn() {
+    return turn;
+  }
+
+  @Override
+  public void setCurrentTurn(int currentTurn) {
+    
+  }
+
+  @Override
+  public int getMaxTurns() {
+    return 3;
+  }
+
+  @Override
+  public void setMaxTurns(int maxTurns) {
+    
+  }
+
+  @Override
+  public String advanceTurn() {
+    this.turn = turn + 1;
+    return "next turn";
+  }
+
+  @Override
+  public String getPlayerName(int playerId) {
+    return null;
+  }
+
+  @Override
+  public int getCurrentPlayerId() {
+    int tempId = id;
+    id = id + 1;
+    return tempId;
+  }
+
+  @Override
+  public List<Integer> getPlayerIds() {
+    List<Integer> list = new ArrayList<>();
+    list.add(0);
+    list.add(1);
+    list.add(2);
+    list.add(3);
+    list.add(4);
+    return list;
+  }
+
+  @Override
+  public Map<Integer, String> getPlayerNames() {
+    Map<Integer, String> map = new HashMap<>();
+    map.put(0, "FirstName");
+    map.put(1, "SecondName");
+    map.put(2, "ThirdName");
+    map.put(3, "ForthName");
+    map.put(4, "FifthName");
+    return map;
+  }
+
+  @Override
+  public Map<Integer, Boolean> getIsComputer() {
+    Map<Integer, Boolean> map = new HashMap<>();
+    map.put(0, true);
+    map.put(1, false);
+    map.put(2, false);
+    map.put(3, false);
+    map.put(4, false);
+    return map;
+  }
+
+  @Override
+  public Gadget createItem(String name, int location, int murderValue) {
+    return null;
+  }
+
+  @Override
+  public CharacterTarget getTarget() {
+    return null;
+  }
+
+  @Override
+  public CharacterPet getPet() {
+    return null;
+  }
+
+  @Override
+  public CharacterPet createPet(String petNameInput, Block initialRoom) {
+    return null;
+  }
+
+  @Override
+  public Gadget getItemByName(String itemName) {
+    return null;
+  }
+
+  @Override
+  public CharacterPlayer createPlayer(String playerName, int startRoomIndex) {
+    return null;
+  }
+
+  @Override
+  public Block createRoom(String roomName, int roomId, int[] coordinates,
+      List<String[]> allRoomData) {
+    return null;
+  }
+
+  @Override
+  public CharacterTarget createTarget(String name, Block room, int health) {
+    return null;
   }
 }
