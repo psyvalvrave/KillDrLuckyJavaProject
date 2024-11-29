@@ -43,8 +43,7 @@ public class CreatePlayerCommand implements Command {
   @Override
   public void execute(Appendable output) throws IOException {
       if (roomIndex < 1 || roomIndex > world.getRoomCount()) {
-          output.append("Invalid room index. Please enter a number between 1 and " + world.getRoomCount() + ".\n");
-          return;
+        throw new IllegalArgumentException("Invalid room index. Please enter a number between 1 and " + world.getRoomCount() + ".\n");
       }
       int playerId = world.callCreatePlayer(playerName, roomIndex);
       playerIds.add(playerId);

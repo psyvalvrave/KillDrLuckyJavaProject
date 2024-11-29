@@ -1,5 +1,6 @@
 package mock;
 
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -448,6 +449,16 @@ public class MockWorldOutline implements WorldOutline {
 
   @Override
   public CharacterTarget createTarget(String name, Block room, int health) {
+    return null;
+  }
+
+  @Override
+  public Map<Integer, Rectangle> getPlayerCoordinates() {
+    return null;
+  }
+
+  @Override
+  public Map<Integer, Rectangle> getRoomCoordinates() {
     return null;
   }
 }

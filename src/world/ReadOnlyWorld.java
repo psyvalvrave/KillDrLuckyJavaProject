@@ -1,5 +1,6 @@
 package world;
 
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.Map;
@@ -187,4 +188,6 @@ public interface ReadOnlyWorld {
      * @return True if the conditions for a murder attempt are met, otherwise false.
      */
     boolean canMurderAttempt(int playerId);
+    Map<Integer, Rectangle> getPlayerCoordinates();
+    Map<Integer, Rectangle> getRoomCoordinates();
 }

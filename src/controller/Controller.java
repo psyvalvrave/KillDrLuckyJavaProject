@@ -1,6 +1,12 @@
 package controller;
 
+import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Map;
+
+import world.ReadOnlyWorld;
+import world.World;
 import world.WorldOutline;
 
 /**
@@ -25,7 +31,20 @@ public interface Controller {
   void playGame(WorldOutline world) throws InterruptedException, IOException;
 
   void addPlayer(String playerName, int roomIndex, boolean isComputer) throws IOException, InterruptedException;
-  void startGame();
+  void startGame() throws IOException;
+
   void loadNewWorld(Readable source) throws IOException;
-  void updateWorldInView();
+
+  ReadOnlyWorld getWorld();
+  
+  void setOutput(Appendable output);
+
+  BufferedImage saveWorldImg();
+
+  void updateCoordinates();
+
+  Map<Integer, Rectangle> getPlayerCoordinates();
+
+  Map<Integer, Rectangle> getRoomCoordinates();
+  
 }

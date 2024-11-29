@@ -3,6 +3,7 @@ package world;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -47,7 +48,9 @@ public class World implements WorldOutline {
   private Map<Integer, Boolean> isComputer = new HashMap<>();
   private Map<Integer, String> playerNames = new HashMap<>();
   private boolean isRunning = true;
-
+  private Map<Integer, Rectangle> playerPositions = new HashMap<>();
+  private Map<Integer, Rectangle> roomCoordinates = new HashMap<>();
+  
   /**
    * Constructor for World that initializes the game from a file.
    * 
@@ -253,30 +256,31 @@ public class World implements WorldOutline {
 
   @Override
   public BufferedImage drawWorld() {
-    BufferedImage image = new BufferedImage(this.cols * 25, this.rows * 25, 
+    int scaleFactor = 40;
+    BufferedImage image = new BufferedImage(this.cols * scaleFactor, this.rows * scaleFactor, 
         BufferedImage.TYPE_INT_RGB);
     Graphics g = image.createGraphics();
 
     g.setColor(Color.WHITE);
-    g.fillRect(0, 0, this.cols * 25, this.rows * 25);
+    g.fillRect(0, 0, this.cols * scaleFactor, this.rows * scaleFactor);
 
-    Font font = new Font("Arial", Font.PLAIN, 9);
+    Font font = new Font("Arial", Font.BOLD, scaleFactor/3);
     g.setFont(font);
 
     
     for (String[] room : roomData) {
       String roomName = room[0];
-      String roomId = room[2];
+      Integer roomId = Integer.parseInt(room[2]);
       String[] coordsStr = room[1].replace("[", "").replace("]", "").split(", ");
       int y1 = Integer.parseInt(coordsStr[0]);
       int x1 = Integer.parseInt(coordsStr[1]);
       int y2 = Integer.parseInt(coordsStr[2]);
       int x2 = Integer.parseInt(coordsStr[3]);
 
-      int x1Draw = x1 * 25;
-      int y1Draw = y1 * 25;
-      int width = ((x2 - x1 + 1) * 25) - 1;
-      int height = ((y2 - y1 + 1) * 25) - 1;
+      int x1Draw = x1 * scaleFactor;
+      int y1Draw = y1 * scaleFactor;
+      int width = ((x2 - x1 + 1) * scaleFactor) - 1;
+      int height = ((y2 - y1 + 1) * scaleFactor) - 1;
 
       if (width > 0 && height > 0) {
         g.setColor(Color.WHITE);
@@ -286,30 +290,30 @@ public class World implements WorldOutline {
         g.drawRect(x1Draw, y1Draw, width, height);
         g.drawString(roomName + " (" + roomId + ")", x1Draw + 3, y1Draw + (height / 2) + 5);
       }
+      roomCoordinates.put(roomId, new Rectangle(x1Draw, y1Draw, width, height));
 
       if (target != null && target.getLocation() != null 
           && roomName.equals(target.getLocation().getRoomName())) {
         g.setColor(Color.RED);
-        g.fillOval(x1Draw + 10, y1Draw + 10, 10, 10); 
-        g.drawString("Target: " + target.getCharacterName(), x1Draw + 25, y1Draw + 15);
+        g.fillOval(x1Draw + scaleFactor/3, y1Draw + scaleFactor/3, 20, 20); 
       }
-      int petOffset = 0;
-      if (pet != null && pet.getLocation() != null && roomName
-          .equals(pet.getLocation().getRoomName())) {
-        g.setColor(Color.BLUE);
-        g.fillOval(x1Draw + 10, y1Draw + 25, 10, 10); 
-        g.drawString("Pet: " + pet.getCharacterName(), x1Draw + 25, y1Draw + 30);
-        petOffset = 10;
-      }
-      int playerOffset = 0 + petOffset;
+
+      
+      int playerOffset = scaleFactor/3 + 30;
+      int playerHorizontalSpace = scaleFactor/3;
       for (CharacterPlayer player : players) {
         if (player.getLocation() != null && roomName.equals(player.getLocation().getRoomName())) {
-          g.setColor(Color.BLACK);
-          g.fillOval(x1Draw + 10, y1Draw + 30 + playerOffset, 10, 10); 
-          g.drawString("Player: " + player.getCharacterName(), 
-              x1Draw + 25, y1Draw + 35 + playerOffset);
-
-          playerOffset += 20; 
+            Color playerColor = player.getPlayerId() == players.get(currentPlayerIndex).getPlayerId() ? Color.BLUE : Color.BLACK;
+            g.setColor(playerColor);
+            int playerX = x1Draw + playerHorizontalSpace;
+            int playerY = y1Draw + playerOffset;
+            g.fillOval(playerX, playerY, 20, 20);
+            playerPositions.put(player.getPlayerId(), new Rectangle(playerX, playerY, 20, 20));
+         playerHorizontalSpace += scaleFactor/1.5;
+         if(player.getPlayerId() % 5 == 4) {
+           playerOffset += scaleFactor/2;
+           playerHorizontalSpace = scaleFactor/3;
+         }
         }
       }
     }
@@ -1073,6 +1077,16 @@ public class World implements WorldOutline {
   public Map<Integer, Boolean> getIsComputer() {
     return isComputer;
   }
+  
+  @Override
+  public Map<Integer, Rectangle> getRoomCoordinates() {
+    return new HashMap<>(roomCoordinates);
+}
+
+  @Override
+public Map<Integer, Rectangle> getPlayerCoordinates() {
+    return new HashMap<>(playerPositions);
+}
   
   
 }

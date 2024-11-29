@@ -2,6 +2,7 @@ package view;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -9,33 +10,32 @@ import java.io.FileNotFoundException;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import controller.Controller;
+import controller.TextOutputHandler;
 import world.ReadOnlyWorld;
 import world.World;
 
-public class GameFrame extends JFrame {
+public class GameFrame extends JFrame implements ClickListener {
     private ReadOnlyWorld world;
     private JLabel statusLabel;
     private WorldPanel worldPanel;
     private JTextArea infoTextArea;
-    private JPanel mainPanel;
-    private CardLayout cardLayout;
     private Controller gameController;
+    private JPanel setupPanel;
+    private JPanel gamePanel;
 
     public GameFrame(Controller gameController) {
-      this.gameController = gameController;
+        this.gameController = gameController;
         setTitle("Game World");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new BorderLayout());
         setSize(800, 600);
         setMinimumSize(new Dimension(300, 300));
-        
-        cardLayout = new CardLayout();
-        mainPanel = new JPanel(cardLayout);
-        
+
         initializeMenu();
         initializeComponents();
-        add(mainPanel);  // Ensure mainPanel is added to the JFrame
+        setupOutputHandler();
+        
     }
+    
 
     private void initializeMenu() {
         JMenuBar menuBar = new JMenuBar();
@@ -49,21 +49,27 @@ public class GameFrame extends JFrame {
 
         gameMenu.add(loadGame);
         gameMenu.add(quitGame);
-
         menuBar.add(gameMenu);
         setJMenuBar(menuBar);
     }
 
     private void loadWorldFromFile() {
-      // File chooser logic
+      JFileChooser fileChooser = new JFileChooser();
+      fileChooser.setDialogTitle("Select Game Configuration File");
+      fileChooser.setFileFilter(new FileNameExtensionFilter("Text Files", "txt"));
+
+      int result = fileChooser.showOpenDialog(this);
       if (result == JFileChooser.APPROVE_OPTION) {
           File selectedFile = fileChooser.getSelectedFile();
           try {
               FileReader fileReader = new FileReader(selectedFile);
-              gameController.loadNewWorld(fileReader);
-              worldPanel.updateWorld((World) gameController.getWorld());
+              gameController.loadNewWorld(fileReader);  
+              refreshWorldDisplay();
+              printCoordinates();
+              setupPanel.setVisible(true);
               statusLabel.setText("Game loaded. Please set up the game.");
-              cardLayout.show(mainPanel, "SetupPanel");
+          } catch (FileNotFoundException e) {
+              JOptionPane.showMessageDialog(this, "File not found: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
           } catch (IOException e) {
               JOptionPane.showMessageDialog(this, "Error loading world: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
           }
@@ -71,81 +77,105 @@ public class GameFrame extends JFrame {
   }
 
 
-
-    private void startNewGame(Readable inputSource) {
-      SwingUtilities.invokeLater(() -> {
-          try {
-              this.world = new World(inputSource);  // Assuming World can initialize from a Readable
-              worldPanel.updateWorld((World) world);  // Make sure WorldPanel can accept World
-              statusLabel.setText("Game loaded. Please set up the game.");
-              cardLayout.show(mainPanel, "SetupPanel");  // Switch to the setup panel
-          } catch (Exception e) {
-              JOptionPane.showMessageDialog(this, "Error initializing game: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-          }
-      });
-  }
-
-
-
     private void initializeComponents() {
-      worldPanel = new WorldPanel();
-      JScrollPane scrollPane = new JScrollPane(worldPanel);
-      scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-      scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        statusLabel = new JLabel("Load a game configuration file to start.");
+        statusLabel.setPreferredSize(new Dimension(getWidth(), 30));
+        infoTextArea = new JTextArea(5, 20);
+        
+        worldPanel = new WorldPanel();
+        setupWorldPanel();
+        JScrollPane scrollPane = new JScrollPane(worldPanel);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
-      statusLabel = new JLabel("Load a game configuration file to start.");
-      add(statusLabel, BorderLayout.NORTH);
+        infoTextArea.setEditable(false);
+        JScrollPane infoScrollPane = new JScrollPane(infoTextArea);
+        infoScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
-      infoTextArea = new JTextArea(5, 20);
-      infoTextArea.setEditable(false);
-      JScrollPane infoScrollPane = new JScrollPane(infoTextArea);
+        gamePanel = new JPanel(new BorderLayout());
+        gamePanel.add(statusLabel, BorderLayout.NORTH);
+        gamePanel.add(scrollPane, BorderLayout.CENTER);
+        gamePanel.add(infoScrollPane, BorderLayout.SOUTH);
 
-      JPanel gamePanel = new JPanel(new BorderLayout());
-      gamePanel.add(scrollPane, BorderLayout.CENTER);
-      gamePanel.add(infoScrollPane, BorderLayout.SOUTH);
+        setupPanel = createSetupPanel();
+        setupPanel.setVisible(false);
+        setupPanel.setPreferredSize(new Dimension(200, getHeight()));
 
-      mainPanel.add(gamePanel, "GamePanel");
-      add(mainPanel, BorderLayout.CENTER);
-
-      JPanel setupPanel = createSetupPanel();
-      mainPanel.add(setupPanel, "SetupPanel");
-      cardLayout.show(mainPanel, "SetupPanel");
-  }
-
-
+        setLayout(new BorderLayout());
+        add(setupPanel, BorderLayout.WEST);
+        add(gamePanel, BorderLayout.CENTER);
+    }
 
     private JPanel createSetupPanel() {
-      JPanel setupPanel = new JPanel();
-      setupPanel.setLayout(new BoxLayout(setupPanel, BoxLayout.Y_AXIS));
+        JPanel setupPanel = new JPanel();
+        setupPanel.setLayout(new BoxLayout(setupPanel, BoxLayout.Y_AXIS));
 
-      JButton addHumanPlayerButton = new JButton("Add Human Player");
-      JButton addComputerPlayerButton = new JButton("Add Computer Player");
-      JButton startGameButton = new JButton("Start Game");
+        JButton addHumanPlayerButton = new JButton("Add Human Player");
+        JButton addComputerPlayerButton = new JButton("Add Computer Player");
+        JButton startGameButton = new JButton("Start Game");
 
-      addHumanPlayerButton.addActionListener(e -> {
-        try {
-          addPlayer(false);
-        } catch (InterruptedException e1) {
-          e1.printStackTrace();
+        addHumanPlayerButton.addActionListener(e -> {
+            try {
+                addPlayer(false);
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+        });
+        addComputerPlayerButton.addActionListener(e -> {
+            try {
+                addPlayer(true);
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+        });
+        startGameButton.addActionListener(e -> {
+          try {
+            startGame();
+          } catch (IOException e1) {
+            e1.printStackTrace();
+          }
+        });
+
+        setupPanel.add(addHumanPlayerButton);
+        setupPanel.add(addComputerPlayerButton);
+        setupPanel.add(startGameButton);
+
+        return setupPanel;
+    }
+
+    private void addPlayer(boolean isComputer) throws InterruptedException {
+        String playerName = JOptionPane.showInputDialog(this, "Enter player name:");
+        if (playerName != null && !playerName.trim().isEmpty()) {
+            try {
+                int roomIndex = Integer.parseInt(JOptionPane.showInputDialog(this, "Enter starting room ID:"));
+                gameController.addPlayer(playerName, roomIndex, isComputer);
+                refreshWorldDisplay();
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Invalid room number. Please enter a valid number.", "Error", JOptionPane.ERROR_MESSAGE);
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, "Error adding player: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            } catch (IllegalArgumentException ex) {
+              JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
-      });
-      addComputerPlayerButton.addActionListener(e -> {
-        try {
-          addPlayer(true);
-        } catch (InterruptedException e1) {
-          e1.printStackTrace();
-        }
-      });
-      startGameButton.addActionListener(e -> startGame());
+    }
 
-      setupPanel.add(addHumanPlayerButton);
-      setupPanel.add(addComputerPlayerButton);
-      setupPanel.add(startGameButton);
-
-      return setupPanel;
+    private void refreshWorldDisplay() {
+          BufferedImage image = gameController.saveWorldImg();
+          worldPanel.setWorldImage(image);
+          worldPanel.setRoomCoordinates(gameController.getRoomCoordinates());
+          worldPanel.setPlayerCoordinates(gameController.getPlayerCoordinates());
   }
 
-    
+    private void startGame() throws IOException {
+      try {
+        gameController.startGame();
+        setupPanel.setVisible(false);
+      } catch(IllegalArgumentException e) {
+        JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+      }
+    }
+
     private void updateGameInfo(String message) {
         SwingUtilities.invokeLater(() -> {
             infoTextArea.append(message + "\n");
@@ -153,27 +183,34 @@ public class GameFrame extends JFrame {
         });
     }
     
-    private void addPlayer(boolean isComputer) throws InterruptedException {
-      String playerName = JOptionPane.showInputDialog(this, "Enter player name:");
-      if (playerName != null && !playerName.trim().isEmpty()) {
-          try {
-              int roomIndex = Integer.parseInt(JOptionPane.showInputDialog(this, "Enter starting room ID:"));
-              gameController.addPlayer(playerName, roomIndex, isComputer);
-              updateGameInfo(playerName + " added as " + (isComputer ? "computer" : "human") + " player.");
-          } catch (NumberFormatException ex) {
-              JOptionPane.showMessageDialog(this, "Invalid room number. Please enter a valid number.", "Error", JOptionPane.ERROR_MESSAGE);
-          } catch (IOException ex) {
-              JOptionPane.showMessageDialog(this, "Error adding player: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-          }
-      }
+    private void setupOutputHandler() {
+      TextOutputHandler outputHandler = new TextOutputHandler(text -> {
+          SwingUtilities.invokeLater(() -> infoTextArea.append(text));
+      });
+      gameController.setOutput(outputHandler);
   }
+    
+    @Override
+    public void onPlayerClick(int playerId) {
+      System.out.println("Player clicked: " + playerId);
+        infoTextArea.append("Player " + playerId + " clicked.\n");
+    }
 
+    @Override
+    public void onRoomClick(int roomId) {
+      System.out.println("Room clicked: " + roomId);
+        infoTextArea.append("Room " + roomId + " clicked.\n");
+    }
 
-    private void startGame() {
-      gameController.startGame();
-      updateGameInfo("Game started with players.");
-      cardLayout.show(mainPanel, "GamePanel");  // Switch back to game panel to start the game
+    // Setup method to pass this listener to the WorldPanel
+    private void setupWorldPanel() {
+        worldPanel.setClickListener(this);
+    }
+    
+    public void printCoordinates() {
+      System.out.println("Room Coordinates:");
+      gameController.getRoomCoordinates().forEach((key, value) -> System.out.println("Room ID: " + key + " -> Bounds: " + value));
+
   }
-
 
 }

@@ -1,7 +1,10 @@
 package controller;
 
+import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 import world.ReadOnlyWorld;
@@ -18,6 +21,9 @@ public class GameController implements Controller {
   private int maxTurns;
   private RandomNumberGenerator rng;
   private ReadOnlyWorld world;
+  private Map<Integer, Rectangle> roomCoordinates;
+  private Map<Integer, Rectangle> playerCoordinates;
+  
 
   /**
    * Constructs a new GameController with the specified input, 
@@ -34,6 +40,8 @@ public class GameController implements Controller {
     this.output = outputInput;
     this.maxTurns = maxTurnsInput;
     this.rng = rngInput;
+    //updateCoordinates();
+    printCoordinates();
   }
     
   @Override
@@ -55,13 +63,17 @@ public class GameController implements Controller {
       } else {
           command = new CreatePlayerCommand(world, playerName, roomIndex, world.getPlayerIds(), world.getPlayerNames(), world.getIsComputer());
       }
-      StringBuilder output = new StringBuilder();
       command.execute(output);
   }
 
   @Override
-  public void startGame() {
+  public void startGame() throws IOException {
       ((WorldOutline) world).setRunning(true);
+      if (world.getPlayerIds().isEmpty()) {
+        throw new IllegalArgumentException("No players added. Cannot start game.");
+      } else {
+        print("Game will start with " + world.getPlayerIds().size() + " players.");
+      }
   }
   
   @Override
@@ -69,11 +81,7 @@ public class GameController implements Controller {
     this.world = new World(source);  
 }
   
-  @Override
-  public void updateWorldInView() {
-      // Assuming there's a method in WorldPanel to handle this update
-      worldPanel.updateWorld(world);
-  }
+
   
   public ReadOnlyWorld getWorld() {
     return this.world;
@@ -111,7 +119,7 @@ public class GameController implements Controller {
             break;
           case 4:
             if (world.getPlayerIds().isEmpty()) {
-              print("No players added. Cannot start game.");
+              throw new IllegalArgumentException("No players added. Cannot start game.");
             } else {
               print("Game will start with " + world.getPlayerIds().size() + " players.");
               runGame(world);
@@ -122,7 +130,9 @@ public class GameController implements Controller {
         }
       } catch (NumberFormatException e) {
         print("Invalid option, please enter a valid number.");
-      }
+      } catch (IllegalArgumentException e) {
+        print(e.getMessage());
+      }   
     }
   }
 
@@ -263,13 +273,11 @@ public class GameController implements Controller {
     try {
         roomIndex = Integer.parseInt(scanner.nextLine());
     } catch (NumberFormatException e) {
-        output.append("Invalid input for room index. Please enter a valid number.\n");
-        return;
+      throw new NumberFormatException("Invalid input for room index. Please enter a valid number.\n");
     }
 
     if (roomIndex < 1 || roomIndex > world.getRoomCount()) {
-        output.append("Invalid room index. Please enter a number between 1 and " + world.getRoomCount() + ".\n");
-        return;
+      throw new IllegalArgumentException("Invalid room index. Please enter a number between 1 and " + world.getRoomCount() + ".\n");
     }
 
     Command createPlayerCommand = new CreatePlayerCommand(world, playerName, roomIndex, world.getPlayerIds(), world.getPlayerNames(), world.getIsComputer());
@@ -284,13 +292,11 @@ public class GameController implements Controller {
     try {
         roomIndex = Integer.parseInt(scanner.nextLine());
     } catch (NumberFormatException e) {
-        output.append("Invalid input for room index. Please enter a valid number.\n");
-        return;
+      throw new NumberFormatException("Invalid input for room index. Please enter a valid number.\n");
     }
 
     if (roomIndex < 1 || roomIndex > world.getRoomCount()) {
-        output.append("Invalid room index. Please enter a number between 1 and " + world.getRoomCount() + ".\n");
-        return;
+      throw new IllegalArgumentException("Invalid room index. Please enter a number between 1 and " + world.getRoomCount() + ".\n");
     }
     Command createComputerPlayerCommand = new CreateComputerPlayerCommand(world, playerName, roomIndex, world.getPlayerIds(), world.getPlayerNames(), world.getIsComputer());
     createComputerPlayerCommand.execute(output);
@@ -442,7 +448,39 @@ public class GameController implements Controller {
     playerInfoCommand.execute(output);
 }
 
+  @Override
+  public void setOutput(Appendable output) {
+    this.output = output;
+}
   
+  @Override
+  public BufferedImage saveWorldImg() {
+    return world.drawWorld();
+  }
+
+  @Override
+  public void updateCoordinates() {
+    if (world != null) {
+        this.roomCoordinates = world.getRoomCoordinates();
+        this.playerCoordinates = world.getPlayerCoordinates();
+    }
+}
+  
+  @Override
+  public Map<Integer, Rectangle> getRoomCoordinates() {
+    return roomCoordinates;
+}
+
+  @Override
+  public Map<Integer, Rectangle> getPlayerCoordinates() {
+      return playerCoordinates;
+}
+  
+  public void printCoordinates() {
+    System.out.println("Room Coordinates:");
+    world.getRoomCoordinates().forEach((key, value) -> System.out.println("Room ID: " + key + " -> Bounds: " + value));
+
+}
   
 
 
