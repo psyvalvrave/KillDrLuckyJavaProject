@@ -50,8 +50,6 @@ public class ControllerDriver {
       Readable consoleInput = new InputStreamReader(System.in);
       RandomNumberGenerator rng = new RandomNumberGenerator();
       World world = new World(fileInput); 
-      //MockWorldOutline world = new MockWorldOutline(); 
-      world.drawWorld();
       GameController controller = new GameController(consoleInput, consoleOutput, rng, maxTurns);
       controller.playGame(world);
     } catch (FileNotFoundException e) {

@@ -23,6 +23,7 @@ public class GameController implements Controller {
   private ReadOnlyWorld world;
   private Map<Integer, Rectangle> roomCoordinates;
   private Map<Integer, Rectangle> playerCoordinates;
+  private String mode = "CLI";
   
 
   /**
@@ -40,18 +41,16 @@ public class GameController implements Controller {
     this.output = outputInput;
     this.maxTurns = maxTurnsInput;
     this.rng = rngInput;
-    //updateCoordinates();
-    printCoordinates();
   }
     
   @Override
-  public void playGame(WorldOutline world) throws InterruptedException, IOException {
-    setupGame(world);
-    if (world.getIsRunning()) {
-      runGame(world);
-    }
-    if (!world.getIsRunning()) {
-      return; 
+  public void playGame(ReadOnlyWorld world) throws InterruptedException, IOException {
+    if(this.mode == "CLI") {
+        setupGame((WorldOutline) world);
+        if (!world.getIsRunning()) {
+          return; 
+        }
+      
     }
   }
   
@@ -64,28 +63,32 @@ public class GameController implements Controller {
           command = new CreatePlayerCommand(world, playerName, roomIndex, world.getPlayerIds(), world.getPlayerNames(), world.getIsComputer());
       }
       command.execute(output);
+      updateCoordinates();
+      printCoordinates();
   }
 
   @Override
-  public void startGame() throws IOException {
+  public void startGame() throws IOException, InterruptedException {
       ((WorldOutline) world).setRunning(true);
       if (world.getPlayerIds().isEmpty()) {
         throw new IllegalArgumentException("No players added. Cannot start game.");
       } else {
         print("Game will start with " + world.getPlayerIds().size() + " players.");
       }
+      runGameG((WorldOutline) world);
   }
   
   @Override
-  public void loadNewWorld(Readable source) throws IOException {
-    this.world = new World(source);  
-}
+  public void loadNewWorld(ReadOnlyWorld worldInput) throws IOException {
+    this.world = worldInput;  
+    updateCoordinates();
+  }
   
 
-  
+  @Override
   public ReadOnlyWorld getWorld() {
     return this.world;
-}
+  }
 
   private void setupGame(WorldOutline world) throws InterruptedException, IOException {
     print("Setting up the game.");
@@ -122,7 +125,7 @@ public class GameController implements Controller {
               throw new IllegalArgumentException("No players added. Cannot start game.");
             } else {
               print("Game will start with " + world.getPlayerIds().size() + " players.");
-              runGame(world);
+              runGameC(world);
             }
             break;
           default:
@@ -137,7 +140,7 @@ public class GameController implements Controller {
   }
 
 
-  private void runGame(WorldOutline world) throws InterruptedException, IOException {
+  private void runGameC(WorldOutline world) throws InterruptedException, IOException {
     print("Game started. Manage your turns.");
     ComputerPlayer computerPlayerStrategy = new ComputerPlayerStrategy(world, output, rng);
     while (world.getIsRunning() && world.getCurrentTurn() < maxTurns) {
@@ -458,9 +461,9 @@ public class GameController implements Controller {
     return world.drawWorld();
   }
 
-  @Override
-  public void updateCoordinates() {
+  private void updateCoordinates() {
     if (world != null) {
+      world.drawWorld();
         this.roomCoordinates = world.getRoomCoordinates();
         this.playerCoordinates = world.getPlayerCoordinates();
     }
@@ -476,9 +479,50 @@ public class GameController implements Controller {
       return playerCoordinates;
 }
   
+  private void runGameG(WorldOutline world) throws InterruptedException, IOException {
+    while (world.getIsRunning()) {
+        int currentPlayerId = world.getCurrentPlayerId();
+        print("Current player's turn: Player ID " + currentPlayerId);
+        ComputerPlayer computerPlayerStrategy = new ComputerPlayerStrategy(world, output, rng);
+        if (world.getIsComputer().get(currentPlayerId)) {
+          computerPlayerStrategy.executeActions(currentPlayerId);
+        } else {
+            handleHumanPlayer(currentPlayerId);
+        }
+
+        if (world.getCurrentTurn() >= maxTurns) {
+          print(""+world.getCurrentTurn());
+            world.setRunning(false);
+            print("Game over: Maximum number of turns reached!");
+            break;
+        }
+        
+        if (world.getTargetHealthPoint() <= 0) {
+          world.setRunning(false);
+          print("Game over: target eliminated!");
+          break;
+      }
+    }
+}
+  
+  private void handleHumanPlayer(int playerId) throws IOException, InterruptedException {
+    // You can implement interactive logic or further input handling here
+    print("Human player " + playerId + " please make your move.");
+    // This would involve GUI interaction typically
+}
+  
+  private void handleComputerPlayer(int playerId) throws IOException, InterruptedException {
+    // Computer logic here
+    print("Computer player " + playerId + " is making a move.");
+    // Simulate actions
+}
+  
   public void printCoordinates() {
-    System.out.println("Room Coordinates:");
-    world.getRoomCoordinates().forEach((key, value) -> System.out.println("Room ID: " + key + " -> Bounds: " + value));
+    System.out.println("Player Coordinates:");
+    world.getPlayerCoordinates().forEach((key, value) -> System.out.println("Room ID: " + key + " -> Bounds: " + value));
+
+  }
+  
 
 }
   
@@ -489,4 +533,4 @@ public class GameController implements Controller {
 
 
   
-}
+

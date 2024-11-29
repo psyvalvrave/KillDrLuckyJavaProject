@@ -63,9 +63,10 @@ public class GameFrame extends JFrame implements ClickListener {
           File selectedFile = fileChooser.getSelectedFile();
           try {
               FileReader fileReader = new FileReader(selectedFile);
-              gameController.loadNewWorld(fileReader);  
+              ReadOnlyWorld world = new World(fileReader);
+              this.world = world;
+              gameController.loadNewWorld(world);  
               refreshWorldDisplay();
-              printCoordinates();
               setupPanel.setVisible(true);
               statusLabel.setText("Game loaded. Please set up the game.");
           } catch (FileNotFoundException e) {
@@ -80,7 +81,7 @@ public class GameFrame extends JFrame implements ClickListener {
     private void initializeComponents() {
         statusLabel = new JLabel("Load a game configuration file to start.");
         statusLabel.setPreferredSize(new Dimension(getWidth(), 30));
-        infoTextArea = new JTextArea(5, 20);
+        infoTextArea = new JTextArea(8, 20);
         
         worldPanel = new WorldPanel();
         setupWorldPanel();
@@ -133,6 +134,8 @@ public class GameFrame extends JFrame implements ClickListener {
             startGame();
           } catch (IOException e1) {
             e1.printStackTrace();
+          } catch (InterruptedException e1) {
+            e1.printStackTrace();
           }
         });
 
@@ -167,7 +170,7 @@ public class GameFrame extends JFrame implements ClickListener {
           worldPanel.setPlayerCoordinates(gameController.getPlayerCoordinates());
   }
 
-    private void startGame() throws IOException {
+    private void startGame() throws IOException, InterruptedException {
       try {
         gameController.startGame();
         setupPanel.setVisible(false);
@@ -202,15 +205,9 @@ public class GameFrame extends JFrame implements ClickListener {
         infoTextArea.append("Room " + roomId + " clicked.\n");
     }
 
-    // Setup method to pass this listener to the WorldPanel
     private void setupWorldPanel() {
         worldPanel.setClickListener(this);
     }
     
-    public void printCoordinates() {
-      System.out.println("Room Coordinates:");
-      gameController.getRoomCoordinates().forEach((key, value) -> System.out.println("Room ID: " + key + " -> Bounds: " + value));
-
-  }
 
 }

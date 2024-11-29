@@ -16,9 +16,8 @@ public class Main {
             try {
               StringReader dummyInput = new StringReader("");
                 RandomNumberGenerator rng = new RandomNumberGenerator();
-                GameController controller = new GameController(dummyInput, System.out, rng, 20); // Use a sensible default for maxTurns
-
-                // Create and show the game frame
+                GameController controller = new GameController(dummyInput, System.out, rng, 20); 
+                
                 GameFrame frame = new GameFrame(controller);
                 frame.setVisible(true);
             } catch (Exception e) {

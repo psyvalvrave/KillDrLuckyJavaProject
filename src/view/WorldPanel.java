@@ -82,8 +82,8 @@ public class WorldPanel extends JPanel {
   }
     
     public void printCoordinates() {
-      System.out.println("Room Coordinates:");
-      roomCoordinates.forEach((key, value) -> System.out.println("Room ID: " + key + " -> Bounds: " + value));
+      //System.out.println("Room Coordinates:");
+      //roomCoordinates.forEach((key, value) -> System.out.println("Room ID: " + key + " -> Bounds: " + value));
 
       System.out.println("Player Coordinates:");
       playerCoordinates.forEach((key, value) -> System.out.println("Player ID: " + key + " -> Bounds: " + value));

@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.util.Map;
 
 import world.ReadOnlyWorld;
-import world.World;
-import world.WorldOutline;
 
 /**
  * The interface defines the necessary methods for a game controller.
@@ -28,20 +26,18 @@ public interface Controller {
    * @throws IOException If an I/O error occurs, such as a failure to 
    *        read data necessary for the game.
    */
-  void playGame(WorldOutline world) throws InterruptedException, IOException;
+  void playGame(ReadOnlyWorld world) throws InterruptedException, IOException;
 
   void addPlayer(String playerName, int roomIndex, boolean isComputer) throws IOException, InterruptedException;
-  void startGame() throws IOException;
+  void startGame() throws IOException, InterruptedException;
 
-  void loadNewWorld(Readable source) throws IOException;
+  void loadNewWorld(ReadOnlyWorld world) throws IOException;
 
   ReadOnlyWorld getWorld();
   
   void setOutput(Appendable output);
 
   BufferedImage saveWorldImg();
-
-  void updateCoordinates();
 
   Map<Integer, Rectangle> getPlayerCoordinates();
 
