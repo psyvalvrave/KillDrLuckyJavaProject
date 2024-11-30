@@ -22,12 +22,13 @@ public class SaveWorldMapCommand implements Command {
   }
 
   @Override
-  public void execute(Appendable output) throws IOException {
+  public String execute(Appendable output) throws IOException {
     try {
       world.drawWorld(); 
       output.append("World map saved to 'res/world.png'.\n"); 
     } catch (IOException e) {
-      throw new IOException(e.getMessage() + "\n");
+      throw e;
     }
+    return null;
   }
 }

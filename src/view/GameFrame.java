@@ -6,10 +6,15 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
 import java.io.FileNotFoundException;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+
 
 import controller.Controller;
+import controller.GameController;
 import controller.TextOutputHandler;
 import world.ReadOnlyWorld;
 import world.World;
@@ -25,6 +30,7 @@ public class GameFrame extends JFrame implements ClickListener {
 
     public GameFrame(Controller gameController) {
         this.gameController = gameController;
+        gameController.setGameFrame(this);
         setTitle("Game World");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 600);
@@ -33,6 +39,7 @@ public class GameFrame extends JFrame implements ClickListener {
         initializeMenu();
         initializeComponents();
         setupOutputHandler();
+        setupKeyListeners();
         
     }
     
@@ -163,7 +170,7 @@ public class GameFrame extends JFrame implements ClickListener {
         }
     }
 
-    private void refreshWorldDisplay() {
+    public void refreshWorldDisplay() {
           BufferedImage image = gameController.saveWorldImg();
           worldPanel.setWorldImage(image);
           worldPanel.setRoomCoordinates(gameController.getRoomCoordinates());
@@ -179,12 +186,6 @@ public class GameFrame extends JFrame implements ClickListener {
       }
     }
 
-    private void updateGameInfo(String message) {
-        SwingUtilities.invokeLater(() -> {
-            infoTextArea.append(message + "\n");
-            infoTextArea.setCaretPosition(infoTextArea.getDocument().getLength());
-        });
-    }
     
     private void setupOutputHandler() {
       TextOutputHandler outputHandler = new TextOutputHandler(text -> {
@@ -194,20 +195,129 @@ public class GameFrame extends JFrame implements ClickListener {
   }
     
     @Override
-    public void onPlayerClick(int playerId) {
-      System.out.println("Player clicked: " + playerId);
-        infoTextArea.append("Player " + playerId + " clicked.\n");
+    public void onPlayerClick(int playerId) throws InterruptedException {
+      try {
+        StringBuilder output = new StringBuilder();
+          gameController.displayPlayerInfo(playerId, output);
+          JOptionPane.showMessageDialog(this, output.toString(), "Move", JOptionPane.INFORMATION_MESSAGE);
+      } catch (IOException e) {
+          JOptionPane.showMessageDialog(this, "Error displaying player info: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+      }
     }
 
+    
     @Override
-    public void onRoomClick(int roomId) {
-      System.out.println("Room clicked: " + roomId);
-        infoTextArea.append("Room " + roomId + " clicked.\n");
+    public void onRoomClick(int roomId) throws IOException, InterruptedException {
+        if (gameController.getRunning()) {
+            try {
+              StringBuilder output = new StringBuilder();
+                gameController.movePlayerToRoom(roomId, output);
+                JOptionPane.showMessageDialog(this, output.toString(), "Move", JOptionPane.INFORMATION_MESSAGE);
+                refreshWorldDisplay();  
+            } catch (IllegalArgumentException e) {
+                JOptionPane.showMessageDialog(this, "Invalid move: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            } 
+        } 
     }
+
+
+
 
     private void setupWorldPanel() {
         worldPanel.setClickListener(this);
     }
+    
+    private void setupKeyListeners() {
+      this.setFocusable(true);
+      this.requestFocusInWindow();
+      this.addKeyListener(new KeyAdapter() {
+          @Override
+          public void keyPressed(KeyEvent e) {
+              try {
+                  if (e.getKeyChar() == 'p') {
+                      showItemPickupDialog();
+                  } else if (e.getKeyChar() == 'l' || e.getKeyChar() == 'L') {
+                      performLookAround();
+                  } else if (e.getKeyChar() == 'a' || e.getKeyChar() == 'A') {
+                    showAttackDialog();
+                  } else if (e.getKeyChar() == 'm' || e.getKeyChar() == 'M') {
+                    showPetMoveDialog();
+                  }
+                  
+              } catch (IOException | InterruptedException ex) {
+                  JOptionPane.showMessageDialog(GameFrame.this, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+              }
+          }
+      });
+      this.setFocusable(true);
+      this.requestFocusInWindow();
+  }
+
+    
+    private void showItemPickupDialog() throws IOException, InterruptedException {
+      int currentPlayerId = gameController.getCurrentPlayerId();
+      List<String> items = gameController.passRoomItem(currentPlayerId); 
+
+      if (items.isEmpty()) {
+          JOptionPane.showMessageDialog(this, "No items available to pick up in this room. You waste your time on searching!", "Information", JOptionPane.INFORMATION_MESSAGE);
+          gameController.doNothing();
+      } else {
+          ItemPickupDialog dialog = new ItemPickupDialog(this, "Pick an Item", true, items, (GameController) gameController, currentPlayerId);
+          dialog.setVisible(true);
+      }
+      refreshWorldDisplay(); 
+  }
+    
+    private void performLookAround() throws IOException, InterruptedException {
+      int currentPlayerId = gameController.getCurrentPlayerId();
+      StringBuilder output = new StringBuilder();
+      gameController.performLookAround(currentPlayerId, output); 
+      JOptionPane.showMessageDialog(this, output.toString(), "Look Around", JOptionPane.INFORMATION_MESSAGE);
+      refreshWorldDisplay(); 
+  }
+    
+    private void showAttackDialog() throws IOException, InterruptedException {
+      int currentPlayerId = gameController.getCurrentPlayerId();
+      List<String> items = gameController.passPlayerItems(currentPlayerId); 
+      try {
+      if (items.isEmpty()) {      
+            StringBuilder output = new StringBuilder();
+            gameController.attackTargetWithItem(currentPlayerId, "", output); 
+              JOptionPane.showMessageDialog(this, "No items available to use for the attack. Attack by poking eyes.", "Attack", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, output.toString(), "Attack", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            AttackDialog dialog = new AttackDialog(this, (GameController) gameController, currentPlayerId, items);
+            dialog.setVisible(true);
+        }
+      } catch (IllegalArgumentException e) {
+        JOptionPane.showMessageDialog(this, "Invalid attack: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    } 
+      refreshWorldDisplay(); 
+  }
+    
+    public void showPetMoveDialog() throws IOException, InterruptedException {
+      try {
+      int currentPlayerId = gameController.getCurrentPlayerId();
+      new PetMoveDialog(this, gameController, currentPlayerId).setVisible(true);
+      } catch (IllegalArgumentException e) {
+      JOptionPane.showMessageDialog(this, "Invalid attack: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+  } 
+      refreshWorldDisplay(); 
+  }
+
+
+
+
+    
+    
+
+
+
+    
+
+
+
+
     
 
 }

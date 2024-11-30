@@ -26,9 +26,10 @@ public class DisplayRoomInfoCommand implements Command {
   }
 
   @Override
-  public void execute(Appendable output) throws IOException {
+  public String execute(Appendable output) throws IOException {
       String roomInfo = world.displayRoomInfo(roomId);
       output.append(roomInfo + "\n");
+      return roomInfo;
   }
 }
 

@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,7 +21,11 @@ public class WorldPanel extends JPanel {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                handleMouseClick(e.getX(), e.getY());
+                try {
+                  handleMouseClick(e.getX(), e.getY());
+                } catch (IOException | InterruptedException e1) {
+                  e1.printStackTrace();
+                }
             }
         });
     }
@@ -52,16 +57,13 @@ public class WorldPanel extends JPanel {
         this.playerCoordinates = coordinates;
     }
 
-    private void handleMouseClick(int x, int y) {
-      System.out.println("Clicked at: " + x + ", " + y); // Log click coordinates
-      printCoordinates();
+    private void handleMouseClick(int x, int y) throws IOException, InterruptedException {
       boolean found = false;
 
       for (Map.Entry<Integer, Rectangle> entry : playerCoordinates.entrySet()) {
           if (entry.getValue().contains(x, y)) {
               if (clickListener != null) {
                   clickListener.onPlayerClick(entry.getKey());
-                  System.out.println("Player Clicked: " + entry.getKey());
               }
               found = true;
               break;
@@ -73,7 +75,6 @@ public class WorldPanel extends JPanel {
               if (entry.getValue().contains(x, y)) {
                   if (clickListener != null) {
                       clickListener.onRoomClick(entry.getKey());
-                      System.out.println("Room Clicked: " + entry.getKey());
                   }
                   break;
               }

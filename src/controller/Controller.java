@@ -3,8 +3,10 @@ package controller;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
+import view.GameFrame;
 import world.ReadOnlyWorld;
 
 /**
@@ -42,5 +44,33 @@ public interface Controller {
   Map<Integer, Rectangle> getPlayerCoordinates();
 
   Map<Integer, Rectangle> getRoomCoordinates();
+
+  int getCurrentPlayerId();
+
+  boolean getRunning();
+
+  void setGameFrame(GameFrame frame);
+
+  List<String> passRoomItem(int playerId);
+
+  void doNothing() throws InterruptedException, IOException;
+
+  void performLookAround(int playerId, Appendable outputView) throws IOException, InterruptedException;
+
+  void pickUpItem(int playerId, String itemName, Appendable outputView)
+      throws IOException, InterruptedException;
+
+  String displayPlayerInfo(int playerId, Appendable outputView)
+      throws InterruptedException, IOException;
+
+  void movePlayerToRoom(int roomId, Appendable outputView) throws IOException, InterruptedException;
+  
+  List<String> passPlayerItems(int playerId);
+
+  void attackTargetWithItem(int playerId, String itemName, Appendable outputView) throws IOException, InterruptedException;
+
+  void movePet(int playerId, int roomId, Appendable outputView) throws IOException, InterruptedException;
+  
+  void setMaxTurn(int turn);
   
 }

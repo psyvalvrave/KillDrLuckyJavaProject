@@ -29,12 +29,14 @@ public class PickUpItemCommand implements Command {
   }
 
   @Override
-  public void execute(Appendable output) throws IOException {
+  public String execute(Appendable output) throws IOException {
       try {
           String pickUpResult = world.playerPickUpItem(playerId, itemName);
           output.append(pickUpResult + "\n");
       } catch (IllegalArgumentException e) {
           output.append("Error picking up item: " + e.getMessage() + "\n");
+          throw e;
       }
+      return null;
   }
 }

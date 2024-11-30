@@ -41,7 +41,7 @@ public class CreatePlayerCommand implements Command {
   }
 
   @Override
-  public void execute(Appendable output) throws IOException {
+  public String execute(Appendable output) throws IOException {
       if (roomIndex < 1 || roomIndex > world.getRoomCount()) {
         throw new IllegalArgumentException("Invalid room index. Please enter a number between 1 and " + world.getRoomCount() + ".\n");
       }
@@ -50,5 +50,6 @@ public class CreatePlayerCommand implements Command {
       playerNames.put(playerId, playerName);
       isComputer.put(playerId, false);
       output.append("Human player added with ID: " + playerId + ".\n");
+      return null;
   }
 }

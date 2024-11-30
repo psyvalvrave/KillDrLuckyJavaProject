@@ -2,6 +2,7 @@ package world;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -42,12 +43,13 @@ public class World implements WorldOutline {
   private int nextPlayerId = 0;
   private CharacterPet pet;
   private int currentTurn = 1;
-  private int maxTurns = 20;
+  private int maxTurns = 200;
   private List<Integer> playerIds = new ArrayList<>();
   private int currentPlayerIndex = 0;
   private Map<Integer, Boolean> isComputer = new HashMap<>();
   private Map<Integer, String> playerNames = new HashMap<>();
   private boolean isRunning = true;
+  private boolean isRunningGui = false;
   private Map<Integer, Rectangle> playerPositions = new HashMap<>();
   private Map<Integer, Rectangle> roomCoordinates = new HashMap<>();
   
@@ -309,6 +311,14 @@ public class World implements WorldOutline {
             int playerY = y1Draw + playerOffset;
             g.fillOval(playerX, playerY, 20, 20);
             playerPositions.put(player.getPlayerId(), new Rectangle(playerX, playerY, 20, 20));
+            
+            String playerIdText = String.valueOf(player.getPlayerId());
+            FontMetrics fm = g.getFontMetrics();
+            int textWidth = fm.stringWidth(playerIdText);
+            int textHeight = fm.getAscent();
+            g.setColor(Color.WHITE); // Set text color to white for better visibility
+            g.drawString(playerIdText, playerX + (20 - textWidth) / 2, playerY + (20 + textHeight) / 2 - fm.getDescent());
+            
          playerHorizontalSpace += scaleFactor/1.5;
          if(player.getPlayerId() % 5 == 4) {
            playerOffset += scaleFactor/2;
@@ -1020,6 +1030,16 @@ public class World implements WorldOutline {
   }
   
   @Override
+  public boolean getIsRunningGui() {
+    return isRunningGui;
+  }
+  
+  @Override
+  public void setRunningGui(boolean running) {
+      this.isRunningGui = running;
+  }
+  
+  @Override
   public int getCurrentTurn() {
       return currentTurn;
   }
@@ -1046,7 +1066,7 @@ public class World implements WorldOutline {
           isRunning = false;
           return "Maximum turns reached. Ending game.";
       } else {
-          currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
+          this.currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
           this.moveTargetToNextRoom();
           String result = this.movePetToNextRoom();
           return result;

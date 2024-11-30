@@ -461,4 +461,14 @@ public class MockWorldOutline implements WorldOutline {
   public Map<Integer, Rectangle> getRoomCoordinates() {
     return null;
   }
+
+  @Override
+  public boolean getIsRunningGui() {
+    return false;
+  }
+
+  @Override
+  public void setRunningGui(boolean running) {
+    
+  }
 }

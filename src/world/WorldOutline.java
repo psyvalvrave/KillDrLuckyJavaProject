@@ -255,5 +255,7 @@ public interface WorldOutline extends ReadOnlyWorld {
 
   
   CharacterTarget createTarget(String name, Block room, int health);
+
+  void setRunningGui(boolean running);
   
 }

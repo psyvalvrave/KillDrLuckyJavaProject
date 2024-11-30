@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+import javax.swing.SwingUtilities;
+
+import view.GameFrame;
 import world.ReadOnlyWorld;
 import world.World;
 import world.WorldOutline;
@@ -20,11 +23,11 @@ public class GameController implements Controller {
   private Appendable output;
   private int maxTurns;
   private RandomNumberGenerator rng;
-  private ReadOnlyWorld world;
+  private ReadOnlyWorld rOworld;
   private Map<Integer, Rectangle> roomCoordinates;
   private Map<Integer, Rectangle> playerCoordinates;
   private String mode = "CLI";
-  
+  private GameFrame gameFrame;
 
   /**
    * Constructs a new GameController with the specified input, 
@@ -58,36 +61,41 @@ public class GameController implements Controller {
   public void addPlayer(String playerName, int roomIndex, boolean isComputer) throws IOException, InterruptedException {
       Command command;
       if (isComputer) {
-          command = new CreateComputerPlayerCommand(world, playerName, roomIndex, world.getPlayerIds(), world.getPlayerNames(), world.getIsComputer());
+          command = new CreateComputerPlayerCommand(rOworld, playerName, roomIndex, rOworld.getPlayerIds(), rOworld.getPlayerNames(), rOworld.getIsComputer());
       } else {
-          command = new CreatePlayerCommand(world, playerName, roomIndex, world.getPlayerIds(), world.getPlayerNames(), world.getIsComputer());
+          command = new CreatePlayerCommand(rOworld, playerName, roomIndex, rOworld.getPlayerIds(), rOworld.getPlayerNames(), rOworld.getIsComputer());
       }
       command.execute(output);
       updateCoordinates();
-      printCoordinates();
   }
 
   @Override
   public void startGame() throws IOException, InterruptedException {
-      ((WorldOutline) world).setRunning(true);
-      if (world.getPlayerIds().isEmpty()) {
+    try {
+      if (rOworld.getPlayerIds().isEmpty()) {
         throw new IllegalArgumentException("No players added. Cannot start game.");
       } else {
-        print("Game will start with " + world.getPlayerIds().size() + " players.");
+        print("Game will start with " + rOworld.getPlayerIds().size() + " players.");
       }
-      runGameG((WorldOutline) world);
+      ((WorldOutline) rOworld).setRunningGui(true);  // Ensure this is set to true to start the game
+      runGameG((WorldOutline) rOworld);
+    } catch (Exception e) {
+      print("Error starting game: " + e.getMessage());
+      e.printStackTrace();
+    }
   }
+
   
   @Override
   public void loadNewWorld(ReadOnlyWorld worldInput) throws IOException {
-    this.world = worldInput;  
+    this.rOworld = worldInput;  
     updateCoordinates();
   }
   
 
   @Override
   public ReadOnlyWorld getWorld() {
-    return this.world;
+    return this.rOworld;
   }
 
   private void setupGame(WorldOutline world) throws InterruptedException, IOException {
@@ -159,6 +167,8 @@ public class GameController implements Controller {
       }
     }
   }
+  
+  
   
   private void processPlayerInput(String input, WorldOutline world, 
       int playerId) throws IOException, InterruptedException {
@@ -458,14 +468,14 @@ public class GameController implements Controller {
   
   @Override
   public BufferedImage saveWorldImg() {
-    return world.drawWorld();
+    return rOworld.drawWorld();
   }
 
   private void updateCoordinates() {
-    if (world != null) {
-      world.drawWorld();
-        this.roomCoordinates = world.getRoomCoordinates();
-        this.playerCoordinates = world.getPlayerCoordinates();
+    if (rOworld != null) {
+      rOworld.drawWorld();
+        this.roomCoordinates = rOworld.getRoomCoordinates();
+        this.playerCoordinates = rOworld.getPlayerCoordinates();
     }
 }
   
@@ -479,53 +489,157 @@ public class GameController implements Controller {
       return playerCoordinates;
 }
   
-  private void runGameG(WorldOutline world) throws InterruptedException, IOException {
-    while (world.getIsRunning()) {
-        int currentPlayerId = world.getCurrentPlayerId();
-        print("Current player's turn: Player ID " + currentPlayerId);
-        ComputerPlayer computerPlayerStrategy = new ComputerPlayerStrategy(world, output, rng);
-        if (world.getIsComputer().get(currentPlayerId)) {
-          computerPlayerStrategy.executeActions(currentPlayerId);
-        } else {
-            handleHumanPlayer(currentPlayerId);
-        }
-
-        if (world.getCurrentTurn() >= maxTurns) {
-          print(""+world.getCurrentTurn());
-            world.setRunning(false);
-            print("Game over: Maximum number of turns reached!");
-            break;
-        }
-        
-        if (world.getTargetHealthPoint() <= 0) {
-          world.setRunning(false);
-          print("Game over: target eliminated!");
-          break;
-      }
-    }
-}
-  
-  private void handleHumanPlayer(int playerId) throws IOException, InterruptedException {
-    // You can implement interactive logic or further input handling here
-    print("Human player " + playerId + " please make your move.");
-    // This would involve GUI interaction typically
-}
-  
-  private void handleComputerPlayer(int playerId) throws IOException, InterruptedException {
-    // Computer logic here
-    print("Computer player " + playerId + " is making a move.");
-    // Simulate actions
-}
-  
-  public void printCoordinates() {
-    System.out.println("Player Coordinates:");
-    world.getPlayerCoordinates().forEach((key, value) -> System.out.println("Room ID: " + key + " -> Bounds: " + value));
-
+  @Override
+  public int getCurrentPlayerId() {
+    return rOworld.getCurrentPlayerId();
   }
   
+  @Override
+  public boolean getRunning() {
+    return rOworld.getIsRunningGui();
+  }
+  
+  
+  private void handleComputerPlayer(int currentPlayerId) throws InterruptedException, IOException {
+    ComputerPlayer computerPlayerStrategy = new ComputerPlayerStrategy((WorldOutline) rOworld, output, rng);
+    computerPlayerStrategy.executeActions(currentPlayerId);
+      
+    }
+  
+  public void runGameG(WorldOutline world) throws InterruptedException, IOException {
+    while (world.getIsRunning()) {
+        int currentPlayerId = world.getCurrentPlayerId();
+        if (world.getIsComputer().get(currentPlayerId)) {
+            handleComputerPlayer(currentPlayerId);
+            updateCoordinates();
+            gameFrame.refreshWorldDisplay();
+        } else {
+            SwingUtilities.invokeLater(() -> prepareForPlayerTurn(currentPlayerId));
+            return;  
+        }
+
+        updateGameStatus();
+        if (!world.getIsRunning()) {
+            break; 
+        }
+
+    }
+}
+
+  private void updateGameStatus() {
+    System.out.println("Updating game status...");
+    if (rOworld.getCurrentTurn() >= maxTurns) {
+        ((World) rOworld).setRunningGui(false);
+        System.out.println("Game over: Maximum number of turns reached!");
+    } else if (rOworld.getTargetHealthPoint() <= 0) {
+        ((WorldOutline) rOworld).setRunningGui(false);
+        System.out.println("Game over: Target eliminated!");
+    }
+}
+
+
+// This method is called when it's time for a human player to make a move
+private void prepareForPlayerTurn(int playerId) {
+    System.out.println("Preparing for human player " + playerId + " to take their turn.");
+    // Enable GUI components for human interaction
+}
+
+@Override
+public void setGameFrame(GameFrame frame) {
+  this.gameFrame = frame;
+}
+
+@Override
+public void movePlayerToRoom(int roomId, Appendable outputView) throws IOException, InterruptedException {
+  int currentPlayerId = getCurrentPlayerId();
+  try {
+    Command movePlayerCommand = new MovePlayerCommand(rOworld, currentPlayerId, roomId);
+    movePlayerCommand.execute(outputView);
+    updateCoordinates();
+    doNothing();
+  } catch (IllegalArgumentException e) {
+    throw e; 
+  }
+}
+
+@Override
+public String displayPlayerInfo(int playerId, Appendable outputView) throws InterruptedException, IOException {
+      Command playerInfoCommand = new PlayerInfoCommand(rOworld, playerId);
+      return playerInfoCommand.execute(outputView);
+  }
+
+@Override
+  public List<String> passRoomItem(int playerId) {
+    return rOworld.getRoomItems(rOworld.getPlayerRoomId(playerId));
+  }
+
+@Override
+public void pickUpItem(int playerId, String itemName, Appendable outputView) throws IOException, InterruptedException {
+  try {
+    Command pickUpItemCommand = new PickUpItemCommand(rOworld, playerId, itemName);
+    pickUpItemCommand.execute(outputView);
+    doNothing();
+  } catch (IllegalArgumentException e) {
+    throw e; 
+  }
+}
+
+@Override
+public void doNothing() throws InterruptedException, IOException {
+  ((WorldOutline) rOworld).advanceTurn();
+  runGameG((WorldOutline) rOworld);
+}
+
+@Override
+public void performLookAround(int playerId, Appendable outputView) throws IOException, InterruptedException {
+  Command lookAroundCommand = new LookAroundCommand(rOworld, playerId);
+  lookAroundCommand.execute(outputView);
+  doNothing();
+}
+
+@Override
+public List<String> passPlayerItems(int playerId){
+  List<String> playerItems = rOworld.getPlayerItems(playerId);
+  return playerItems;
+}
+
+@Override
+public void attackTargetWithItem(int playerId, String itemName, Appendable outputView) throws IOException, InterruptedException {
+  try {
+    Command murderTargetCommand = new MurderTargetCommand(rOworld, playerId, itemName);
+    murderTargetCommand.execute(outputView);
+    doNothing();
+  } catch (IllegalArgumentException e) {
+    throw e; 
+  }
+}
+
+@Override
+public void movePet(int playerId, int roomId, Appendable outputView) throws IOException, InterruptedException {
+  try {
+    Command movePetCommand = new MovePetCommand(rOworld, playerId, roomId);
+    movePetCommand.execute(outputView);
+    doNothing();
+  } catch (IllegalArgumentException e) {
+      throw e;
+  }
+}
+
+@Override
+public void setMaxTurn(int turn) {
+  ((WorldOutline) rOworld).setMaxTurns(turn);
+  
+}
+
+
 
 }
+
+
   
+
+ 
+
 
 
 

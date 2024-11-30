@@ -22,12 +22,13 @@ public class TargetInfoCommand implements Command {
   }
 
   @Override
-  public void execute(Appendable output) throws IOException {
+  public String execute(Appendable output) throws IOException {
     try {
       String targetInfo = world.getTargetInfo();
       output.append(targetInfo + "\n");
     } catch (IllegalArgumentException e) {
       throw new IllegalArgumentException(e.getMessage() + "\n");
     }
+    return null;
   }
 }

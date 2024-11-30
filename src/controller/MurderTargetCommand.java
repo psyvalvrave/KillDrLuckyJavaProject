@@ -29,7 +29,7 @@ public class MurderTargetCommand implements Command {
   }
 
   @Override
-  public void execute(Appendable output) throws IOException {
+  public String execute(Appendable output) throws IOException {
       try {
           output.append("Attempt to murder the target:\n");
           if (!world.canMurderAttempt(playerId)) {
@@ -45,8 +45,10 @@ public class MurderTargetCommand implements Command {
           
           String result = world.murderAttempt(playerId);
           output.append(result + "\n");
+          return result;
       } catch (IllegalArgumentException e) {
           output.append("Error: " + e.getMessage() + "\n");
+          throw e;
       }
   }
 

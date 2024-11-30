@@ -29,13 +29,15 @@ public class MovePlayerCommand implements Command {
   }
 
   @Override
-  public void execute(Appendable output) throws IOException {
+  public String execute(Appendable output) throws IOException {
       try {
           String moveResult = world.movePlayer(playerId, targetRoomId);
           output.append(moveResult + "\n");
       } catch (IllegalArgumentException e) {
           output.append("Error moving player: " + e.getMessage() + "\n");
+          throw e;
       }
+      return null;
   }
 }
 

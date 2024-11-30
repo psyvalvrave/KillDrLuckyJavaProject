@@ -76,7 +76,7 @@ public class ComputerPlayerStrategy implements ComputerPlayer{
         output.append("Start Picking Item Up\n");
         if (!itemsInRoom.isEmpty()) {
             int itemIndex = rng.nextInt(itemsInRoom.size());
-            String itemName = itemsInRoom.get(itemIndex);
+            String itemName = itemsInRoom.get(itemIndex).split(": ")[0];
             output.append("Computer player: " + world.playerPickUpItem(playerId, itemName) + "\n");
         } else {
             output.append("No items available to pick up in this room for player " + playerId + "\n");

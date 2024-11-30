@@ -31,7 +31,7 @@ public class MovePetCommand implements Command {
   }
 
   @Override
-  public void execute(Appendable output) throws IOException {
+  public String execute(Appendable output) throws IOException {
       try {
           if (!world.canInteractWithPet(playerId)) {
               throw new IllegalArgumentException("You must be in the same room as the pet to move it.");
@@ -41,8 +41,10 @@ public class MovePetCommand implements Command {
           }
           String moveResult = world.movePet(playerId, targetRoomId);
           output.append(moveResult + "\n");
+          return moveResult;
       } catch (IllegalArgumentException e) {
           output.append("Error: " + e.getMessage() + "\n");
+          throw e;
       }
   }
 }

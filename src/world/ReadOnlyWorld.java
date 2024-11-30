@@ -190,4 +190,5 @@ public interface ReadOnlyWorld {
     boolean canMurderAttempt(int playerId);
     Map<Integer, Rectangle> getPlayerCoordinates();
     Map<Integer, Rectangle> getRoomCoordinates();
+    boolean getIsRunningGui();
 }

@@ -28,12 +28,13 @@ public class LookAroundCommand implements Command {
   }
 
   @Override
-  public void execute(Appendable output) throws IOException {
+  public String execute(Appendable output) throws IOException {
     try {
       String lookAroundInfo = world.playerLookAround(playerId);
       output.append(lookAroundInfo); 
+      return lookAroundInfo;
     } catch (IllegalArgumentException e) {
-      throw new IllegalArgumentException(e.getMessage() + "\n");
+      throw e;
     }
   }
 }

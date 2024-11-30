@@ -27,16 +27,19 @@ public class PlayerInfoCommand implements Command {
   }
 
   @Override
-  public void execute(Appendable output) throws IOException {
+  public String execute(Appendable output) throws IOException {
       try {
           if (!world.getPlayerIds().contains(playerId)) {
               output.append("No player found with ID: " + playerId + "\n");
           } else {
               String playerInfo = world.getPlayerInfo(playerId);
               output.append(playerInfo + "\n");
+              return playerInfo;
           }
       } catch (IllegalArgumentException e) {
           output.append("Error retrieving player information: " + e.getMessage() + "\n");
+          throw e;
       }
+      return null;
   }
 }

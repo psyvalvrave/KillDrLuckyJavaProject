@@ -17,6 +17,6 @@ public interface Command {
    * @throws IOException If an I/O error occurs during command execution.
    * @throws InterruptedException If the command execution is interrupted.
    */
-  void execute(Appendable output) throws IOException, InterruptedException;
+  String execute(Appendable output) throws IOException, InterruptedException;
 }
 
