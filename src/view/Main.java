@@ -16,8 +16,9 @@ public class Main {
             try {
               StringReader dummyInput = new StringReader("");
                 RandomNumberGenerator rng = new RandomNumberGenerator();
-                GameController controller = new GameController(dummyInput, System.out, rng, 200);                 
-                GameFrame frame = new GameFrame(controller);
+                int maxTurn = 200;
+                GameController controller = new GameController(dummyInput, System.out, rng, maxTurn);                 
+                GameFrame frame = new GameFrame(controller, maxTurn, "res/mansion.txt");
                 frame.setVisible(true);
             } catch (Exception e) {
                 System.err.println("Failed to initialize the game: " + e.getMessage());

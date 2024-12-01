@@ -28,6 +28,8 @@ public class GameController implements Controller {
   private Map<Integer, Rectangle> playerCoordinates;
   private String mode = "CLI";
   private GameFrame gameFrame;
+  private boolean gameEnd = false;
+  private String result;
 
   /**
    * Constructs a new GameController with the specified input, 
@@ -79,9 +81,8 @@ public class GameController implements Controller {
       }
       ((WorldOutline) rOworld).setRunningGui(true);  // Ensure this is set to true to start the game
       runGameG((WorldOutline) rOworld);
-    } catch (Exception e) {
-      print("Error starting game: " + e.getMessage());
-      e.printStackTrace();
+    } catch (IllegalArgumentException e) {
+      throw e;
     }
   }
 
@@ -499,6 +500,20 @@ public class GameController implements Controller {
     return rOworld.getIsRunningGui();
   }
   
+  @Override
+  public boolean getEnd() {
+    return this.gameEnd;
+  }
+  
+  @Override
+  public void setEnd(boolean end) {
+    this.gameEnd = end;
+  }
+  
+  @Override
+  public String getResult() {
+    return this.result;
+  }
   
   private void handleComputerPlayer(int currentPlayerId) throws InterruptedException, IOException {
     ComputerPlayer computerPlayerStrategy = new ComputerPlayerStrategy((WorldOutline) rOworld, output, rng);
@@ -506,19 +521,22 @@ public class GameController implements Controller {
       
     }
   
+  @Override
   public void runGameG(WorldOutline world) throws InterruptedException, IOException {
+    this.gameEnd = false;
     while (world.getIsRunning()) {
         int currentPlayerId = world.getCurrentPlayerId();
         if (world.getIsComputer().get(currentPlayerId)) {
             handleComputerPlayer(currentPlayerId);
             updateCoordinates();
+            updateGameStatus();
             gameFrame.refreshWorldDisplay();
+            Thread.sleep(1000);
         } else {
             SwingUtilities.invokeLater(() -> prepareForPlayerTurn(currentPlayerId));
+            updateGameStatus();
             return;  
         }
-
-        updateGameStatus();
         if (!world.getIsRunning()) {
             break; 
         }
@@ -527,21 +545,31 @@ public class GameController implements Controller {
 }
 
   private void updateGameStatus() {
-    System.out.println("Updating game status...");
     if (rOworld.getCurrentTurn() >= maxTurns) {
         ((World) rOworld).setRunningGui(false);
-        System.out.println("Game over: Maximum number of turns reached!");
+        ((World) rOworld).setRunning(false);
+        this.gameEnd = true;
+        this.result = "Game over: Maximum number of turns reached!\nNo winner for this game!";
     } else if (rOworld.getTargetHealthPoint() <= 0) {
         ((WorldOutline) rOworld).setRunningGui(false);
-        System.out.println("Game over: Target eliminated!");
+        ((World) rOworld).setRunning(false);
+        this.gameEnd = true;
+        this.result = "Game over: Target eliminated!\n";
+        int winner;
+        if (((World) rOworld).getCurrentPlayerId() == 0) {
+          winner = rOworld.getPlayerIds().get(rOworld.getPlayerIds().size()-1);
+        } else {
+          winner = rOworld.getCurrentPlayerId() - 1;
+        }
+        String winnerName = rOworld.getPlayerNames().get(winner);
+        this.result += "Player " + winnerName + " with ID " + winner + " is the winner!";
     }
 }
 
 
-// This method is called when it's time for a human player to make a move
+
 private void prepareForPlayerTurn(int playerId) {
     System.out.println("Preparing for human player " + playerId + " to take their turn.");
-    // Enable GUI components for human interaction
 }
 
 @Override
@@ -591,10 +619,11 @@ public void doNothing() throws InterruptedException, IOException {
 }
 
 @Override
-public void performLookAround(int playerId, Appendable outputView) throws IOException, InterruptedException {
+public String performLookAround(int playerId, Appendable outputView) throws IOException, InterruptedException {
   Command lookAroundCommand = new LookAroundCommand(rOworld, playerId);
-  lookAroundCommand.execute(outputView);
+  String result = lookAroundCommand.execute(outputView);
   doNothing();
+  return result;
 }
 
 @Override

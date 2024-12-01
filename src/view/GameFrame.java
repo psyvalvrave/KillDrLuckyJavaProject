@@ -26,22 +26,53 @@ public class GameFrame extends JFrame implements ClickListener {
     private JTextArea infoTextArea;
     private Controller gameController;
     private JPanel setupPanel;
-    private JPanel gamePanel;
+    private int maxturn;
+    private File currentGameFile;
+    private JPanel infoPanel;
+    private JTextArea infoDisplay;
 
-    public GameFrame(Controller gameController) {
+    public GameFrame(Controller gameController, int maxTurn, String file) throws IOException {
         this.gameController = gameController;
+        currentGameFile = new File(file);
+        this.maxturn = maxTurn;
         gameController.setGameFrame(this);
-        setTitle("Game World");
+        setTitle("Kill Dr.Lucky");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 600);
         setMinimumSize(new Dimension(300, 300));
-
+     
         initializeMenu();
         initializeComponents();
         setupOutputHandler();
         setupKeyListeners();
+        loadDefaultWorld();
+        initializeWelcomeScreen();
         
     }
+    
+    private void loadDefaultWorld() throws IOException {
+      infoTextArea.setText("");
+      FileReader fileReader = new FileReader(this.currentGameFile);
+      this.world = new World(fileReader);
+      gameController.loadNewWorld(world);
+      gameController.setMaxTurn(maxturn);  
+      refreshWorldDisplay();
+      statusLabel.setText("Default Game loaded. Please set up the game.");
+  }
+    
+    void restartWorld() throws IOException {
+      infoTextArea.setText("");
+      FileReader fileReader = new FileReader(this.currentGameFile);
+      this.world = new World(fileReader);
+      gameController.loadNewWorld(world);
+      gameController.setMaxTurn(maxturn);
+      gameController.setEnd(false);
+      setupInitialGamePanel();
+      refreshWorldDisplay();
+      statusLabel.setText("Restart Game. Please set up the game.");
+      
+      
+  }
     
 
     private void initializeMenu() {
@@ -49,22 +80,32 @@ public class GameFrame extends JFrame implements ClickListener {
         JMenu gameMenu = new JMenu("Game");
 
         JMenuItem loadGame = new JMenuItem("Load Game Configuration");
+        JMenuItem restartGame = new JMenuItem("Restart Game");
         JMenuItem quitGame = new JMenuItem("Quit Game");
 
         loadGame.addActionListener(e -> loadWorldFromFile());
+        restartGame.addActionListener(e -> {
+          try {
+            restartWorld();
+          } catch (IOException e1) {
+            e1.printStackTrace();
+          }
+        });
         quitGame.addActionListener(e -> System.exit(0));
 
         gameMenu.add(loadGame);
+        gameMenu.add(restartGame);
         gameMenu.add(quitGame);
         menuBar.add(gameMenu);
         setJMenuBar(menuBar);
+        menuBar.setVisible(false);
     }
 
-    private void loadWorldFromFile() {
+    void loadWorldFromFile() {
       JFileChooser fileChooser = new JFileChooser();
       fileChooser.setDialogTitle("Select Game Configuration File");
       fileChooser.setFileFilter(new FileNameExtensionFilter("Text Files", "txt"));
-
+      infoTextArea.setText("");
       int result = fileChooser.showOpenDialog(this);
       if (result == JFileChooser.APPROVE_OPTION) {
           File selectedFile = fileChooser.getSelectedFile();
@@ -73,9 +114,12 @@ public class GameFrame extends JFrame implements ClickListener {
               ReadOnlyWorld world = new World(fileReader);
               this.world = world;
               gameController.loadNewWorld(world);  
+              gameController.setMaxTurn(maxturn);
+              gameController.setEnd(false);
+              setupInitialGamePanel();
               refreshWorldDisplay();
-              setupPanel.setVisible(true);
-              statusLabel.setText("Game loaded. Please set up the game.");
+              statusLabel.setText("Selected Game loaded. Please set up the game.");
+              this.currentGameFile = selectedFile;
           } catch (FileNotFoundException e) {
               JOptionPane.showMessageDialog(this, "File not found: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
           } catch (IOException e) {
@@ -86,33 +130,22 @@ public class GameFrame extends JFrame implements ClickListener {
 
 
     private void initializeComponents() {
-        statusLabel = new JLabel("Load a game configuration file to start.");
-        statusLabel.setPreferredSize(new Dimension(getWidth(), 30));
-        infoTextArea = new JTextArea(8, 20);
-        
-        worldPanel = new WorldPanel();
-        setupWorldPanel();
-        JScrollPane scrollPane = new JScrollPane(worldPanel);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+      statusLabel = new JLabel("Load a game configuration file to start.");
+      statusLabel.setPreferredSize(new Dimension(getWidth(), 30));
 
-        infoTextArea.setEditable(false);
-        JScrollPane infoScrollPane = new JScrollPane(infoTextArea);
-        infoScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+      infoTextArea = new JTextArea(8, 20);
+      infoTextArea.setEditable(false);
 
-        gamePanel = new JPanel(new BorderLayout());
-        gamePanel.add(statusLabel, BorderLayout.NORTH);
-        gamePanel.add(scrollPane, BorderLayout.CENTER);
-        gamePanel.add(infoScrollPane, BorderLayout.SOUTH);
+      worldPanel = new WorldPanel();
+      setupWorldPanel(); 
 
-        setupPanel = createSetupPanel();
-        setupPanel.setVisible(false);
-        setupPanel.setPreferredSize(new Dimension(200, getHeight()));
+      setupPanel = createSetupPanel();
+      setupPanel.setVisible(false);
+      setupPanel.setPreferredSize(new Dimension(200, getHeight()));
+      
+      createInfoPanel();
+  }
 
-        setLayout(new BorderLayout());
-        add(setupPanel, BorderLayout.WEST);
-        add(gamePanel, BorderLayout.CENTER);
-    }
 
     private JPanel createSetupPanel() {
         JPanel setupPanel = new JPanel();
@@ -143,7 +176,7 @@ public class GameFrame extends JFrame implements ClickListener {
             e1.printStackTrace();
           } catch (InterruptedException e1) {
             e1.printStackTrace();
-          }
+          } 
         });
 
         setupPanel.add(addHumanPlayerButton);
@@ -171,17 +204,33 @@ public class GameFrame extends JFrame implements ClickListener {
     }
 
     public void refreshWorldDisplay() {
-          BufferedImage image = gameController.saveWorldImg();
-          worldPanel.setWorldImage(image);
-          worldPanel.setRoomCoordinates(gameController.getRoomCoordinates());
-          worldPanel.setPlayerCoordinates(gameController.getPlayerCoordinates());
+      if (!gameController.getEnd()) {
+        BufferedImage image = gameController.saveWorldImg();
+        worldPanel.setWorldImage(image);
+        worldPanel.setRoomCoordinates(gameController.getRoomCoordinates());
+        worldPanel.setPlayerCoordinates(gameController.getPlayerCoordinates());
+        if (gameController.getRunning()) {
+            statusLabel.setText("Player ID " + gameController.getCurrentPlayerId() + "'s turn");
+        }
+    } else {
+        getContentPane().removeAll(); 
+        GameEndPanel gameEndPanel = new GameEndPanel("Game Over! \n" + gameController.getResult());
+        add(gameEndPanel, BorderLayout.CENTER);
+        validate();
+        repaint();
+    }
   }
 
     private void startGame() throws IOException, InterruptedException {
       try {
         gameController.startGame();
-        setupPanel.setVisible(false);
-      } catch(IllegalArgumentException e) {
+        if (gameController.getRunning()) {
+          statusLabel.setText("Player ID " + gameController.getCurrentPlayerId() + "'s turn");
+        }
+        showInfoPanel();
+        System.out.println("Info Panel Visibility: " + infoPanel.isVisible());
+        System.out.println("Info Panel Size: " + infoPanel.getSize());
+      } catch (IllegalArgumentException e) {
         JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
       }
     }
@@ -198,8 +247,9 @@ public class GameFrame extends JFrame implements ClickListener {
     public void onPlayerClick(int playerId) throws InterruptedException {
       try {
         StringBuilder output = new StringBuilder();
-          gameController.displayPlayerInfo(playerId, output);
-          JOptionPane.showMessageDialog(this, output.toString(), "Move", JOptionPane.INFORMATION_MESSAGE);
+          String playerInfo = gameController.displayPlayerInfo(playerId, output);
+          infoDisplay.setText("Player Info: \n"+playerInfo);
+          JOptionPane.showMessageDialog(this, output.toString(), "Player Info", JOptionPane.INFORMATION_MESSAGE);
       } catch (IOException e) {
           JOptionPane.showMessageDialog(this, "Error displaying player info: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
       }
@@ -271,7 +321,8 @@ public class GameFrame extends JFrame implements ClickListener {
     private void performLookAround() throws IOException, InterruptedException {
       int currentPlayerId = gameController.getCurrentPlayerId();
       StringBuilder output = new StringBuilder();
-      gameController.performLookAround(currentPlayerId, output); 
+      String lookAroundInfo = gameController.performLookAround(currentPlayerId, output); 
+      infoDisplay.setText("Look Around Result: \n"+lookAroundInfo);
       JOptionPane.showMessageDialog(this, output.toString(), "Look Around", JOptionPane.INFORMATION_MESSAGE);
       refreshWorldDisplay(); 
   }
@@ -304,6 +355,77 @@ public class GameFrame extends JFrame implements ClickListener {
   } 
       refreshWorldDisplay(); 
   }
+    
+    private void initializeWelcomeScreen() throws IOException {
+      WelcomePanel welcomePanel = new WelcomePanel("Welcome to the Game Kill Doctor Lucky", "Credit: Zhecheng Li");
+      welcomePanel.setPreferredSize(new Dimension(800, 600));
+      getContentPane().removeAll(); 
+      setLayout(new BorderLayout());
+      add(welcomePanel, BorderLayout.CENTER);  
+      pack();
+      setLocationRelativeTo(null);
+
+      Timer timer = new Timer(3000, e -> {
+          setupInitialGamePanel();
+          getJMenuBar().setVisible(true);
+      });
+      timer.setRepeats(false);
+      timer.start();
+  }
+    
+    private void setupInitialGamePanel() {
+      getContentPane().removeAll();  
+      setLayout(new BorderLayout());  
+
+      // Setup scroll panes for world and info text areas
+      JScrollPane scrollPane = new JScrollPane(worldPanel);
+      scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+      scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
+      JScrollPane infoScrollPane = new JScrollPane(infoTextArea);
+      infoScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+
+      add(statusLabel, BorderLayout.NORTH);
+      add(scrollPane, BorderLayout.CENTER);
+      add(infoScrollPane, BorderLayout.SOUTH);
+      add(setupPanel, BorderLayout.WEST);
+      add(infoPanel, BorderLayout.EAST);
+      infoPanel.setVisible(false); 
+      worldPanel.setVisible(true);
+      infoTextArea.setVisible(true);
+      statusLabel.setVisible(true);
+      setupPanel.setVisible(true);
+
+      validate();
+      repaint();
+
+      refreshWorldDisplay();  
+  }
+    
+    private void createInfoPanel() {
+      infoPanel = new JPanel();
+      infoPanel.setLayout(new BorderLayout());
+      infoPanel.setPreferredSize(new Dimension(300, getHeight()));
+      infoDisplay = new JTextArea();
+      infoDisplay.setEditable(false);
+      infoDisplay.setLineWrap(true);
+      JScrollPane scrollPane = new JScrollPane(infoDisplay);
+      scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+
+      infoPanel.add(scrollPane, BorderLayout.CENTER);
+      infoPanel.setBackground(Color.CYAN);
+      infoPanel.setVisible(false);
+  }
+    
+    private void showInfoPanel() {
+      setupPanel.setVisible(false);
+      infoPanel.setVisible(true);
+      infoDisplay.setText("");
+  }
+
+
+    
+
 
 
 

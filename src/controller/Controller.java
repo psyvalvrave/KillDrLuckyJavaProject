@@ -8,6 +8,7 @@ import java.util.Map;
 
 import view.GameFrame;
 import world.ReadOnlyWorld;
+import world.WorldOutline;
 
 /**
  * The interface defines the necessary methods for a game controller.
@@ -55,7 +56,7 @@ public interface Controller {
 
   void doNothing() throws InterruptedException, IOException;
 
-  void performLookAround(int playerId, Appendable outputView) throws IOException, InterruptedException;
+  String performLookAround(int playerId, Appendable outputView) throws IOException, InterruptedException;
 
   void pickUpItem(int playerId, String itemName, Appendable outputView)
       throws IOException, InterruptedException;
@@ -72,5 +73,13 @@ public interface Controller {
   void movePet(int playerId, int roomId, Appendable outputView) throws IOException, InterruptedException;
   
   void setMaxTurn(int turn);
+
+  void runGameG(WorldOutline world) throws InterruptedException, IOException;
+
+  boolean getEnd();
+
+  String getResult();
+
+  void setEnd(boolean end);
   
 }
