@@ -79,7 +79,7 @@ public class GameController implements Controller {
       } else {
         print("Game will start with " + rOworld.getPlayerIds().size() + " players.");
       }
-      ((WorldOutline) rOworld).setRunningGui(true);  // Ensure this is set to true to start the game
+      ((WorldOutline) rOworld).setRunningGui(true);  
       runGameG((WorldOutline) rOworld);
     } catch (IllegalArgumentException e) {
       throw e;
@@ -94,10 +94,6 @@ public class GameController implements Controller {
   }
   
 
-  @Override
-  public ReadOnlyWorld getWorld() {
-    return this.rOworld;
-  }
 
   private void setupGame(WorldOutline world) throws InterruptedException, IOException {
     print("Setting up the game.");
@@ -521,8 +517,7 @@ public class GameController implements Controller {
       
     }
   
-  @Override
-  public void runGameG(WorldOutline world) throws InterruptedException, IOException {
+  private void runGameG(WorldOutline world) throws InterruptedException, IOException {
     this.gameEnd = false;
     while (world.getIsRunning()) {
         int currentPlayerId = world.getCurrentPlayerId();
@@ -530,10 +525,16 @@ public class GameController implements Controller {
             handleComputerPlayer(currentPlayerId);
             updateCoordinates();
             updateGameStatus();
-            gameFrame.refreshWorldDisplay();
+            gameFrame.refreshWorldDisplay(this);
             Thread.sleep(1000);
         } else {
-            SwingUtilities.invokeLater(() -> prepareForPlayerTurn(currentPlayerId));
+            SwingUtilities.invokeLater(() -> {
+              try {
+                prepareForPlayerTurn(currentPlayerId);
+              } catch (IOException e) {
+                e.printStackTrace();
+              }
+            });
             updateGameStatus();
             return;  
         }
@@ -568,8 +569,8 @@ public class GameController implements Controller {
 
 
 
-private void prepareForPlayerTurn(int playerId) {
-    System.out.println("Preparing for human player " + playerId + " to take their turn.");
+private void prepareForPlayerTurn(int playerId) throws IOException {
+    print("human player " + playerId + " to take their turn.");
 }
 
 @Override
@@ -659,6 +660,7 @@ public void setMaxTurn(int turn) {
   ((WorldOutline) rOworld).setMaxTurns(turn);
   
 }
+
 
 
 

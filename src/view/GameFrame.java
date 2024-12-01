@@ -24,7 +24,6 @@ public class GameFrame extends JFrame implements FrameView {
     private JLabel statusLabel;
     private WorldPanel worldPanel;
     private JTextArea infoTextArea;
-    private Controller gameController;
     private JPanel setupPanel;
     private int maxturn;
     private File currentGameFile;
@@ -32,7 +31,6 @@ public class GameFrame extends JFrame implements FrameView {
     private JTextArea infoDisplay;
 
     public GameFrame(Controller gameController, int maxTurn, String file) throws IOException {
-        this.gameController = gameController;
         currentGameFile = new File(file);
         this.maxturn = maxTurn;
         gameController.setGameFrame(this);
@@ -41,41 +39,41 @@ public class GameFrame extends JFrame implements FrameView {
         setSize(800, 600);
         setMinimumSize(new Dimension(300, 300));
      
-        initializeMenu();
-        initializeComponents();
-        setupOutputHandler();
-        setupKeyListeners();
-        loadDefaultWorld();
-        initializeWelcomeScreen();
+        initializeMenu(gameController);
+        initializeComponents(gameController);
+        setupOutputHandler(gameController);
+        setupKeyListeners(gameController);
+        loadDefaultWorld(gameController);
+        initializeWelcomeScreen(gameController);
         
     }
     
-    private void loadDefaultWorld() throws IOException {
+    private void loadDefaultWorld(Controller gameController) throws IOException {
       setUpInstruction();
       FileReader fileReader = new FileReader(this.currentGameFile);
       this.world = new World(fileReader);
       gameController.loadNewWorld(world);
       gameController.setMaxTurn(maxturn);  
-      refreshWorldDisplay();
+      refreshWorldDisplay(gameController);
       statusLabel.setText("Default Game loaded. Please set up the game.");
   }
     
-    void restartWorld() throws IOException {
+    void restartWorld(Controller gameController) throws IOException {
       setUpInstruction();
       FileReader fileReader = new FileReader(this.currentGameFile);
       this.world = new World(fileReader);
       gameController.loadNewWorld(world);
       gameController.setMaxTurn(maxturn);
       gameController.setEnd(false);
-      setupInitialGamePanel();
-      refreshWorldDisplay();
+      setupInitialGamePanel(gameController);
+      refreshWorldDisplay(gameController);
       statusLabel.setText("Restart Game. Please set up the game.");
       
       
   }
     
 
-    private void initializeMenu() {
+    private void initializeMenu(Controller gameController) {
         JMenuBar menuBar = new JMenuBar();
         JMenu gameMenu = new JMenu("Game");
 
@@ -83,10 +81,10 @@ public class GameFrame extends JFrame implements FrameView {
         JMenuItem restartGame = new JMenuItem("Restart Game");
         JMenuItem quitGame = new JMenuItem("Quit Game");
 
-        loadGame.addActionListener(e -> loadWorldFromFile());
+        loadGame.addActionListener(e -> loadWorldFromFile(gameController));
         restartGame.addActionListener(e -> {
           try {
-            restartWorld();
+            restartWorld(gameController);
           } catch (IOException e1) {
             e1.printStackTrace();
           }
@@ -101,7 +99,7 @@ public class GameFrame extends JFrame implements FrameView {
         menuBar.setVisible(false);
     }
 
-    void loadWorldFromFile() {
+    void loadWorldFromFile(Controller gameController) {
       JFileChooser fileChooser = new JFileChooser();
       fileChooser.setDialogTitle("Select Game Configuration File");
       fileChooser.setFileFilter(new FileNameExtensionFilter("Text Files", "txt"));
@@ -116,8 +114,8 @@ public class GameFrame extends JFrame implements FrameView {
               gameController.loadNewWorld(world);  
               gameController.setMaxTurn(maxturn);
               gameController.setEnd(false);
-              setupInitialGamePanel();
-              refreshWorldDisplay();
+              setupInitialGamePanel(gameController);
+              refreshWorldDisplay(gameController);
               statusLabel.setText("Selected Game loaded. Please set up the game.");
               this.currentGameFile = selectedFile;
           } catch (FileNotFoundException e) {
@@ -129,17 +127,17 @@ public class GameFrame extends JFrame implements FrameView {
   }
 
 
-    private void initializeComponents() {
+    private void initializeComponents(Controller gameController) {
       statusLabel = new JLabel("Load a game configuration file to start.");
       statusLabel.setPreferredSize(new Dimension(getWidth(), 30));
 
       infoTextArea = new JTextArea(8, 20);
       infoTextArea.setEditable(false);
 
-      worldPanel = new WorldPanel();
+      worldPanel = new WorldPanel(gameController);
       setupWorldPanel(); 
 
-      setupPanel = createSetupPanel();
+      setupPanel = createSetupPanel(gameController);
       setupPanel.setVisible(false);
       setupPanel.setPreferredSize(new Dimension(200, getHeight()));
       
@@ -147,7 +145,7 @@ public class GameFrame extends JFrame implements FrameView {
   }
 
 
-    private JPanel createSetupPanel() {
+    private JPanel createSetupPanel(Controller gameController) {
         JPanel setupPanel = new JPanel();
         setupPanel.setLayout(new BoxLayout(setupPanel, BoxLayout.Y_AXIS));
 
@@ -157,21 +155,21 @@ public class GameFrame extends JFrame implements FrameView {
 
         addHumanPlayerButton.addActionListener(e -> {
             try {
-                addPlayer(false);
+                addPlayer(gameController, false);
             } catch (InterruptedException ex) {
                 ex.printStackTrace();
             }
         });
         addComputerPlayerButton.addActionListener(e -> {
             try {
-                addPlayer(true);
+                addPlayer(gameController, true);
             } catch (InterruptedException ex) {
                 ex.printStackTrace();
             }
         });
         startGameButton.addActionListener(e -> {
           try {
-            startGame();
+            startGame(gameController);
           } catch (IOException e1) {
             e1.printStackTrace();
           } catch (InterruptedException e1) {
@@ -186,13 +184,13 @@ public class GameFrame extends JFrame implements FrameView {
         return setupPanel;
     }
 
-    private void addPlayer(boolean isComputer) throws InterruptedException {
+    private void addPlayer(Controller gameController, boolean isComputer) throws InterruptedException {
         String playerName = JOptionPane.showInputDialog(this, "Enter player name:");
         if (playerName != null && !playerName.trim().isEmpty()) {
             try {
                 int roomIndex = Integer.parseInt(JOptionPane.showInputDialog(this, "Enter starting room ID:"));
                 gameController.addPlayer(playerName, roomIndex, isComputer);
-                refreshWorldDisplay();
+                refreshWorldDisplay(gameController);
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(this, "Invalid room number. Please enter a valid number.", "Error", JOptionPane.ERROR_MESSAGE);
             } catch (IOException ex) {
@@ -204,7 +202,7 @@ public class GameFrame extends JFrame implements FrameView {
     }
 
     @Override
-    public void refreshWorldDisplay() {
+    public void refreshWorldDisplay(Controller gameController) {
       if (!gameController.getEnd()) {
         BufferedImage image = gameController.saveWorldImg();
         worldPanel.setWorldImage(image);
@@ -215,14 +213,14 @@ public class GameFrame extends JFrame implements FrameView {
         }
     } else {
         getContentPane().removeAll(); 
-        GameEndPanel gameEndPanel = new GameEndPanel("Game Over! \n" + gameController.getResult());
+        GameEndPanel gameEndPanel = new GameEndPanel("Game Over! \n" + gameController.getResult(), gameController);
         add(gameEndPanel, BorderLayout.CENTER);
         validate();
         repaint();
     }
   }
 
-    private void startGame() throws IOException, InterruptedException {
+    private void startGame(Controller gameController) throws IOException, InterruptedException {
       try {
         gameController.startGame();
         if (gameController.getRunning()) {
@@ -235,7 +233,7 @@ public class GameFrame extends JFrame implements FrameView {
     }
 
     
-    private void setupOutputHandler() {
+    private void setupOutputHandler(Controller gameController) {
       TextOutputHandler outputHandler = new TextOutputHandler(text -> {
           SwingUtilities.invokeLater(() -> infoTextArea.append(text));
       });
@@ -243,7 +241,7 @@ public class GameFrame extends JFrame implements FrameView {
   }
     
     @Override
-    public void onPlayerClick(int playerId) throws InterruptedException {
+    public void onPlayerClick(Controller gameController, int playerId) throws InterruptedException {
       try {
         StringBuilder output = new StringBuilder();
           String playerInfo = gameController.displayPlayerInfo(playerId, output);
@@ -256,13 +254,13 @@ public class GameFrame extends JFrame implements FrameView {
 
     
     @Override
-    public void onRoomClick(int roomId) throws IOException, InterruptedException {
+    public void onRoomClick(Controller gameController, int roomId) throws IOException, InterruptedException {
         if (gameController.getRunning()) {
             try {
               StringBuilder output = new StringBuilder();
                 gameController.movePlayerToRoom(roomId, output);
                 JOptionPane.showMessageDialog(this, output.toString(), "Move", JOptionPane.INFORMATION_MESSAGE);
-                refreshWorldDisplay();  
+                refreshWorldDisplay(gameController);  
             } catch (IllegalArgumentException e) {
                 JOptionPane.showMessageDialog(this, "Invalid move: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             } 
@@ -277,7 +275,7 @@ public class GameFrame extends JFrame implements FrameView {
         worldPanel.setClickListener(this);
     }
     
-    private void setupKeyListeners() {
+    private void setupKeyListeners(Controller gameController) {
       this.setFocusable(true);
       this.requestFocusInWindow();
       this.addKeyListener(new KeyAdapter() {
@@ -285,13 +283,13 @@ public class GameFrame extends JFrame implements FrameView {
           public void keyPressed(KeyEvent e) {
               try {
                   if (e.getKeyChar() == 'p') {
-                      showItemPickupDialog();
+                      showItemPickupDialog(gameController);
                   } else if (e.getKeyChar() == 'l' || e.getKeyChar() == 'L') {
-                      performLookAround();
+                      performLookAround(gameController);
                   } else if (e.getKeyChar() == 'a' || e.getKeyChar() == 'A') {
-                    showAttackDialog();
+                    showAttackDialog(gameController);
                   } else if (e.getKeyChar() == 'm' || e.getKeyChar() == 'M') {
-                    showPetMoveDialog();
+                    showPetMoveDialog(gameController);
                   }
                   
               } catch (IOException | InterruptedException ex) {
@@ -304,7 +302,7 @@ public class GameFrame extends JFrame implements FrameView {
   }
 
     
-    private void showItemPickupDialog() throws IOException, InterruptedException {
+    private void showItemPickupDialog(Controller gameController) throws IOException, InterruptedException {
       int currentPlayerId = gameController.getCurrentPlayerId();
       List<String> items = gameController.passRoomItem(currentPlayerId); 
 
@@ -316,19 +314,19 @@ public class GameFrame extends JFrame implements FrameView {
           dialog.setVisible(true);
       }
       setUpInstruction();
-      refreshWorldDisplay(); 
+      refreshWorldDisplay(gameController); 
   }
     
-    private void performLookAround() throws IOException, InterruptedException {
+    private void performLookAround(Controller gameController) throws IOException, InterruptedException {
       int currentPlayerId = gameController.getCurrentPlayerId();
       StringBuilder output = new StringBuilder();
       String lookAroundInfo = gameController.performLookAround(currentPlayerId, output); 
       infoDisplay.setText("Look Around Result: \n"+lookAroundInfo);
       JOptionPane.showMessageDialog(this, output.toString(), "Look Around", JOptionPane.INFORMATION_MESSAGE);
-      refreshWorldDisplay(); 
+      refreshWorldDisplay(gameController); 
   }
     
-    private void showAttackDialog() throws IOException, InterruptedException {
+    private void showAttackDialog(Controller gameController) throws IOException, InterruptedException {
       int currentPlayerId = gameController.getCurrentPlayerId();
       List<String> items = gameController.passPlayerItems(currentPlayerId); 
       try {
@@ -345,10 +343,10 @@ public class GameFrame extends JFrame implements FrameView {
         JOptionPane.showMessageDialog(this, "Invalid attack: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
     } 
       setUpInstruction();
-      refreshWorldDisplay(); 
+      refreshWorldDisplay(gameController); 
   }
     
-    public void showPetMoveDialog() throws IOException, InterruptedException {
+    public void showPetMoveDialog(Controller gameController) throws IOException, InterruptedException {
       try {
       int currentPlayerId = gameController.getCurrentPlayerId();
       new PetMoveDialog(this, gameController, currentPlayerId).setVisible(true);
@@ -356,10 +354,10 @@ public class GameFrame extends JFrame implements FrameView {
       JOptionPane.showMessageDialog(this, "Invalid attack: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
   } 
       setUpInstruction();
-      refreshWorldDisplay(); 
+      refreshWorldDisplay(gameController); 
   }
     
-    private void initializeWelcomeScreen() throws IOException {
+    private void initializeWelcomeScreen(Controller gameController) throws IOException {
       WelcomePanel welcomePanel = new WelcomePanel("Welcome to the Game Kill Doctor Lucky", "Credit: Zhecheng Li");
       welcomePanel.setPreferredSize(new Dimension(800, 600));
       getContentPane().removeAll(); 
@@ -369,14 +367,14 @@ public class GameFrame extends JFrame implements FrameView {
       setLocationRelativeTo(null);
 
       Timer timer = new Timer(3000, e -> {
-          setupInitialGamePanel();
+          setupInitialGamePanel(gameController);
           getJMenuBar().setVisible(true);
       });
       timer.setRepeats(false);
       timer.start();
   }
     
-    private void setupInitialGamePanel() {
+    private void setupInitialGamePanel(Controller gameController) {
       getContentPane().removeAll();  
       setLayout(new BorderLayout());  
 
@@ -401,7 +399,7 @@ public class GameFrame extends JFrame implements FrameView {
       validate();
       repaint();
 
-      refreshWorldDisplay();  
+      refreshWorldDisplay(gameController);  
   }
     
     private void createInfoPanel() {

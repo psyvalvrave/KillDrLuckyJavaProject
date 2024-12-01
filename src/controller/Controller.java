@@ -35,8 +35,6 @@ public interface Controller {
   void startGame() throws IOException, InterruptedException;
 
   void loadNewWorld(ReadOnlyWorld world) throws IOException;
-
-  ReadOnlyWorld getWorld();
   
   void setOutput(Appendable output);
 
@@ -74,7 +72,7 @@ public interface Controller {
   
   void setMaxTurn(int turn);
 
-  void runGameG(WorldOutline world) throws InterruptedException, IOException;
+  //void runGameG(WorldOutline world) throws InterruptedException, IOException;
 
   boolean getEnd();
 

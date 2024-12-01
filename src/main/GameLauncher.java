@@ -2,9 +2,10 @@ package main;
 
 import controller.GameController;
 import controller.RandomNumberGenerator;
+import mock.MockWorldOutline;
 import view.GameFrame;
 import world.World;
-
+import world.WorldOutline;
 import javax.swing.SwingUtilities;
 import java.io.*;
 import java.util.Scanner;
@@ -44,7 +45,8 @@ public class GameLauncher {
             Appendable consoleOutput = System.out;
             InputStreamReader consoleInput = new InputStreamReader(System.in);
             RandomNumberGenerator rng = new RandomNumberGenerator();
-            World world = new World(fileInput);
+            WorldOutline world = new World(fileInput);
+            MockWorldOutline mock = new MockWorldOutline();
             GameController controller = new GameController(consoleInput, consoleOutput, rng, maxTurns);
             controller.playGame(world);
         } catch (FileNotFoundException e) {

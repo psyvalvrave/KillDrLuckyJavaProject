@@ -1,6 +1,9 @@
 package view;
 
 import javax.swing.*;
+
+import controller.Controller;
+
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -15,14 +18,14 @@ public class WorldPanel extends JPanel {
     private Map<Integer, Rectangle> playerCoordinates = new HashMap<>();
     private FrameView clickListener;
 
-    public WorldPanel() {
+    public WorldPanel(Controller gameController) {
         super();
         this.worldImage = null;
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 try {
-                  handleMouseClick(e.getX(), e.getY());
+                  handleMouseClick(gameController, e.getX(), e.getY());
                 } catch (IOException | InterruptedException e1) {
                   e1.printStackTrace();
                 }
@@ -57,13 +60,13 @@ public class WorldPanel extends JPanel {
         this.playerCoordinates = coordinates;
     }
 
-    private void handleMouseClick(int x, int y) throws IOException, InterruptedException {
+    private void handleMouseClick(Controller gameController, int x, int y) throws IOException, InterruptedException {
       boolean found = false;
 
       for (Map.Entry<Integer, Rectangle> entry : playerCoordinates.entrySet()) {
           if (entry.getValue().contains(x, y)) {
               if (clickListener != null) {
-                  clickListener.onPlayerClick(entry.getKey());
+                  clickListener.onPlayerClick(gameController, entry.getKey());
               }
               found = true;
               break;
@@ -74,7 +77,7 @@ public class WorldPanel extends JPanel {
           for (Map.Entry<Integer, Rectangle> entry : roomCoordinates.entrySet()) {
               if (entry.getValue().contains(x, y)) {
                   if (clickListener != null) {
-                      clickListener.onRoomClick(entry.getKey());
+                      clickListener.onRoomClick(gameController, entry.getKey());
                   }
                   break;
               }
