@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import view.GameFrame;
+import view.FrameView;
 import world.ReadOnlyWorld;
 import world.WorldOutline;
 
@@ -50,7 +50,7 @@ public interface Controller {
 
   boolean getRunning();
 
-  void setGameFrame(GameFrame frame);
+  void setGameFrame(FrameView frame);
 
   List<String> passRoomItem(int playerId);
 

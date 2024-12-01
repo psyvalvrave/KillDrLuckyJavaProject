@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import world.WorldOutline;
 
-public class ComputerPlayerStrategy implements ComputerPlayer{
+public class ComputerPlayerStrategy implements PlayerStrategy{
     private WorldOutline world;
     private Appendable output;
     private RandomNumberGenerator rng;

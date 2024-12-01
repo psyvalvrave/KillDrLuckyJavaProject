@@ -13,7 +13,7 @@ public class WorldPanel extends JPanel {
     private BufferedImage worldImage;
     private Map<Integer, Rectangle> roomCoordinates = new HashMap<>();
     private Map<Integer, Rectangle> playerCoordinates = new HashMap<>();
-    private ClickListener clickListener;
+    private FrameView clickListener;
 
     public WorldPanel() {
         super();
@@ -30,7 +30,7 @@ public class WorldPanel extends JPanel {
         });
     }
     
-    public void setClickListener(ClickListener listener) {
+    public void setClickListener(FrameView listener) {
       this.clickListener = listener;
   }
 
@@ -38,7 +38,7 @@ public class WorldPanel extends JPanel {
         this.worldImage = worldImage;
         setPreferredSize(new Dimension(worldImage.getWidth(), worldImage.getHeight()));
         revalidate();
-        repaint();  // This will trigger the paintComponent to redraw the image
+        repaint();  
     }
 
     @Override
@@ -80,14 +80,6 @@ public class WorldPanel extends JPanel {
               }
           }
       }
-  }
-    
-    public void printCoordinates() {
-      //System.out.println("Room Coordinates:");
-      //roomCoordinates.forEach((key, value) -> System.out.println("Room ID: " + key + " -> Bounds: " + value));
-
-      System.out.println("Player Coordinates:");
-      playerCoordinates.forEach((key, value) -> System.out.println("Player ID: " + key + " -> Bounds: " + value));
   }
 
 

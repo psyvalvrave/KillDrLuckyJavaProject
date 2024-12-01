@@ -9,7 +9,7 @@ import java.util.Scanner;
 
 import javax.swing.SwingUtilities;
 
-import view.GameFrame;
+import view.FrameView;
 import world.ReadOnlyWorld;
 import world.World;
 import world.WorldOutline;
@@ -27,7 +27,7 @@ public class GameController implements Controller {
   private Map<Integer, Rectangle> roomCoordinates;
   private Map<Integer, Rectangle> playerCoordinates;
   private String mode = "CLI";
-  private GameFrame gameFrame;
+  private FrameView gameFrame;
   private boolean gameEnd = false;
   private String result;
 
@@ -151,7 +151,7 @@ public class GameController implements Controller {
 
   private void runGameC(WorldOutline world) throws InterruptedException, IOException {
     print("Game started. Manage your turns.");
-    ComputerPlayer computerPlayerStrategy = new ComputerPlayerStrategy(world, output, rng);
+    PlayerStrategy computerPlayerStrategy = new ComputerPlayerStrategy(world, output, rng);
     while (world.getIsRunning() && world.getCurrentTurn() < maxTurns) {
       int currentPlayerId = world.getPlayerIds().get(world.getCurrentPlayerId());
       if (world.getIsComputer().get(currentPlayerId)) {
@@ -516,7 +516,7 @@ public class GameController implements Controller {
   }
   
   private void handleComputerPlayer(int currentPlayerId) throws InterruptedException, IOException {
-    ComputerPlayer computerPlayerStrategy = new ComputerPlayerStrategy((WorldOutline) rOworld, output, rng);
+    PlayerStrategy computerPlayerStrategy = new ComputerPlayerStrategy((WorldOutline) rOworld, output, rng);
     computerPlayerStrategy.executeActions(currentPlayerId);
       
     }
@@ -573,7 +573,7 @@ private void prepareForPlayerTurn(int playerId) {
 }
 
 @Override
-public void setGameFrame(GameFrame frame) {
+public void setGameFrame(FrameView frame) {
   this.gameFrame = frame;
 }
 

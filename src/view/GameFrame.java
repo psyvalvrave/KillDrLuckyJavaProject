@@ -19,7 +19,7 @@ import controller.TextOutputHandler;
 import world.ReadOnlyWorld;
 import world.World;
 
-public class GameFrame extends JFrame implements ClickListener {
+public class GameFrame extends JFrame implements FrameView {
     private ReadOnlyWorld world;
     private JLabel statusLabel;
     private WorldPanel worldPanel;
@@ -51,7 +51,7 @@ public class GameFrame extends JFrame implements ClickListener {
     }
     
     private void loadDefaultWorld() throws IOException {
-      infoTextArea.setText("");
+      setUpInstruction();
       FileReader fileReader = new FileReader(this.currentGameFile);
       this.world = new World(fileReader);
       gameController.loadNewWorld(world);
@@ -61,7 +61,7 @@ public class GameFrame extends JFrame implements ClickListener {
   }
     
     void restartWorld() throws IOException {
-      infoTextArea.setText("");
+      setUpInstruction();
       FileReader fileReader = new FileReader(this.currentGameFile);
       this.world = new World(fileReader);
       gameController.loadNewWorld(world);
@@ -105,7 +105,7 @@ public class GameFrame extends JFrame implements ClickListener {
       JFileChooser fileChooser = new JFileChooser();
       fileChooser.setDialogTitle("Select Game Configuration File");
       fileChooser.setFileFilter(new FileNameExtensionFilter("Text Files", "txt"));
-      infoTextArea.setText("");
+      setUpInstruction();
       int result = fileChooser.showOpenDialog(this);
       if (result == JFileChooser.APPROVE_OPTION) {
           File selectedFile = fileChooser.getSelectedFile();
@@ -203,6 +203,7 @@ public class GameFrame extends JFrame implements ClickListener {
         }
     }
 
+    @Override
     public void refreshWorldDisplay() {
       if (!gameController.getEnd()) {
         BufferedImage image = gameController.saveWorldImg();
@@ -228,8 +229,6 @@ public class GameFrame extends JFrame implements ClickListener {
           statusLabel.setText("Player ID " + gameController.getCurrentPlayerId() + "'s turn");
         }
         showInfoPanel();
-        System.out.println("Info Panel Visibility: " + infoPanel.isVisible());
-        System.out.println("Info Panel Size: " + infoPanel.getSize());
       } catch (IllegalArgumentException e) {
         JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
       }
@@ -268,6 +267,7 @@ public class GameFrame extends JFrame implements ClickListener {
                 JOptionPane.showMessageDialog(this, "Invalid move: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             } 
         } 
+        setUpInstruction();
     }
 
 
@@ -315,6 +315,7 @@ public class GameFrame extends JFrame implements ClickListener {
           ItemPickupDialog dialog = new ItemPickupDialog(this, "Pick an Item", true, items, (GameController) gameController, currentPlayerId);
           dialog.setVisible(true);
       }
+      setUpInstruction();
       refreshWorldDisplay(); 
   }
     
@@ -343,6 +344,7 @@ public class GameFrame extends JFrame implements ClickListener {
       } catch (IllegalArgumentException e) {
         JOptionPane.showMessageDialog(this, "Invalid attack: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
     } 
+      setUpInstruction();
       refreshWorldDisplay(); 
   }
     
@@ -353,6 +355,7 @@ public class GameFrame extends JFrame implements ClickListener {
       } catch (IllegalArgumentException e) {
       JOptionPane.showMessageDialog(this, "Invalid attack: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
   } 
+      setUpInstruction();
       refreshWorldDisplay(); 
   }
     
@@ -377,7 +380,6 @@ public class GameFrame extends JFrame implements ClickListener {
       getContentPane().removeAll();  
       setLayout(new BorderLayout());  
 
-      // Setup scroll panes for world and info text areas
       JScrollPane scrollPane = new JScrollPane(worldPanel);
       scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
       scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -420,8 +422,18 @@ public class GameFrame extends JFrame implements ClickListener {
     private void showInfoPanel() {
       setupPanel.setVisible(false);
       infoPanel.setVisible(true);
-      infoDisplay.setText("");
+      setUpInstruction();
   }
+    
+    private void setUpInstruction() {
+      infoDisplay.setText("Game Instruction:\nBlue dot is the current player\nBlack dot is not current player\n"
+          + "Click a room to move\nClick player ICON(blue or black dot) to display player info\n"
+          + "Press 'P' on keyboard to pick up item\n"
+          + "Press 'L' on keyboard to look around to gather information\n"
+          + "Press 'A' on keyboard to attack target(red dot)\n"
+          + "Press 'M' on keyboard to move the pet the other room\n"
+          + "enjoy the game!");
+    }
 
 
     

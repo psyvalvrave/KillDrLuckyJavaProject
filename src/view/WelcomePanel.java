@@ -15,15 +15,12 @@ public class WelcomePanel extends JPanel {
         constraints.gridwidth = GridBagConstraints.REMAINDER;
         constraints.anchor = GridBagConstraints.CENTER;
 
-        // Initialize labels with the provided text
         lineOne = new JLabel(textOne);
         lineTwo = new JLabel(textTwo);
 
-        // Set a larger font size for better visibility
         lineOne.setFont(new Font("Serif", Font.BOLD, 24));
         lineTwo.setFont(new Font("Serif", Font.BOLD, 24));
 
-        // Add labels to the panel
         add(lineOne, constraints);
         add(lineTwo, constraints);
     }
