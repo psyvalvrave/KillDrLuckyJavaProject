@@ -58,7 +58,8 @@ The view is created for this milestone, and it works with Java Swing. The graphi
 5. For model end, Some methods are added in the model end as well to help running the game. For example, `getRoomCoordinates()` and `getPlayerCoordinates()` are added to pass the current coordinates to controller, and allow the game uses these coordinates to respond to mouse click for different actions.
 6. Mock model and mock controller are created now to help testing. 
 7. In order to display the Appendable output from System.out to the area in view, a helper class call `TextOutputHandler` is created. 
-8. There are many minor update, but all updated are display in the file design.pdf in the res folder.
+8. There are many minor update, but all updated are display in the file design.pdf in the res folder. Though they are two separated pdf, but the view should work controller and model all the time. (Simply image two association lines between GameFrame and Controller interface, GameFrame and ReadOnlyWorld interface )
+9. TestPlan.pdf is the test for the entire project. 
 
 ### Key Features
 - **World Class:** Constructs the game board and initializes the rooms based on predefined configurations.
