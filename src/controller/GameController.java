@@ -289,8 +289,8 @@ public class GameController implements Controller {
       throw new IllegalArgumentException("Invalid room index. "
           + "Please enter a number between 1 and " + world.getRoomCount() + ".\n");
     }
-    String playerName = scanner.nextLine();
     output.append("Enter player name:\n");
+    String playerName = scanner.nextLine();
     Command createPlayerCommand = new CreatePlayerCommand(world, 
         playerName, roomIndex, world.getPlayerIds(), world.getPlayerNames(), world.getIsComputer());
     createPlayerCommand.execute(output);
