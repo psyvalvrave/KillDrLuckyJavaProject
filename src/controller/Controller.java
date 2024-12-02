@@ -52,7 +52,7 @@ public interface Controller {
 
   List<String> passRoomItem(int playerId);
 
-  void doNothing() throws InterruptedException, IOException;
+  void passTurn() throws InterruptedException, IOException;
 
   String performLookAround(int playerId, Appendable outputView) throws IOException, InterruptedException;
 
@@ -79,5 +79,7 @@ public interface Controller {
   String getResult();
 
   void setEnd(boolean end);
+
+  void pickNothing() throws InterruptedException, IOException;
   
 }

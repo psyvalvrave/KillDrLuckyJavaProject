@@ -55,11 +55,13 @@ public class GameFrame extends JFrame implements FrameView {
       gameController.loadNewWorld(world);
       gameController.setMaxTurn(maxturn);  
       refreshWorldDisplay(gameController);
+      infoTextArea.setText("");
       statusLabel.setText("Default Game loaded. Please set up the game.");
   }
     
     void restartWorld(Controller gameController) throws IOException {
       setUpInstruction();
+      infoTextArea.setText("");
       FileReader fileReader = new FileReader(this.currentGameFile);
       this.world = new World(fileReader);
       gameController.loadNewWorld(world);
@@ -104,6 +106,7 @@ public class GameFrame extends JFrame implements FrameView {
       fileChooser.setDialogTitle("Select Game Configuration File");
       fileChooser.setFileFilter(new FileNameExtensionFilter("Text Files", "txt"));
       setUpInstruction();
+      infoTextArea.setText("");
       int result = fileChooser.showOpenDialog(this);
       if (result == JFileChooser.APPROVE_OPTION) {
           File selectedFile = fileChooser.getSelectedFile();
@@ -308,7 +311,7 @@ public class GameFrame extends JFrame implements FrameView {
 
       if (items.isEmpty()) {
           JOptionPane.showMessageDialog(this, "No items available to pick up in this room. You waste your time on searching!", "Information", JOptionPane.INFORMATION_MESSAGE);
-          gameController.doNothing();
+          gameController.pickNothing();
       } else {
           ItemPickupDialog dialog = new ItemPickupDialog(this, "Pick an Item", true, items, (GameController) gameController, currentPlayerId);
           dialog.setVisible(true);
@@ -405,7 +408,7 @@ public class GameFrame extends JFrame implements FrameView {
     private void createInfoPanel() {
       infoPanel = new JPanel();
       infoPanel.setLayout(new BorderLayout());
-      infoPanel.setPreferredSize(new Dimension(300, getHeight()));
+      infoPanel.setPreferredSize(new Dimension(350, getHeight()));
       infoDisplay = new JTextArea();
       infoDisplay.setEditable(false);
       infoDisplay.setLineWrap(true);
@@ -431,6 +434,11 @@ public class GameFrame extends JFrame implements FrameView {
           + "Press 'A' on keyboard to attack target(red dot)\n"
           + "Press 'M' on keyboard to move the pet the other room\n"
           + "enjoy the game!");
+    }
+    
+    @Override
+    public WorldPanel getWorldPanel() {
+      return this.worldPanel;
     }
 
 

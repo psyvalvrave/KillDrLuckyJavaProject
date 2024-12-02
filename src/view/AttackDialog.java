@@ -8,7 +8,6 @@ import java.awt.*;
 import java.util.List;
 
 public class AttackDialog extends JDialog {
-    private Controller gameController;
     private int playerId;
     private JList<String> itemList;
     private JButton attackButton;
@@ -18,7 +17,6 @@ public class AttackDialog extends JDialog {
 
     public AttackDialog(Frame owner, Controller gameController, int playerId, List<String> items) {
         super(owner, "Select Item for Attack", true);
-        this.gameController = gameController;
         this.playerId = playerId;
 
         itemList = new JList<>(new DefaultListModel<>());
@@ -26,10 +24,10 @@ public class AttackDialog extends JDialog {
         items.forEach(model::addElement);
 
         attackButton = new JButton("Attack with Selected Item");
-        attackButton.addActionListener(e -> performAttack(true));
+        attackButton.addActionListener(e -> performAttack(gameController, true));
         
         basicAttackButton = new JButton("Poking Eyes");
-        basicAttackButton.addActionListener(e -> performAttack(false));
+        basicAttackButton.addActionListener(e -> performAttack(gameController, false));
         
         cancelButton = new JButton("Cancel");
         cancelButton.addActionListener(e -> dispose());
@@ -50,7 +48,7 @@ public class AttackDialog extends JDialog {
         setLocationRelativeTo(owner);
     }
 
-    private void performAttack(boolean useItem) {
+    private void performAttack(Controller gameController, boolean useItem) {
       if (useItem) {
         selectedItem = itemList.getSelectedValue().split(": ")[0];
       } else {

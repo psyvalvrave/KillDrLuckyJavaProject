@@ -746,13 +746,13 @@ public class WorldTest {
     assertEquals("DFS path does not match expected", expectedPath.trim(), actualPath);
   }
   
+  
   @Test
   public void testDfsResetsOnPetMove() {
     world.createPlayer("Alice", 2); 
     String moveResult = world.movePet(0, 21);
     assertTrue("Move message should confirm the move", moveResult.contains("Pet has been moved"));
     CharacterPet pet = world.getPet(); 
-    world.initializePetDfs();
     Stack<Block> newPath = pet.getPath();
     assertFalse("Path should not be empty after move", newPath.isEmpty());
     StringBuilder pathString = new StringBuilder();

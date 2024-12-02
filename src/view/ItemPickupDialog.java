@@ -13,12 +13,10 @@ import java.util.List;
 public class ItemPickupDialog extends JDialog {
     private JList<String> itemList;
     private JButton pickButton;
-    private Controller gameController;
     private int playerId;
 
-    public ItemPickupDialog(Frame owner, String title, boolean modal, List<String> items, Controller controller, int currentPlayerId) {
+    public ItemPickupDialog(Frame owner, String title, boolean modal, List<String> items, Controller gameController, int currentPlayerId) {
         super(owner, title, modal);
-        this.gameController = controller;
         this.playerId = currentPlayerId;
 
         setLayout(new BorderLayout());

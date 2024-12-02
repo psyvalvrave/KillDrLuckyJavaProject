@@ -11,6 +11,8 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import javax.imageio.ImageIO;
 import org.junit.Test;
+import world.Item;
+import world.Room;
 import world.World;
 
 /**
@@ -598,8 +600,9 @@ public class GameControllerTest {
             + "7 2 Loud Noise\n";
     Reader fileInput = new StringReader(input);
     World world = new World(fileInput);
-    world.createPlayer("Peter", 1);
-    world.playerPickUpItem(0, "Revolver");
+    Room room = (Room) world.getRoomById(1);
+    Item item = (Item) world.getItemByName("Revolver");
+    room.removeItem(item);
     world.movePetToNextRoom();
     gameController.playGame(world);
     assert (consoleOutput.toString().contains("Current Room Items: None"));
@@ -666,8 +669,9 @@ public class GameControllerTest {
             + "7 2 Loud Noise\n";
     Reader fileInput = new StringReader(input);
     World world = new World(fileInput);
-    world.createPlayer("Peter", 5);
-    world.playerPickUpItem(0, "Letter Opener");
+    Room room = (Room) world.getRoomById(5);
+    Item item = (Item) world.getItemByName("Letter Opener");
+    room.removeItem(item);
     world.movePetToNextRoom();
     gameController.playGame(world);
     assert (consoleOutput.toString().contains("Current Room Items:"));

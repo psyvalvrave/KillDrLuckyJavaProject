@@ -547,17 +547,17 @@ public class GameController implements Controller {
 
   private void updateGameStatus() {
     if (rOworld.getCurrentTurn() >= maxTurns) {
-        ((World) rOworld).setRunningGui(false);
-        ((World) rOworld).setRunning(false);
+        ((WorldOutline) rOworld).setRunningGui(false);
+        ((WorldOutline) rOworld).setRunning(false);
         this.gameEnd = true;
         this.result = "Game over: Maximum number of turns reached!\nNo winner for this game!";
     } else if (rOworld.getTargetHealthPoint() <= 0) {
         ((WorldOutline) rOworld).setRunningGui(false);
-        ((World) rOworld).setRunning(false);
+        ((WorldOutline) rOworld).setRunning(false);
         this.gameEnd = true;
         this.result = "Game over: Target eliminated!\n";
         int winner;
-        if (((World) rOworld).getCurrentPlayerId() == 0) {
+        if (((WorldOutline) rOworld).getCurrentPlayerId() == 0) {
           winner = rOworld.getPlayerIds().get(rOworld.getPlayerIds().size()-1);
         } else {
           winner = rOworld.getCurrentPlayerId() - 1;
@@ -585,7 +585,7 @@ public void movePlayerToRoom(int roomId, Appendable outputView) throws IOExcepti
     Command movePlayerCommand = new MovePlayerCommand(rOworld, currentPlayerId, roomId);
     movePlayerCommand.execute(outputView);
     updateCoordinates();
-    doNothing();
+    passTurn();
   } catch (IllegalArgumentException e) {
     throw e; 
   }
@@ -607,14 +607,14 @@ public void pickUpItem(int playerId, String itemName, Appendable outputView) thr
   try {
     Command pickUpItemCommand = new PickUpItemCommand(rOworld, playerId, itemName);
     pickUpItemCommand.execute(outputView);
-    doNothing();
+    passTurn();
   } catch (IllegalArgumentException e) {
     throw e; 
   }
 }
 
 @Override
-public void doNothing() throws InterruptedException, IOException {
+public void passTurn() throws InterruptedException, IOException {
   ((WorldOutline) rOworld).advanceTurn();
   runGameG((WorldOutline) rOworld);
 }
@@ -623,7 +623,7 @@ public void doNothing() throws InterruptedException, IOException {
 public String performLookAround(int playerId, Appendable outputView) throws IOException, InterruptedException {
   Command lookAroundCommand = new LookAroundCommand(rOworld, playerId);
   String result = lookAroundCommand.execute(outputView);
-  doNothing();
+  passTurn();
   return result;
 }
 
@@ -638,7 +638,7 @@ public void attackTargetWithItem(int playerId, String itemName, Appendable outpu
   try {
     Command murderTargetCommand = new MurderTargetCommand(rOworld, playerId, itemName);
     murderTargetCommand.execute(outputView);
-    doNothing();
+    passTurn();
   } catch (IllegalArgumentException e) {
     throw e; 
   }
@@ -649,7 +649,7 @@ public void movePet(int playerId, int roomId, Appendable outputView) throws IOEx
   try {
     Command movePetCommand = new MovePetCommand(rOworld, playerId, roomId);
     movePetCommand.execute(outputView);
-    doNothing();
+    passTurn();
   } catch (IllegalArgumentException e) {
       throw e;
   }
@@ -659,6 +659,12 @@ public void movePet(int playerId, int roomId, Appendable outputView) throws IOEx
 public void setMaxTurn(int turn) {
   ((WorldOutline) rOworld).setMaxTurns(turn);
   
+}
+
+@Override
+public void pickNothing() throws InterruptedException, IOException {
+  ((WorldOutline) rOworld).advanceTurn();
+  runGameG((WorldOutline) rOworld);
 }
 
 

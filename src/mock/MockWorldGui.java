@@ -5,14 +5,17 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import world.Block;
 import world.CharacterPet;
 import world.CharacterPlayer;
 import world.CharacterTarget;
 import world.Gadget;
+import world.Room;
 import world.WorldOutline;
 
 /**
@@ -20,20 +23,22 @@ import world.WorldOutline;
  * This class allows setting expected outcomes and behaviors to simulate
  * different scenarios without interacting with a real game world.
  */
-public class MockWorldOutline implements WorldOutline {
-  private int roomCount = 3;
-  private String movePlayerResult = "Default move result";
-  private String roomInfoResult = "Default room info";
-  private String lookAroundResult = "Default look around info";
-  private String pickItemUpResult = "Default pick item up";
-  private String useItem;
+public class MockWorldGui implements WorldOutline {
+  private int roomCount = 100;
+  private String movePlayerResult = "Move result";
+  private String roomInfoResult = "room info";
+  private String lookAroundResult = "look around info";
+  private String pickItemUpResult = "pick item up";
   private int mockId = 0;
   private int id = 0;
   private int turn = 1;
   private boolean mockMurderAttempt = false;
-  private int mockTargetHealthPoint = 0;
+  private int mockTargetHealthPoint = 3;
   private boolean mockRunning = true;
-
+  private String useItem;
+  private MockPlayer player = new MockPlayer();
+  public boolean containsResult = false;
+  
   /**
    * Sets the number of rooms in the mock world.
    *
@@ -42,6 +47,7 @@ public class MockWorldOutline implements WorldOutline {
   public void setRoomCount(int count) {
     this.roomCount = count;
   }
+  
 
   /**
    * Sets the result for the movePlayer method.
@@ -101,9 +107,45 @@ public class MockWorldOutline implements WorldOutline {
     return roomCount;
   }
 
+  public class MockPlayer {
+    public MockLocation location = new MockLocation();
+    
+    public MockPlayer() {
+    }
+
+    public MockLocation getLocation() {
+        return location;
+    }
+}
+
+public class MockLocation {
+  public Set<Room> neighbors = new MockNeighbors();
+    
+    public MockLocation() {
+  }
+
+    public Set<Room> getNeighbor() {
+        return neighbors;
+    }
+}
+
+public class MockNeighbors extends HashSet<Room> {
+  private static final long serialVersionUID = 1L;
+  public MockNeighbors() {
+}
+  @Override
+    public boolean contains(Object o) {
+        return containsResult; 
+    }
+}
+
   @Override
   public String movePlayer(int playerId, int roomId) {
-    return movePlayerResult;
+    if (player.getLocation().getNeighbor().contains(roomId)) {
+      return movePlayerResult + " " + roomId;
+    } else {
+      throw new IllegalArgumentException("Move not allowed. Target room is not a neighbor.");
+    }
   }
   
   @Override
@@ -118,7 +160,7 @@ public class MockWorldOutline implements WorldOutline {
 
   @Override
   public String playerLookAround(int playerId) {
-    return lookAroundResult;
+    return lookAroundResult + " by Player " + playerId;
   }
 
   @Override
@@ -193,12 +235,12 @@ public class MockWorldOutline implements WorldOutline {
 
   @Override
   public String getPlayerInfo(int playerId) {
-    return null;
+    return "Displaying Player Info " + playerId;
   }
 
   @Override
   public String playerPickUpItem(int playerId, String itemName) {
-    return pickItemUpResult + "Player " + playerId + " item " + itemName;
+    return playerId+ " " + pickItemUpResult + " " + itemName;
   }
 
   @Override
@@ -348,7 +390,7 @@ public class MockWorldOutline implements WorldOutline {
 
   @Override
   public void setCurrentTurn(int currentTurn) {
-    
+    this.turn = currentTurn;
   }
 
   @Override
@@ -404,7 +446,7 @@ public class MockWorldOutline implements WorldOutline {
   @Override
   public Map<Integer, Boolean> getIsComputer() {
     Map<Integer, Boolean> map = new HashMap<>();
-    map.put(0, true);
+    map.put(0, false);
     map.put(1, false);
     map.put(2, false);
     map.put(3, false);
@@ -470,6 +512,6 @@ public class MockWorldOutline implements WorldOutline {
 
   @Override
   public void setRunningGui(boolean running) {
-    
+    this.mockRunning = running;
   }
 }

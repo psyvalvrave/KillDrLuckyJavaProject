@@ -7,7 +7,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class PetMoveDialog extends JDialog {
-    private Controller gameController;
     private int playerId;
     private JTextField roomInputField;
     private JButton moveButton;
@@ -15,15 +14,14 @@ public class PetMoveDialog extends JDialog {
 
     public PetMoveDialog(Frame owner, Controller gameController, int playerId) {
         super(owner, "Move Pet", true);
-        this.gameController = gameController;
         this.playerId = playerId;
 
-        setupUI();
+        setupUI(gameController);
         pack();
         setLocationRelativeTo(owner);
     }
 
-    private void setupUI() {
+    private void setupUI(Controller gameController) {
         roomInputField = new JTextField(10);
         moveButton = new JButton("Move");
         cancelButton = new JButton("Cancel");
@@ -31,7 +29,7 @@ public class PetMoveDialog extends JDialog {
         moveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                performMove();
+                performMove(gameController);
             }
         });
 
@@ -52,7 +50,7 @@ public class PetMoveDialog extends JDialog {
         add(panel, BorderLayout.CENTER);
     }
 
-    private void performMove() {
+    private void performMove(Controller gameController) {
         try {
             int roomId = Integer.parseInt(roomInputField.getText().trim());
             StringBuilder output = new StringBuilder();
