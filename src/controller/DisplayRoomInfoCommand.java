@@ -18,7 +18,7 @@ public class DisplayRoomInfoCommand implements Command {
    * retrieve information about specific rooms based on user input.
    *
    * @param worldModel The game world from which room information will be retrieved.
-   * @param scannerInput A Scanner to read input from the console.
+   * @param roomIdInput RoomId for display info.
    */
   public DisplayRoomInfoCommand(ReadOnlyWorld worldModel, int roomIdInput) {
     this.world = worldModel;
@@ -27,9 +27,9 @@ public class DisplayRoomInfoCommand implements Command {
 
   @Override
   public String execute(Appendable output) throws IOException {
-      String roomInfo = world.displayRoomInfo(roomId);
-      output.append(roomInfo + "\n");
-      return roomInfo;
+    String roomInfo = world.displayRoomInfo(roomId);
+    output.append(roomInfo + "\n");
+    return roomInfo;
   }
 }
 

@@ -23,7 +23,7 @@ public class GameControllerMockTest {
     int maxTurns = 2; 
     MockWorldOutline mockWorld = new MockWorldOutline();
     mockWorld.setLookAroundResult("You see a distant mountain");
-    String simulatedUserInput = "1\nHumanPlayer\n1\n2\nComputerPlayer\n1\n4\n7\n7\n7\n7\n7\n0\n"; 
+    String simulatedUserInput = "1\n1\nHumanPlayer\n2\n1\nComputerPlayer\n4\n7\n7\n7\n7\n7\n0\n"; 
     Readable consoleInput = new StringReader(simulatedUserInput);
     gameController = new GameController(consoleInput, consoleOutput, fakeRng, maxTurns);
     fakeRng.setNextIntResult(1);
@@ -35,7 +35,7 @@ public class GameControllerMockTest {
   
   @Test
   public void testEndGameWithTargetDie() throws InterruptedException, IOException {
-    String simulatedUserInput = "1\nHumanPlayer\n1\n4\n3\n0\n"; 
+    String simulatedUserInput = "1\n1\nHumanPlayer\n4\n3\n0\n"; 
     Readable consoleInput = new StringReader(simulatedUserInput);
     consoleOutput = new StringWriter();
     fakeRng = new FakeRandomNumberGenerator();
@@ -75,7 +75,7 @@ public class GameControllerMockTest {
     int maxTurns = 5; 
     MockWorldOutline mockWorld = new MockWorldOutline();
     mockWorld.setPlayerPickUpItemResult("Sword picked up");
-    String simulatedUserInput = "1\nHumanPlayer\n1\n2\nComputerPlayer\n1\n4\n6\n1\n0\n"; 
+    String simulatedUserInput = "1\n1\nHumanPlayer\n2\n1\nComputerPlayer\n4\n6\n1\n0\n"; 
     Readable consoleInput = new StringReader(simulatedUserInput);
     gameController = new GameController(consoleInput, consoleOutput, fakeRng, maxTurns);
     fakeRng.setNextIntResult(1);
@@ -93,7 +93,7 @@ public class GameControllerMockTest {
     int maxTurns = 3; 
     MockWorldOutline mockWorld = new MockWorldOutline();
     mockWorld.setLookAroundResult("You see a distant mountain");
-    String simulatedUserInput = "1\nHumanPlayer\n1\n2\nComputerPlayer\n1\n4\n7\n0\n"; 
+    String simulatedUserInput = "1\n1\nHumanPlayer\n2\n1\nComputerPlayer\n4\n7\n0\n"; 
     Readable consoleInput = new StringReader(simulatedUserInput);
     gameController = new GameController(consoleInput, consoleOutput, fakeRng, maxTurns);
     fakeRng.setNextIntResult(1);
@@ -106,7 +106,7 @@ public class GameControllerMockTest {
   
   @Test
   public void testEachPlayerMovePetCostTurn() throws InterruptedException, IOException {
-    String simulatedUserInput = "1\nHumanPlayer\n1\n2\nComputerPlayer\n1\n4\n4\n1\n0\n"; 
+    String simulatedUserInput = "1\n1\nHumanPlayer\n2\n1\nComputerPlayer\n4\n4\n1\n0\n"; 
     Readable consoleInput = new StringReader(simulatedUserInput);
     consoleOutput = new StringWriter();
     fakeRng = new FakeRandomNumberGenerator();
@@ -130,7 +130,7 @@ public class GameControllerMockTest {
     MockWorldOutline mockWorld = new MockWorldOutline();
     mockWorld.toggleMurderAttempt();
     mockWorld.setTargetHealthPoint(1);
-    String simulatedUserInput = "1\nHumanPlayer\n1\n2\nComputerPlayer\n2\n4\n3\n0\n0\n"; 
+    String simulatedUserInput = "1\n1\nHumanPlayer\n2\n2\nComputerPlayer\n4\n3\n0\n0\n"; 
     Readable consoleInput = new StringReader(simulatedUserInput);
     gameController = new GameController(consoleInput, consoleOutput, fakeRng, maxTurns);
     fakeRng.setNextIntResult(1);
@@ -148,7 +148,7 @@ public class GameControllerMockTest {
     int maxTurns = 5; 
     MockWorldOutline mockWorld = new MockWorldOutline();
     mockWorld.setLookAroundResult("You see a distant mountain");
-    String simulatedUserInput = "1\nHumanPlayer\n1\n2\nComputerPlayer\n1\n4\n7\n0\n"; 
+    String simulatedUserInput = "1\n1\nHumanPlayer\n2\n1\nComputerPlayer\n4\n7\n0\n"; 
     Readable consoleInput = new StringReader(simulatedUserInput);
     gameController = new GameController(consoleInput, consoleOutput, fakeRng, maxTurns);
     fakeRng.setNextIntResult(1);
@@ -162,7 +162,7 @@ public class GameControllerMockTest {
   
   @Test
   public void testTargetInfoCommandShowsTargetInfo() throws InterruptedException, IOException {
-    String simulatedUserInput = "1\nHumanPlayer\n1\n2\nComputerPlayer\n1\n4\n10\n0\n";
+    String simulatedUserInput = "1\n1\nHumanPlayer\n2\n1\nComputerPlayer\n4\n10\n0\n";
     Readable consoleInput = new StringReader(simulatedUserInput);
     consoleOutput = new StringWriter();
     fakeRng = new FakeRandomNumberGenerator();
@@ -178,7 +178,7 @@ public class GameControllerMockTest {
   
   @Test
   public void testPlayerLocationDisplayedAtTurnStart() throws IOException, InterruptedException {
-    String simulatedUserInput = "1\nHumanPlayer\n1\n2\nComputerPlayer\n1\n4\n10\n0\n";
+    String simulatedUserInput = "1\n1\nHumanPlayer\n2\n1\nComputerPlayer\n4\n10\n0\n";
     Readable consoleInput = new StringReader(simulatedUserInput);
     consoleOutput = new StringWriter();
     fakeRng = new FakeRandomNumberGenerator();
@@ -192,7 +192,7 @@ public class GameControllerMockTest {
   
   @Test
   public void testMovePetCommand() throws InterruptedException, IOException {
-    String simulatedUserInput = "1\nHumanPlayer\n1\n2\nComputerPlayer\n1\n4\n4\n2\n0\n";
+    String simulatedUserInput = "1\n1\nHumanPlayer\n2\n1\nComputerPlayer\n4\n4\n2\n0\n";
     Readable consoleInput = new StringReader(simulatedUserInput);
     consoleOutput = new StringWriter();
     fakeRng = new FakeRandomNumberGenerator();

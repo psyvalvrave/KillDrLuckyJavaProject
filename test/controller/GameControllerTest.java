@@ -25,7 +25,7 @@ public class GameControllerTest {
 
   @Test
   public void testDisplayRoomInfo() throws InterruptedException, IOException {
-    String simulatedUserInput = "1\nHumanPlayer\n1\n4\n1\n1\n0\n"; 
+    String simulatedUserInput = "1\n1\nHumanPlayer\n4\n1\n1\n0\n"; 
     Readable consoleInput = new StringReader(simulatedUserInput);
     consoleOutput = new StringWriter();
     RandomNumberGenerator rng = new RandomNumberGenerator();
@@ -95,7 +95,7 @@ public class GameControllerTest {
   
   @Test
   public void testGraphicalShow() throws InterruptedException, IOException {
-    String simulatedUserInput = "3\n1\nHumanPlayer\n1\n4\n2\n2\n2\n0\n"; 
+    String simulatedUserInput = "3\n1\n1\nHumanPlayer\n4\n2\n2\n2\n0\n"; 
     Readable consoleInput = new StringReader(simulatedUserInput);
     consoleOutput = new StringWriter();
     RandomNumberGenerator rng = new RandomNumberGenerator();
@@ -160,7 +160,7 @@ public class GameControllerTest {
   
   @Test
   public void testAddHumanPlayer() throws InterruptedException, IOException {
-    String simulatedUserInput = "1\nHumanPlayer\n1\n4\n1\n1\n0\n"; 
+    String simulatedUserInput = "1\n1\nHumanPlayer\n4\n1\n1\n0\n"; 
     Readable consoleInput = new StringReader(simulatedUserInput);
     consoleOutput = new StringWriter();
     RandomNumberGenerator rng = new RandomNumberGenerator();
@@ -222,7 +222,7 @@ public class GameControllerTest {
   
   @Test
   public void testAddComputerPlayer() throws InterruptedException, IOException {
-    String simulatedUserInput = "2\nComputerPlayer\n1\n1\nHumanPlayer\n1\n4\n1\n1\n0\n"; 
+    String simulatedUserInput = "2\n1\nComputerPlayer\n1\n1\nHumanPlayer\n4\n1\n1\n0\n"; 
     Readable consoleInput = new StringReader(simulatedUserInput);
     consoleOutput = new StringWriter();
     RandomNumberGenerator rng = new RandomNumberGenerator();
@@ -284,7 +284,7 @@ public class GameControllerTest {
   
   @Test
   public void testPlayerMove() throws InterruptedException, IOException {
-    String simulatedUserInput = "1\nHumanPlayer\n1\n4\n5\n2\n0\n"; 
+    String simulatedUserInput = "1\n1\nHumanPlayer\n4\n5\n2\n0\n"; 
     Readable consoleInput = new StringReader(simulatedUserInput);
     consoleOutput = new StringWriter();
     RandomNumberGenerator rng = new RandomNumberGenerator();
@@ -347,7 +347,7 @@ public class GameControllerTest {
   
   @Test
   public void testPlayerPickUp() throws InterruptedException, IOException {
-    String simulatedUserInput = "1\nHumanPlayer\n1\n4\n6\n1\n0\n"; 
+    String simulatedUserInput = "1\n1\nHumanPlayer\n4\n6\n1\n0\n"; 
     Readable consoleInput = new StringReader(simulatedUserInput);
     consoleOutput = new StringWriter();
     RandomNumberGenerator rng = new RandomNumberGenerator();
@@ -411,7 +411,7 @@ public class GameControllerTest {
   
   @Test
   public void testPlayerLookAround() throws InterruptedException, IOException {
-    String simulatedUserInput = "1\nHumanPlayer\n1\n4\n7\n0\n"; 
+    String simulatedUserInput = "1\n1\nHumanPlayer\n4\n7\n0\n"; 
     Readable consoleInput = new StringReader(simulatedUserInput);
     consoleOutput = new StringWriter();
     RandomNumberGenerator rng = new RandomNumberGenerator();
@@ -482,7 +482,7 @@ public class GameControllerTest {
   
   @Test
   public void testPlayerLookAroundWithPet() throws InterruptedException, IOException {
-    String simulatedUserInput = "1\nHumanPlayer\n1\n4\n7\n0\n"; 
+    String simulatedUserInput = "1\n1\nHumanPlayer\n4\n7\n0\n"; 
     Readable consoleInput = new StringReader(simulatedUserInput);
     consoleOutput = new StringWriter();
     RandomNumberGenerator rng = new RandomNumberGenerator();
@@ -545,7 +545,7 @@ public class GameControllerTest {
   
   @Test
   public void testPlayerLookAroundNoItems() throws InterruptedException, IOException {
-    String simulatedUserInput = "1\nHumanPlayer\n1\n4\n7\n0\n"; 
+    String simulatedUserInput = "1\n1\nHumanPlayer\n4\n7\n0\n"; 
     Readable consoleInput = new StringReader(simulatedUserInput);
     consoleOutput = new StringWriter();
     RandomNumberGenerator rng = new RandomNumberGenerator();
@@ -614,7 +614,7 @@ public class GameControllerTest {
   
   @Test
   public void testPlayerLookAroundNoItemInNeigbor() throws InterruptedException, IOException {
-    String simulatedUserInput = "1\nHumanPlayer\n1\n4\n7\n0\n"; 
+    String simulatedUserInput = "1\n1\nHumanPlayer\n4\n7\n0\n"; 
     Readable consoleInput = new StringReader(simulatedUserInput);
     consoleOutput = new StringWriter();
     RandomNumberGenerator rng = new RandomNumberGenerator();
@@ -684,7 +684,7 @@ public class GameControllerTest {
   
   @Test
   public void testPlayerLookAroundWithOthers() throws InterruptedException, IOException {
-    String simulatedUserInput = "1\nHumanPlayer\n1\n2\nComputerPlayer\n1\n4\n7\n0\n"; 
+    String simulatedUserInput = "1\n1\nHumanPlayer\n2\n1\nComputerPlayer\n4\n7\n0\n"; 
     Readable consoleInput = new StringReader(simulatedUserInput);
     consoleOutput = new StringWriter();
     RandomNumberGenerator rng = new RandomNumberGenerator();
@@ -750,7 +750,7 @@ public class GameControllerTest {
   
   @Test
   public void testPlayerLookAroundWithOthersInNeighbor() throws InterruptedException, IOException {
-    String simulatedUserInput = "1\nHumanPlayer\n1\n2\nComputerPlayer\n5\n4\n7\n0\n"; 
+    String simulatedUserInput = "1\n1\nHumanPlayer\n2\n5\nComputerPlayer\n4\n7\n0\n"; 
     Readable consoleInput = new StringReader(simulatedUserInput);
     consoleOutput = new StringWriter();
     RandomNumberGenerator rng = new RandomNumberGenerator();
@@ -817,7 +817,7 @@ public class GameControllerTest {
   
   @Test
   public void testPlayerLookAroundTargetNeigbor() throws InterruptedException, IOException {
-    String simulatedUserInput = "1\nHumanPlayer\n5\n4\n7\n0\n"; 
+    String simulatedUserInput = "1\n5\nHumanPlayer\n4\n7\n0\n"; 
     Readable consoleInput = new StringReader(simulatedUserInput);
     consoleOutput = new StringWriter();
     RandomNumberGenerator rng = new RandomNumberGenerator();
@@ -883,7 +883,7 @@ public class GameControllerTest {
   
   @Test
   public void testPlayerLookAroundTargetFar() throws InterruptedException, IOException {
-    String simulatedUserInput = "1\nHumanPlayer\n21\n4\n7\n0\n"; 
+    String simulatedUserInput = "1\n21\nHumanPlayer\n4\n7\n0\n"; 
     Readable consoleInput = new StringReader(simulatedUserInput);
     consoleOutput = new StringWriter();
     RandomNumberGenerator rng = new RandomNumberGenerator();
@@ -949,7 +949,7 @@ public class GameControllerTest {
   
   @Test
   public void testPlayerDisplayInfo() throws InterruptedException, IOException {
-    String simulatedUserInput = "1\nHumanPlayer\n1\n4\n8\n0\n0\n"; 
+    String simulatedUserInput = "1\n1\nHumanPlayer\n4\n8\n0\n0\n"; 
     Readable consoleInput = new StringReader(simulatedUserInput);
     consoleOutput = new StringWriter();
     RandomNumberGenerator rng = new RandomNumberGenerator();

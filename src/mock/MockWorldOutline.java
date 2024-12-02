@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import world.Block;
 import world.CharacterPet;
 import world.CharacterPlayer;
@@ -471,5 +470,10 @@ public class MockWorldOutline implements WorldOutline {
   @Override
   public void setRunningGui(boolean running) {
     
+  }
+
+  @Override
+  public Block getRoomById(int roomId) {
+    return null;
   }
 }

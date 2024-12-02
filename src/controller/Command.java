@@ -14,8 +14,10 @@ public interface Command {
    * if an I/O error occurs during command execution, which might involve writing to the output.
    *
    * @param output The Appendable object where the command output will be written.
+   * @return Return a execute result.
    * @throws IOException If an I/O error occurs during command execution.
    * @throws InterruptedException If the command execution is interrupted.
+   * 
    */
   String execute(Appendable output) throws IOException, InterruptedException;
 }

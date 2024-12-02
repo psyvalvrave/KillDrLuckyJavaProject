@@ -9,7 +9,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import world.Block;
 import world.CharacterPet;
 import world.CharacterPlayer;
@@ -24,6 +23,7 @@ import world.WorldOutline;
  * different scenarios without interacting with a real game world.
  */
 public class MockWorldGui implements WorldOutline {
+  public boolean containsResult = false;
   private int roomCount = 100;
   private String movePlayerResult = "Move result";
   private String roomInfoResult = "room info";
@@ -37,7 +37,6 @@ public class MockWorldGui implements WorldOutline {
   private boolean mockRunning = true;
   private String useItem;
   private MockPlayer player = new MockPlayer();
-  public boolean containsResult = false;
   
   /**
    * Sets the number of rooms in the mock world.
@@ -107,37 +106,74 @@ public class MockWorldGui implements WorldOutline {
     return roomCount;
   }
 
+  /**
+   * A mock player class for testing purposes, simulating player behavior in a game environment.
+   * This class is designed to facilitate the testing of game logic by providing a controlled
+   * player environment with predefined behaviors and states.
+   */
   public class MockPlayer {
     public MockLocation location = new MockLocation();
     
+    /**
+     * Constructs a MockPlayer instance. This constructor initializes 
+     * the player with a default location.
+     */
     public MockPlayer() {
     }
 
+    /**
+     * Returns the current location of the player in the mock game environment.
+     *
+     * @return the current {@link MockLocation} of this player.
+     */
     public MockLocation getLocation() {
-        return location;
+      return location;
     }
-}
-
-public class MockLocation {
-  public Set<Room> neighbors = new MockNeighbors();
-    
+  }
+  
+  /**
+   * A mock location class for testing purposes, simulating location behavior in a game environment.
+   * This class is designed to facilitate the testing of game mechanics related to player locations,
+   * providing a fixed set of neighboring rooms.
+   */
+  public class MockLocation {
+    public Set<Room> neighbors = new MockNeighbors();
+      
+    /**
+     * Constructs a MockLocation instance with default neighboring rooms.
+     */
     public MockLocation() {
+    }
+  
+    /**
+     * Returns the neighbors of this location in the mock game environment.
+     *
+     * @return a set of {@link Room} objects representing the neighbors of this location.
+     */
+    public Set<Room> getNeighbor() {
+      return neighbors;
+    }
   }
 
-    public Set<Room> getNeighbor() {
-        return neighbors;
+  /**
+   * A mock implementation of a Set specifically for Rooms, used in the testing of game logic.
+   * This extension of {@link HashSet} is designed to simulate specific behaviors or scenarios
+   * such as presence or absence of neighbors, by overriding certain methods like {@code contains}.
+   */
+  public class MockNeighbors extends HashSet<Room> {
+    private static final long serialVersionUID = 1L;
+    
+    /**
+     * Constructs a MockNeighbors instance, initializing the underlying HashSet.
+     */
+    public MockNeighbors() {
     }
-}
-
-public class MockNeighbors extends HashSet<Room> {
-  private static final long serialVersionUID = 1L;
-  public MockNeighbors() {
-}
-  @Override
+    
+    @Override
     public boolean contains(Object o) {
-        return containsResult; 
+      return containsResult; 
     }
-}
+  }
 
   @Override
   public String movePlayer(int playerId, int roomId) {
@@ -240,7 +276,7 @@ public class MockNeighbors extends HashSet<Room> {
 
   @Override
   public String playerPickUpItem(int playerId, String itemName) {
-    return playerId+ " " + pickItemUpResult + " " + itemName;
+    return playerId + " " + pickItemUpResult + " " + itemName;
   }
 
   @Override
@@ -513,5 +549,11 @@ public class MockNeighbors extends HashSet<Room> {
   @Override
   public void setRunningGui(boolean running) {
     this.mockRunning = running;
+  }
+
+
+  @Override
+  public Block getRoomById(int roomId) {
+    return null;
   }
 }

@@ -1,8 +1,6 @@
 package world;
 
-import java.awt.image.BufferedImage;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Provides an outline for the world in which the game takes place, including methods to
@@ -211,6 +209,7 @@ public interface WorldOutline extends ReadOnlyWorld {
    * Get the item Object by filtering its name. 
    * 
    * @param itemName The name of the item.
+   * @return item itself.
    */
   Gadget getItemByName(String itemName);
 
@@ -257,5 +256,7 @@ public interface WorldOutline extends ReadOnlyWorld {
   CharacterTarget createTarget(String name, Block room, int health);
 
   void setRunningGui(boolean running);
+
+  Block getRoomById(int roomId);
   
 }

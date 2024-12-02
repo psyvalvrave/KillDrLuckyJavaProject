@@ -20,36 +20,36 @@ public class MurderTargetCommand implements Command {
    *
    * @param worldModel The game world where the interaction occurs.
    * @param playerIdsInput The ID of the player attempting the murder.
-   * @param scannerInput A Scanner object for reading user input.
+   * @param itemNameInput The item name for user to pick up.
    */
-  public MurderTargetCommand(ReadOnlyWorld worldModel, int playerIdsInput, String itemName) {
+  public MurderTargetCommand(ReadOnlyWorld worldModel, int playerIdsInput, String itemNameInput) {
     this.world = worldModel;
     this.playerId = playerIdsInput;
-    this.itemName = itemName;
+    this.itemName = itemNameInput;
   }
 
   @Override
   public String execute(Appendable output) throws IOException {
-      try {
-          output.append("Attempt to murder the target:\n");
-          if (!world.canMurderAttempt(playerId)) {
-              throw new IllegalArgumentException("Player is not in the same room as the target.");
-          }
-
-          if (itemName != null && !itemName.isEmpty()) {
-              world.usePlayerItem(playerId, itemName);
-              output.append("You have used " + itemName + " to increase your murder point.\n");
-          } else {
-              output.append("No item used for this murder attempt.\n");
-          }
-          
-          String result = world.murderAttempt(playerId);
-          output.append(result + "\n");
-          return result;
-      } catch (IllegalArgumentException e) {
-          output.append("Error: " + e.getMessage() + "\n");
-          throw e;
+    try {
+      output.append("Attempt to murder the target:\n");
+      if (!world.canMurderAttempt(playerId)) {
+        throw new IllegalArgumentException("Player is not in the same room as the target.");
       }
+
+      if (itemName != null && !itemName.isEmpty()) {
+        world.usePlayerItem(playerId, itemName);
+        output.append("You have used " + itemName + " to increase your murder point.\n");
+      } else {
+        output.append("No item used for this murder attempt.\n");
+      }
+      
+      String result = world.murderAttempt(playerId);
+      output.append(result + "\n");
+      return result;
+    } catch (IllegalArgumentException e) {
+      output.append("Error: " + e.getMessage() + "\n");
+      throw e;
+    }
   }
 
 }

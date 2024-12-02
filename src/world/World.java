@@ -266,7 +266,7 @@ public class World implements WorldOutline {
     g.setColor(Color.WHITE);
     g.fillRect(0, 0, this.cols * scaleFactor, this.rows * scaleFactor);
 
-    Font font = new Font("Arial", Font.BOLD, scaleFactor/3);
+    Font font = new Font("Arial", Font.BOLD, scaleFactor / 3);
     g.setFont(font);
 
     
@@ -297,33 +297,34 @@ public class World implements WorldOutline {
       if (target != null && target.getLocation() != null 
           && roomName.equals(target.getLocation().getRoomName())) {
         g.setColor(Color.RED);
-        g.fillOval(x1Draw + scaleFactor/3, y1Draw + scaleFactor/3, 20, 20); 
+        g.fillOval(x1Draw + scaleFactor / 3, y1Draw + scaleFactor / 3, 20, 20); 
       }
 
       
-      int playerOffset = scaleFactor/3 + 30;
-      int playerHorizontalSpace = scaleFactor/3;
+      int playerOffset = scaleFactor / 3 + 30;
+      int playerHorizontalSpace = scaleFactor / 3;
       for (CharacterPlayer player : players) {
         if (player.getLocation() != null && roomName.equals(player.getLocation().getRoomName())) {
-            Color playerColor = player.getPlayerId() == players.get(currentPlayerIndex).getPlayerId() ? Color.BLUE : Color.BLACK;
-            g.setColor(playerColor);
-            int playerX = x1Draw + playerHorizontalSpace;
-            int playerY = y1Draw + playerOffset;
-            g.fillOval(playerX, playerY, 20, 20);
-            playerPositions.put(player.getPlayerId(), new Rectangle(playerX, playerY, 20, 20));
-            
-            String playerIdText = String.valueOf(player.getPlayerId());
-            FontMetrics fm = g.getFontMetrics();
-            int textWidth = fm.stringWidth(playerIdText);
-            int textHeight = fm.getAscent();
-            g.setColor(Color.WHITE); // Set text color to white for better visibility
-            g.drawString(playerIdText, playerX + (20 - textWidth) / 2, playerY + (20 + textHeight) / 2 - fm.getDescent());
-            
-         playerHorizontalSpace += scaleFactor/1.5;
-         if(player.getPlayerId() % 5 == 4) {
-           playerOffset += scaleFactor/2;
-           playerHorizontalSpace = scaleFactor/3;
-         }
+          Color playerColor = player.getPlayerId() == players.get(currentPlayerIndex)
+              .getPlayerId() ? Color.BLUE : Color.BLACK;
+          g.setColor(playerColor);
+          int playerX = x1Draw + playerHorizontalSpace;
+          int playerY = y1Draw + playerOffset;
+          g.fillOval(playerX, playerY, 20, 20);
+          playerPositions.put(player.getPlayerId(), new Rectangle(playerX, playerY, 20, 20));
+          
+          String playerIdText = String.valueOf(player.getPlayerId());
+          FontMetrics fm = g.getFontMetrics();
+          int textWidth = fm.stringWidth(playerIdText);
+          int textHeight = fm.getAscent();
+          g.setColor(Color.WHITE); // Set text color to white for better visibility
+          g.drawString(playerIdText, playerX + (20 - textWidth) / 2, 
+              playerY + (20 + textHeight) / 2 - fm.getDescent());
+          playerHorizontalSpace += scaleFactor / 1.5;
+          if (player.getPlayerId() % 5 == 4) {
+            playerOffset += scaleFactor / 2;
+            playerHorizontalSpace = scaleFactor / 3;
+          }
         }
       }
     }
@@ -608,11 +609,7 @@ public class World implements WorldOutline {
     throw new IllegalArgumentException("playerID not valid.");
   }
 
-  /**
-   * Get the Block Object by filtering its ID. 
-   * 
-   * @param roomId The ID of the room.
-   */
+  @Override
   public Block getRoomById(int roomId) {
     for (Block room : rooms) {
       if (room.getRoomId() == roomId) {
@@ -1026,7 +1023,7 @@ public class World implements WorldOutline {
   
   @Override
   public void setRunning(boolean running) {
-      this.isRunning = running;
+    this.isRunning = running;
   }
   
   @Override
@@ -1036,47 +1033,47 @@ public class World implements WorldOutline {
   
   @Override
   public void setRunningGui(boolean running) {
-      this.isRunningGui = running;
+    this.isRunningGui = running;
   }
   
   @Override
   public int getCurrentTurn() {
-      return currentTurn;
+    return currentTurn;
   }
   
   @Override
-  public void setCurrentTurn(int currentTurn) {
-      this.currentTurn = currentTurn;
+  public void setCurrentTurn(int currentTurnInput) {
+    this.currentTurn = currentTurnInput;
   }
   
   @Override
   public int getMaxTurns() {
-      return maxTurns;
+    return maxTurns;
   }
   
   @Override
   public void setMaxTurns(int maxTurns) {
-      this.maxTurns = maxTurns;
+    this.maxTurns = maxTurns;
   }
   
   @Override
   public String advanceTurn() {
-      currentTurn++;
-      if (currentTurn > maxTurns) {
-          isRunning = false;
-          return "Maximum turns reached. Ending game.";
-      } else {
-          this.currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
-          this.moveTargetToNextRoom();
-          String result = this.movePetToNextRoom();
-          return result;
-      }
+    currentTurn++;
+    if (currentTurn > maxTurns) {
+      isRunning = false;
+      return "Maximum turns reached. Ending game.";
+    } else {
+      this.currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
+      this.moveTargetToNextRoom();
+      String result = this.movePetToNextRoom();
+      return result;
+    }
   }
   
   @Override
   public int getCurrentPlayerId() {
     return playerIds.get(currentPlayerIndex);
-}
+  }
   
   @Override
   public String getPlayerName(int playerId) {
@@ -1101,12 +1098,12 @@ public class World implements WorldOutline {
   @Override
   public Map<Integer, Rectangle> getRoomCoordinates() {
     return new HashMap<>(roomCoordinates);
-}
+  }
 
   @Override
 public Map<Integer, Rectangle> getPlayerCoordinates() {
     return new HashMap<>(playerPositions);
-}
+  }
   
   
 }

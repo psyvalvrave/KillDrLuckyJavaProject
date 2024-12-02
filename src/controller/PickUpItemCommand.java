@@ -20,23 +20,23 @@ public class PickUpItemCommand implements Command {
    *
    * @param worldModel The game world where the interaction takes place.
    * @param playerIdsInput The ID of the player picking up an item.
-   * @param scannerInput A Scanner object for reading user input.
+   * @param itemNameInput Item name for picking up.
    */
-  public PickUpItemCommand(ReadOnlyWorld worldModel, int playerIdsInput, String itemName) {
+  public PickUpItemCommand(ReadOnlyWorld worldModel, int playerIdsInput, String itemNameInput) {
     this.world = worldModel;
     this.playerId = playerIdsInput;
-    this.itemName = itemName;
+    this.itemName = itemNameInput;
   }
 
   @Override
   public String execute(Appendable output) throws IOException {
-      try {
-          String pickUpResult = world.playerPickUpItem(playerId, itemName);
-          output.append(pickUpResult + "\n");
-      } catch (IllegalArgumentException e) {
-          output.append("Error picking up item: " + e.getMessage() + "\n");
-          throw e;
-      }
-      return null;
+    try {
+      String pickUpResult = world.playerPickUpItem(playerId, itemName);
+      output.append(pickUpResult + "\n");
+    } catch (IllegalArgumentException e) {
+      output.append("Error picking up item: " + e.getMessage() + "\n");
+      throw e;
+    }
+    return null;
   }
 }

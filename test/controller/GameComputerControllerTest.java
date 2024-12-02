@@ -18,7 +18,7 @@ public class GameComputerControllerTest {
   @Test
   public void testComputerPlayerMoves() throws InterruptedException, IOException {
     int maxTurns = 2; 
-    String simulatedUserInput = "2\nComputerPlayer\n1\n4\n0\n"; 
+    String simulatedUserInput = "2\n1\nComputerPlayer\n4\n0\n"; 
     Readable consoleInput = new java.io.StringReader(simulatedUserInput);
     consoleOutput = new StringWriter();   
     fakeRng = new FakeRandomNumberGenerator();
@@ -33,7 +33,7 @@ public class GameComputerControllerTest {
   @Test
   public void testComputerPlayerPicksUpItem() throws InterruptedException, IOException {
     int maxTurns = 2; 
-    String simulatedUserInput = "2\nComputerPlayer\n1\n4\n0\n"; 
+    String simulatedUserInput = "2\n1\nComputerPlayer\n4\n0\n"; 
     Readable consoleInput = new java.io.StringReader(simulatedUserInput);
     consoleOutput = new StringWriter();   
     fakeRng = new FakeRandomNumberGenerator();
@@ -48,7 +48,7 @@ public class GameComputerControllerTest {
   @Test
   public void testComputerPlayerLookAround() throws InterruptedException, IOException {
     int maxTurns = 2; 
-    String simulatedUserInput = "2\nComputerPlayer\n1\n4\n0\n"; 
+    String simulatedUserInput = "2\n1\nComputerPlayer\n4\n0\n"; 
     Readable consoleInput = new java.io.StringReader(simulatedUserInput);
     consoleOutput = new StringWriter();   
     fakeRng = new FakeRandomNumberGenerator();
@@ -66,7 +66,7 @@ public class GameComputerControllerTest {
     fakeRng = new FakeRandomNumberGenerator();
     MockWorldOutline mockWorld = new MockWorldOutline();
     mockWorld.toggleMurderAttempt();
-    String simulatedUserInput = "2\nComputerPlayer\n1\n4\n0\n"; 
+    String simulatedUserInput = "2\n1\nComputerPlayer\n4\n0\n"; 
     Readable consoleInput = new java.io.StringReader(simulatedUserInput);
     int maxTurns = 2; 
     gameController = new GameController(consoleInput, consoleOutput, fakeRng, maxTurns);

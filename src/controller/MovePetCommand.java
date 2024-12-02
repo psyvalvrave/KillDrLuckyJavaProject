@@ -22,29 +22,30 @@ public class MovePetCommand implements Command {
    *
    * @param worldModel The game world context where the command is executed.
    * @param playerIdsInput The ID of the player attempting to move the pet.
-   * @param scannerInput The scanner for reading user input during command execution.
+   * @param targetRoomIdInput The room id for reading user input during command execution.
    */
-  public MovePetCommand(ReadOnlyWorld worldModel, int playerIdsInput, int targetRoomId) {
+  public MovePetCommand(ReadOnlyWorld worldModel, int playerIdsInput, int targetRoomIdInput) {
     this.world = worldModel;
     this.playerId = playerIdsInput;
-    this.targetRoomId = targetRoomId;
+    this.targetRoomId = targetRoomIdInput;
   }
 
   @Override
   public String execute(Appendable output) throws IOException {
-      try {
-          if (!world.canInteractWithPet(playerId)) {
-              throw new IllegalArgumentException("You must be in the same room as the pet to move it.");
-          }
-          if (targetRoomId < 1 || targetRoomId > world.getRoomCount()) {
-              throw new IllegalArgumentException("Invalid room ID. Please enter a number between 1 and " + world.getRoomCount() + ".");
-          }
-          String moveResult = world.movePet(playerId, targetRoomId);
-          output.append(moveResult + "\n");
-          return moveResult;
-      } catch (IllegalArgumentException e) {
-          output.append("Error: " + e.getMessage() + "\n");
-          throw e;
+    try {
+      if (!world.canInteractWithPet(playerId)) {
+        throw new IllegalArgumentException("You must be in the same room as the pet to move it.");
       }
+      if (targetRoomId < 1 || targetRoomId > world.getRoomCount()) {
+        throw new IllegalArgumentException("Invalid room ID. Please enter a "
+            + "number between 1 and " + world.getRoomCount() + ".");
+      }
+      String moveResult = world.movePet(playerId, targetRoomId);
+      output.append(moveResult + "\n");
+      return moveResult;
+    } catch (IllegalArgumentException e) {
+      output.append("Error: " + e.getMessage() + "\n");
+      throw e;
+    }
   }
 }

@@ -20,24 +20,24 @@ public class MovePlayerCommand implements Command {
    *
    * @param worldModel The game world where the movement is to occur.
    * @param playerIdsInput The ID of the player who will be moved.
-   * @param scannerInput The scanner to read user input.
+   * @param targetRoomIdInput The goal room id.
    */
-  public MovePlayerCommand(ReadOnlyWorld worldModel, int playerIdsInput, int targetRoomId)  {
+  public MovePlayerCommand(ReadOnlyWorld worldModel, int playerIdsInput, int targetRoomIdInput)  {
     this.world = worldModel;
     this.playerId = playerIdsInput;
-    this.targetRoomId = targetRoomId;
+    this.targetRoomId = targetRoomIdInput;
   }
 
   @Override
   public String execute(Appendable output) throws IOException {
-      try {
-          String moveResult = world.movePlayer(playerId, targetRoomId);
-          output.append(moveResult + "\n");
-      } catch (IllegalArgumentException e) {
-          output.append("Error moving player: " + e.getMessage() + "\n");
-          throw e;
-      }
-      return null;
+    try {
+      String moveResult = world.movePlayer(playerId, targetRoomId);
+      output.append(moveResult + "\n");
+    } catch (IllegalArgumentException e) {
+      output.append("Error moving player: " + e.getMessage() + "\n");
+      throw e;
+    }
+    return null;
   }
 }
 

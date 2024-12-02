@@ -19,27 +19,26 @@ public class PlayerInfoCommand implements Command {
    *
    * @param worldModel The game world where player information is managed.
    * @param playerIdsInput A list of all player IDs currently active in the game.
-   * @param scannerInput A Scanner object for reading user input.
    */
-  public PlayerInfoCommand(ReadOnlyWorld worldModel, int playerId) {
+  public PlayerInfoCommand(ReadOnlyWorld worldModel, int playerIdsInput) {
     this.world = worldModel;
-    this.playerId = playerId;
+    this.playerId = playerIdsInput;
   }
 
   @Override
   public String execute(Appendable output) throws IOException {
-      try {
-          if (!world.getPlayerIds().contains(playerId)) {
-              output.append("No player found with ID: " + playerId + "\n");
-          } else {
-              String playerInfo = world.getPlayerInfo(playerId);
-              output.append(playerInfo + "\n");
-              return playerInfo;
-          }
-      } catch (IllegalArgumentException e) {
-          output.append("Error retrieving player information: " + e.getMessage() + "\n");
-          throw e;
+    try {
+      if (!world.getPlayerIds().contains(playerId)) {
+        output.append("No player found with ID: " + playerId + "\n");
+      } else {
+        String playerInfo = world.getPlayerInfo(playerId);
+        output.append(playerInfo + "\n");
+        return playerInfo;
       }
-      return null;
+    } catch (IllegalArgumentException e) {
+      output.append("Error retrieving player information: " + e.getMessage() + "\n");
+      throw e;
+    }
+    return null;
   }
 }
