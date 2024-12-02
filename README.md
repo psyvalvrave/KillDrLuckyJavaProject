@@ -44,18 +44,37 @@ In this initial milestone, the goal is finish the full game can run with command
 5. Add more test to check can the game run well with different condition. Such as the success of murder should determined by other players' location. Add more tests to make sure the expected result is correct when players are in different location.
 6. Check the pdf with revised in res folder for updated design. (m3_Revisited_Design.pdf)
 
+## Milestone 4: View
+
+In this initial milestone, the goal is creating a simply GUI version of the game. The model part does not change much. It only create one more interface to provide read only model for the view to use. This makes sure the view will not affect model. 
+The controller part has many updates. It now has a totally different flow for the GUI version since the CLI game design cannot simply switch to GUI by switch input and output. The controller has method to change the view now. Both key and mouse adapter are available so user's action can lead to different result.
+The view is created for this milestone, and it works with Java Swing. The graphic should help user play the game in a easy way.   
+
+### Updates from every past milestones and preliminary design m4:
+1. For view end, create 3 more dialogs `AttackDialog`, `ItemPickupDialog`, `PetMoveDialog` based on `JDialog` to create better communication for users and the game. Instead of typing the item now, user can now simply click button to get result. 
+2. For view end, create a text area called in the game keeps showing the log of the game in the bottom of game screen, and the other area to display the game manuel and some information on the right side of main screen. 
+3. For controller end, create a totally different game flow to run the game in GUI way. Now the controller use `runGameG` to run GUI game and `runGameC` to run CLI game. The logic is still the same, but it is difficult to simply change the CLI version to GUI version with the old game flow. More public methods are needed now. 
+4. For controller end, modify the command class a little bit. Since it cannot simply take scanner as input anymore. I still want all of those commands are used in the GUI game, so now it won't take scanner as input parameter. Some private helper methods are added into controller to help this change probably without affect the CLI game and all past tests. 
+5. For model end, Some methods are added in the model end as well to help running the game. For example, `getRoomCoordinates()` and `getPlayerCoordinates()` are added to pass the current coordinates to controller, and allow the game uses these coordinates to respond to mouse click for different actions.
+6. Mock model and mock controller are created now to help testing. 
+7. In order to display the Appendable output from System.out to the area in view, a helper class call `TextOutputHandler` is created. 
+8. There are many minor update, but all updated are display in the file design.pdf in the res folder.
+
 ### Key Features
 - **World Class:** Constructs the game board and initializes the rooms based on predefined configurations.
 - **Room and Target Setup:** Rooms are strategically placed within the world, and a target is assigned to one of these rooms.
 - **Player:** player can perform actions to play the game. Use correct strategy to win! We have computer player can do something like human player to player with.
 - **Controller Class:** Using Command Line to run the game now. 
 - **Game End:** The game can end when max turn reach or target's hp drop to 0 or below. We have a full CLI game now.
+- **GUI:** The game now have simply GUI version with JAVA swing. It is not perfect, but it is playable.
 
 ### How to Run My Code with Jar file
 Find KillDoctorLucky.jar in the res folder, open the terminal in this folder. Execute the following command in terminal:
 ```bash
 java -jar KillDoctorLucky.jar mansion.txt 1000
 ```
+After run the bash code, you can hit 1 to enter CLI game and 2 to enter GUI game. 
+Once you are in the game, just simply follow instruction.
 mansion.txt can be switch to other world model text file. I have one_room.txt and three_rooms_player_test.txt to play around and test in res folder.
 1000 means number of turn, once the turn reach, the game will end. Each player's action represent a turn. 
 There will be a txt file to show the example run to show some text info about how a test run is. The code you are running is in the src/WorldDriver.java
@@ -69,6 +88,7 @@ Once you see the line say "Setting up the game.", the CLI game is starting, and 
 5. https://www.educative.io/answers/how-to-generate-random-numbers-in-java
 6. https://dev.to/drathi/how-to-mock-without-using-mockito-or-any-frameworks-1b5g
 7. https://www.baeldung.com/java-depth-first-search
+8. https://www.javatpoint.com/java-swing
 
 ### Assumptions 
 1. The pick up action will consume a turn though there is nothing to pick up.
@@ -79,10 +99,14 @@ Once you see the line say "Setting up the game.", the CLI game is starting, and 
 6. The minimal damage can be done to the target is 1 if the attack is successful.                           
 7. Player need to use look around to know the item murder point and location. This will take a turn as gathering information. 
 8. For human player, they can know where they are and what they are carrying at start of their turn. 
+9. The game have to run with the proper txt file with proper structure. For any other file, it will break. If you follow the pattern, you can make you own map and play your own game. 
+10. Computer player's movement will be immediately when their turn arrive. If we only have 1 human player and 1 computer player, the human player won't wait computer player's action because it happen so fast.
+11. In GUI game, if the game only have computer player. After game start, the game seems stuck. Those players are still taking action behind the map. Because it happens so fast, the image won't update fast enough. However, the result will show up in a minute if the max turn is not set too large.
 
 ### Limitation
 1. Computer player can only run randomly without trying to approach near Dr. Lucky, although the computer player always try to attack when they got chance.
-2. Player need to keep save and update the world.png to know the visualization of the game. Only text in terminal may be difficult to understand. 
+2. Player need to keep save and update the world.png to know the visualization of the game. Only text in terminal may be difficult to understand (in CLI game only).
+3. The game can run in both GUI and CLI way, however, they do not 
 
 ### Example Run Explain for M2
 1. example_run.txt show example run with all requirements: adding a human-controlled player to the world
@@ -101,3 +125,6 @@ creating and saving a graphical representation of the world map to the current d
 I have two different example run to show the game
 1. example_run_m3.txt is a run with all new add game functions display (Move Pet, Attack, Pet, Display info for each turn, etc). We can see for each human turn, they will see their location and what items they are carrying. In turn 2, computer player just start attacking since he is in the same room with the target. Since he does not have any item, so he just attack with bare hand and make 1 damage. Though there are other player(Move Pet Human) in neighbor room Dinning Hall, the pet in the target room block his sight so the attack was successful. In turn 3, the Move Pet Human player is in the same room as the pet, so he successfully move the pet to the other position(Lancaster Room with ID 10). In turn 7, the player Attack Human put 10 in command line to check the target info, and once he realizes he is in the same room with target, he simply uses Trowel he previously picked up to attack and deal 2 damage. Since it took too long to finish the entire game, the game is being forced to quit by putting 0.
 2. example_run_m3 - One_Shot.txt is the other run with modified item damage. The two item in Carriage House Big Red Hammer and Chain Saw were being modified to have murder point 51, which potentially will one shot the target. The first 2 turns just allow the player to pick up both item. In turn 3, he just one of item to kill the target. The game end message is displayed when target's health drops to 0. It declares winner name One Shot.
+
+### Example Run Explain for m4
+This is a GUI base game, so the example_run is not txt anymore. I have a folder in res called example_run. All the screenshot in it represent an action for the game, and the image file name is that action. Go through all images can have better understanding of the game. All images are the all available actions for the current version of the game. 
