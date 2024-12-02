@@ -276,7 +276,7 @@ public class GameController implements Controller {
   }
   
   private void handleAddPlayerCli(WorldOutline world) throws IOException, InterruptedException {
-    output.append("Enter player name:\n");
+    output.append("Enter player starting room id:\n");
     int roomIndex;
     try {
       roomIndex = Integer.parseInt(scanner.nextLine());
@@ -290,7 +290,7 @@ public class GameController implements Controller {
           + "Please enter a number between 1 and " + world.getRoomCount() + ".\n");
     }
     String playerName = scanner.nextLine();
-    output.append("Enter player starting room id:\n");
+    output.append("Enter player name:\n");
     Command createPlayerCommand = new CreatePlayerCommand(world, 
         playerName, roomIndex, world.getPlayerIds(), world.getPlayerNames(), world.getIsComputer());
     createPlayerCommand.execute(output);
