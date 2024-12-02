@@ -127,4 +127,5 @@ I have two different example run to show the game
 2. example_run_m3 - One_Shot.txt is the other run with modified item damage. The two item in Carriage House Big Red Hammer and Chain Saw were being modified to have murder point 51, which potentially will one shot the target. The first 2 turns just allow the player to pick up both item. In turn 3, he just one of item to kill the target. The game end message is displayed when target's health drops to 0. It declares winner name One Shot.
 
 ### Example Run Explain for m4
+The game interface can be viewed in the example_run folder under res folder. What is not showing is the game menu have three options on the top left corner: Restart, load different model, and quit. 
 This is a GUI base game, so the example_run is not txt anymore. I have a folder in res called example_run. All the screenshot in it represent an action for the game, and the image file name is that action. Go through all images can have better understanding of the game. All images are the all available actions for the current version of the game. 
