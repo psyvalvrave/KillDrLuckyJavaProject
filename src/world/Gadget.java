@@ -24,5 +24,5 @@ public interface Gadget {
    * 
    * @return the Room representing the item's location.
    */
-  Room getLocationItem();
+  Block getLocationItem();
 }

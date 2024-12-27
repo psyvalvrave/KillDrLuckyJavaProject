@@ -4,7 +4,9 @@ package world;
  * Represents a target in the game, capable of basic movement and interactions,
  * by implementing the Character interface.
  */
-public class Target extends AbstractCharacter {
+public class Target implements CharacterTarget {
+  private final String name;
+  private Block currentRoom;
   private int healthPoint; 
   
   /**
@@ -15,8 +17,9 @@ public class Target extends AbstractCharacter {
    * @param hpInput Initial health points of the target.
    * @throws IllegalArgumentException If hp is less than 1 or startingRoom is null.
    */
-  public Target(String targetNameInput, Room startingRoomInput, int hpInput) {
-    super(targetNameInput, startingRoomInput);
+  public Target(String targetNameInput, Block startingRoomInput, int hpInput) {
+    this.name = targetNameInput;
+    this.currentRoom = startingRoomInput;
     if (hpInput < 1) {
       throw new IllegalArgumentException("Health points must be at least 1.");
     }
@@ -26,29 +29,16 @@ public class Target extends AbstractCharacter {
     this.healthPoint = hpInput;
   }
 
-  /**
-   * Gets the current health points of the target.
-   * 
-   * @return the current health points.
-   */
+  @Override
   public int getHealthPoint() {
     return healthPoint;
   }
 
-  /**
-   * Sets the health points of the target.
-   * 
-   * @param hp New health points to set.
-   */
+  @Override
   public void setHealthPoint(int hp) {
     this.healthPoint = hp;
   }
   
-  /**
-   * Retrieves detailed information about the target including its current location and health.
-   * 
-   * @return A formatted string containing the name, health, and location of the target.
-   */
   @Override
   public String getCharacterInfo() {
     return String.format("Target Name: %s\nHealth Points: %d\nCurrent Location: %s",
@@ -59,6 +49,25 @@ public class Target extends AbstractCharacter {
   public String toString() {
     return String.format("Target[name=%s, Current Room=%s, Health Points=%d]",
                          name, currentRoom.getRoomName(), healthPoint);
+  }
+  
+  @Override
+  public Block getLocation() {
+    return (Room) currentRoom;
+  }
+  
+
+  @Override
+  public String getCharacterName() {
+    return name;
+  }
+  
+  @Override
+  public void move(Block room) {
+    if (room == null) {
+      throw new IllegalArgumentException("Room cannot be null.");
+    }
+    this.currentRoom = room;
   }
 
 }

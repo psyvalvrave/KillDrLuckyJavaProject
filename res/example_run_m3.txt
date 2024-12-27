@@ -1,0 +1,342 @@
+eclipse-workspace\KillDoctorLucky\src> java controller.ControllerDriver ../res/mansion.txt 1000
+Setting up the game.
+Add players:
+1. Add Human-Controlled Player
+2. Add Computer-Controlled Player
+3. Save the World Map, Check It to Know Where You Want to Start
+4. Start Game
+1
+Enter player name:
+Attack Human
+Enter player starting room id:
+7
+Human player added with ID: 0.
+Add players:
+1. Add Human-Controlled Player
+2. Add Computer-Controlled Player
+3. Save the World Map, Check It to Know Where You Want to Start
+4. Start Game
+2
+Enter computer player name:
+Computer Test Attack
+Enter computer player starting room id:
+2
+Computer player added with ID: 1.
+Add players:
+1. Add Human-Controlled Player
+2. Add Computer-Controlled Player
+3. Save the World Map, Check It to Know Where You Want to Start
+4. Start Game
+1
+Enter player name:
+Move Pet Human 
+Enter player starting room id:
+4
+Human player added with ID: 2.
+Add players:
+1. Add Human-Controlled Player
+2. Add Computer-Controlled Player
+3. Save the World Map, Check It to Know Where You Want to Start
+4. Start Game
+4
+Game will start with 3 players.
+Game started. Manage your turns.
+
+--- Game Menu ---
+Turn 1
+Current player's turn: Player ID 0 Player Name Attack Human
+Room ID: 7, Room Name: Green House
+Player's items: None.
+1. Display Room Info
+2. Save World Map
+3. Attempt to Murder Target
+4. Move Pet
+5. Move Player
+6. Player Pick Up Item
+7. Player Look Around
+8. Display Player Info
+9. Do Nothing
+10. Display Target Info
+0. Quit Game
+Select an option:
+6
+Items available to pick up:
+1: Trowel: Murder Value 2
+2: Pinking Shears: Murder Value 2
+Enter the index of the item to pick up:
+1
+Item 'Trowel' picked up successfully by Attack Human.
+Turn 2. Now Player Computer Test Attack with ID 1's turn.
+Pet moved to room: Billiard Room
+Opportunity for murder identified. Computer player preparing to attack.
+Murder attempt by computer player: Success: Target's health reduced to 49.
+Turn 3. Now Player Move Pet Human  with ID 2's turn.
+Pet moved to room: Dining Hall
+
+--- Game Menu ---
+Turn 3
+Current player's turn: Player ID 2 Player Name Move Pet Human 
+Room ID: 4, Room Name: Dining Hall
+Player's items: None.
+1. Display Room Info
+2. Save World Map
+3. Attempt to Murder Target
+4. Move Pet
+5. Move Player
+6. Player Pick Up Item
+7. Player Look Around
+8. Display Player Info
+9. Do Nothing
+10. Display Target Info
+0. Quit Game
+Select an option:
+4
+Enter a room ID for the pet to move to (1-21):
+10
+Pet has been moved to Lancaster Room.
+Turn 4. Now Player Attack Human with ID 0's turn.
+Pet moved to room: Lancaster Room
+
+--- Game Menu ---
+Turn 4
+Current player's turn: Player ID 0 Player Name Attack Human
+Room ID: 7, Room Name: Green House
+Player's items:
+Item Name: Trowel, Murder Value: 2
+
+1. Display Room Info
+2. Save World Map
+3. Attempt to Murder Target
+4. Move Pet
+5. Move Player
+6. Player Pick Up Item
+7. Player Look Around
+8. Display Player Info
+9. Do Nothing
+10. Display Target Info
+0. Quit Game
+Select an option:
+10
+Target Name: Doctor Lucky
+Health Points: 49
+Current Location: Dining Hall
+
+--- Game Menu ---
+Turn 4
+Current player's turn: Player ID 0 Player Name Attack Human
+Room ID: 7, Room Name: Green House
+Player's items:
+Item Name: Trowel, Murder Value: 2
+
+1. Display Room Info
+2. Save World Map
+3. Attempt to Murder Target
+4. Move Pet
+5. Move Player
+6. Player Pick Up Item
+7. Player Look Around
+8. Display Player Info
+9. Do Nothing
+10. Display Target Info
+0. Quit Game
+Select an option:
+7
+Current Room ID: 7
+Current Room Name: Green House
+Current Room Items: Pinking Shears
+Visible Rooms:
+  Room ID: 3, Room Name: Carriage House, Items: Chain Saw, Big Red Hammer
+  Room ID: 8, Room Name: Hedge Maze, Items: Loud Noise
+  Room ID: 16, Room Name: Piazza, Items: Civil War Cannon
+  Room ID: 21, Room Name: Winter Garden, Items: None
+Player: Attack Human
+Visible rooms from here: 
+Room Carriage House: No occupants
+Room Hedge Maze: No occupants
+Room Piazza: No occupants
+Room Winter Garden: No occupantsTurn 5. Now Player Computer Test Attack with ID 1's turn.
+Pet moved to room: Lilac Room
+Start Looking Around
+Computer player: Current Room ID: 2
+Current Room Name: Billiard Room
+Current Room Items: Billiard Cue
+Visible Rooms:
+  Room ID: 1, Room Name: Armory, Items: Revolver
+  Room ID: 4, Room Name: Dining Hall, Items: None
+  Room ID: 9, Room Name: Kitchen, Items: Crepe Pan, Sharp Knife
+  Room ID: 11, Room Name: Library, Items: None
+  Room ID: 14, Room Name: Nursery, Items: Bad Cream
+  Room ID: 19, Room Name: Trophy Room, Items: Duck Decoy, Monkey Hand
+Player: Computer Test Attack
+Visible rooms from here: 
+Room Armory: No occupants
+Room Dining Hall: Player: Move Pet Human 
+Room Kitchen: No occupants
+Room Library: No occupants
+Room Nursery: No occupants
+Room Trophy Room: No occupants
+Turn 6. Now Player Move Pet Human  with ID 2's turn.
+Pet moved to room: Master Suite
+
+--- Game Menu ---
+Turn 6
+Current player's turn: Player ID 2 Player Name Move Pet Human 
+Room ID: 4, Room Name: Dining Hall
+Player's items: None.
+1. Display Room Info
+2. Save World Map
+3. Attempt to Murder Target
+4. Move Pet
+5. Move Player
+6. Player Pick Up Item
+7. Player Look Around
+8. Display Player Info
+9. Do Nothing
+10. Display Target Info
+0. Quit Game
+Select an option:
+10
+Target Name: Doctor Lucky
+Health Points: 49
+Current Location: Foyer
+
+--- Game Menu ---
+Turn 6
+Current player's turn: Player ID 2 Player Name Move Pet Human 
+Room ID: 4, Room Name: Dining Hall
+Player's items: None.
+1. Display Room Info
+2. Save World Map
+3. Attempt to Murder Target
+4. Move Pet
+5. Move Player
+6. Player Pick Up Item
+7. Player Look Around
+8. Display Player Info
+9. Do Nothing
+10. Display Target Info
+0. Quit Game
+Select an option:
+4
+Error processing command: You must be in the same room as the pet to move it.
+
+--- Game Menu ---
+Turn 6
+Current player's turn: Player ID 2 Player Name Move Pet Human 
+Room ID: 4, Room Name: Dining Hall
+Player's items: None.
+1. Display Room Info
+2. Save World Map
+3. Attempt to Murder Target
+4. Move Pet
+5. Move Player
+6. Player Pick Up Item
+7. Player Look Around
+8. Display Player Info
+9. Do Nothing
+10. Display Target Info
+0. Quit Game
+Select an option:
+6
+No items available to pick up in this room.
+Turn 7. Now Player Attack Human with ID 0's turn.
+Pet moved to room: Library
+
+--- Game Menu ---
+Turn 7
+Current player's turn: Player ID 0 Player Name Attack Human
+Room ID: 7, Room Name: Green House
+Player's items:
+Item Name: Trowel, Murder Value: 2
+
+1. Display Room Info
+2. Save World Map
+3. Attempt to Murder Target
+4. Move Pet
+5. Move Player
+6. Player Pick Up Item
+7. Player Look Around
+8. Display Player Info
+9. Do Nothing
+10. Display Target Info
+0. Quit Game
+Select an option:
+10
+Target Name: Doctor Lucky
+Health Points: 49
+Current Location: Green House
+
+--- Game Menu ---
+Turn 7
+Current player's turn: Player ID 0 Player Name Attack Human
+Room ID: 7, Room Name: Green House
+Player's items:
+Item Name: Trowel, Murder Value: 2
+
+1. Display Room Info
+2. Save World Map
+3. Attempt to Murder Target
+4. Move Pet
+5. Move Player
+6. Player Pick Up Item
+7. Player Look Around
+8. Display Player Info
+9. Do Nothing
+10. Display Target Info
+0. Quit Game
+Select an option:
+3
+Attempt to murder the target:
+Your items:
+1: Trowel: Murder Value 2
+Would you like to use an item to increase your murder point?
+1: Yes
+0: No
+1
+Select the item number you wish to use:
+1
+You have used Trowel to increase your murder point.
+Success: Target's health reduced to 47.
+Turn 8. Now Player Computer Test Attack with ID 1's turn.
+Pet moved to room: Nursery
+Start Looking Around
+Computer player: Current Room ID: 2
+Current Room Name: Billiard Room
+Current Room Items: Billiard Cue
+Visible Rooms:
+  Room ID: 1, Room Name: Armory, Items: Revolver
+  Room ID: 4, Room Name: Dining Hall, Items: None
+  Room ID: 9, Room Name: Kitchen, Items: Crepe Pan, Sharp Knife
+  Room ID: 11, Room Name: Library, Items: None
+  Room ID: 14, Room Name: Nursery: Restricted details due to pet presence.
+  Room ID: 19, Room Name: Trophy Room, Items: Duck Decoy, Monkey Hand
+Player: Computer Test Attack
+Visible rooms from here: 
+Room Armory: No occupants
+Room Dining Hall: Player: Move Pet Human 
+Room Kitchen: No occupants
+Room Library: No occupants
+Room Nursery: Presence of pet blocks the view.
+Room Trophy Room: No occupants
+Turn 9. Now Player Move Pet Human  with ID 2's turn.
+Pet moved to room: Library
+
+--- Game Menu ---
+Turn 9
+Current player's turn: Player ID 2 Player Name Move Pet Human 
+Room ID: 4, Room Name: Dining Hall
+Player's items: None.
+1. Display Room Info
+2. Save World Map
+3. Attempt to Murder Target
+4. Move Pet
+5. Move Player
+6. Player Pick Up Item
+7. Player Look Around
+8. Display Player Info
+9. Do Nothing
+10. Display Target Info
+0. Quit Game
+Select an option:
+0
+Quitting game.

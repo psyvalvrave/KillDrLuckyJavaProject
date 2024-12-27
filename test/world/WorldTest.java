@@ -10,8 +10,11 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -44,12 +47,60 @@ public class WorldTest {
    * @throws FileNotFoundException if the file specified by inputSource does not exist
    */
   @Before
-  public void setUp() throws FileNotFoundException {
-    Readable fileInput = new FileReader("res/mansion.txt");
+  public void setUp() {
+    String input = 
+        "36 30 Doctor Lucky's Mansion\n" 
+            + "50 Doctor Lucky\n" 
+            + "Fortune the Cat\n" 
+            + "21\n" 
+            + "22 19 23 26 Armory\n" 
+            + "16 21 21 28 Billiard Room\n" 
+            + "28  0 35  5 Carriage House\n" 
+            + "12 11 21 20 Dining Hall\n" 
+            + "22 13 25 18 Drawing Room\n" 
+            + "26 13 27 18 Foyer\n" 
+            + "28 26 35 29 Green House\n" 
+            + "30 20 35 25 Hedge Maze\n" 
+            + "16  3 21 10 Kitchen\n" 
+            + " 0  3  5  8 Lancaster Room\n" 
+            + " 4 23  9 28 Library\n" 
+            + " 2  9  7 14 Lilac Room\n" 
+            + " 2 15  7 22 Master Suite\n" 
+            + " 0 23  3 28 Nursery\n" 
+            + "10  5 15 10 Parlor\n" 
+            + "28 12 35 19 Piazza\n" 
+            + " 6  3  9  8 Servants' Quarters\n" 
+            + " 8 11 11 20 Tennessee Room\n" 
+            + "10 21 15 26 Trophy Room\n" 
+            + "22  5 23 12 Wine Cellar\n" 
+            + "30  6 35 11 Winter Garden\n" 
+            + "20\n" 
+            + "8 3 Crepe Pan\n" 
+            + "4 2 Letter Opener\n" 
+            + "12 2 Shoe Horn\n" 
+            + "8 3 Sharp Knife\n" 
+            + "0 3 Revolver\n" 
+            + "15 3 Civil War Cannon\n" 
+            + "2 4 Chain Saw\n" 
+            + "16 2 Broom Stick\n" 
+            + "1 2 Billiard Cue\n" 
+            + "19 2 Rat Poison\n" 
+            + "6 2 Trowel\n" 
+            + "2 4 Big Red Hammer\n" 
+            + "6 2 Pinking Shears\n" 
+            + "18 3 Duck Decoy\n" 
+            + "13 2 Bad Cream\n" 
+            + "18 2 Monkey Hand\n" 
+            + "11 2 Tight Hat\n" 
+            + "19 2 Piece of Rope\n" 
+            + "9 3 Silken Cord\n" 
+            + "7 2 Loud Noise\n";
+    Reader fileInput = new StringReader(input);
     world = new World(fileInput); 
     testRoom = new Room("Test Room", 1, new int[]{0, 0, 10, 10}, world.getRoomData());
     world.getRooms().clear();
     world.getRooms().add(testRoom);
+    world.movePetToNextRoom();
   }
   
   @Test
@@ -107,8 +158,8 @@ public class WorldTest {
   
   @Test
   public void testCreateItemValid() {
-    Item item = world.createItem("Test Item", 0, 10);
-    Room armory = world.getRooms().get(0);
+    Item item = (Item) world.createItem("Test Item", 0, 10);
+    Room armory = (Room) world.getRooms().get(0);
     assertEquals("The room at index 0 should be 'Armory'", "Armory", armory.getRoomName());
     assertNotNull("Item should not be null", item);
     assertEquals("Item name should match", "Test Item", item.getItemName());
@@ -126,7 +177,7 @@ public class WorldTest {
 
   @Test
   public void testCreateTargetValid() {
-    Target target = world.createTarget("Test Target", testRoom, 100);
+    Target target = (Target) world.createTarget("Test Target", testRoom, 100);
     assertNotNull(target);
     assertEquals("Test Target", target.getCharacterName());
     assertEquals(100, target.getHealthPoint());
@@ -142,7 +193,7 @@ public class WorldTest {
   @Test
   public void testCreateRoomValid() {
     int[] coordinates = {0, 0, 5, 5};
-    Room room = world.createRoom("New Room", 2, coordinates, new ArrayList<>());
+    Room room = (Room) world.createRoom("New Room", 2, coordinates, new ArrayList<>());
     assertNotNull(room);
     assertEquals("New Room", room.getRoomName());
     assertArrayEquals(coordinates, room.getCoordinates());
@@ -162,18 +213,18 @@ public class WorldTest {
   
   @Test
   public void testMoveTargetToNextRoom() {
-    world.createTarget("Test Target", world.getRooms().get(0), 10);
-    Room secondRoom = world.getRooms().get(1); 
+    world.createTarget("Test Target", (Room) world.getRooms().get(0), 10);
+    Room secondRoom = (Room) world.getRooms().get(1); 
     world.moveTargetToNextRoom(); 
     assertEquals("Target should be in second room", secondRoom, world.getTarget().getLocation());
   }
   
   @Test
   public void testMoveTargetToFirstRoomWhenInLastRoom() {
-    Room lastRoom = world.getRooms().get(world.getRooms().size() - 1);
+    Room lastRoom = (Room) world.getRooms().get(world.getRooms().size() - 1);
     world.createTarget("Test Target", lastRoom, 10);
     world.moveTargetToNextRoom();
-    Room firstRoom = world.getRooms().get(0);
+    Room firstRoom = (Room) world.getRooms().get(0);
     assertEquals("Target should cycle back to the first "
         + "room", firstRoom, world.getTarget().getLocation());
   }
@@ -184,13 +235,13 @@ public class WorldTest {
     Room billiardRoom = null;
     Room carriageHouse = null;
 
-    for (Room room : world.getRooms()) {
+    for (Block room : world.getRooms()) {
       if (room.getRoomName().equals("Armory")) {
-        armory = room;
+        armory = (Room) room;
       } else if (room.getRoomName().equals("Billiard Room")) {
-        billiardRoom = room;
+        billiardRoom = (Room) room;
       } else if (room.getRoomName().equals("Carriage House")) {
-        carriageHouse = room;
+        carriageHouse = (Room) room;
       }
     }
 
@@ -201,11 +252,11 @@ public class WorldTest {
   
   @Test
   public void testRoomAdjacency() {
-    Room armory = world.getRooms().stream()
+    Room armory = (Room) world.getRooms().stream()
                        .filter(room -> room.getRoomName().equals("Armory"))
                        .findFirst()
                        .orElse(null);
-    Room billiardRoom = world.getRooms().stream()
+    Room billiardRoom = (Room) world.getRooms().stream()
                              .filter(room -> room.getRoomName().equals("Billiard Room"))
                              .findFirst()
                              .orElse(null);
@@ -217,11 +268,11 @@ public class WorldTest {
   
   @Test
   public void testVisibility() {
-    Room armory = world.getRooms().stream()
+    Room armory = (Room) world.getRooms().stream()
                        .filter(room -> room.getRoomName().equals("Armory"))
                        .findFirst()
                        .orElse(null);
-    Room carriageHouse = world.getRooms().stream()
+    Room carriageHouse = (Room) world.getRooms().stream()
                               .filter(room -> room.getRoomName().equals("Carriage House"))
                               .findFirst()
                               .orElse(null);
@@ -232,7 +283,7 @@ public class WorldTest {
   
   @Test
   public void testRoomDetails() {
-    Room armory = world.getRooms().stream()
+    Room armory = (Room) world.getRooms().stream()
                        .filter(room -> room.getRoomName().equals("Armory"))
                        .findFirst()
                        .orElse(null);
@@ -250,7 +301,7 @@ public class WorldTest {
   
   @Test
   public void testGetRoomName() {
-    Room armory = world.getRooms().stream()
+    Room armory = (Room) world.getRooms().stream()
         .filter(room -> room.getRoomName().equals("Armory"))
         .findFirst()
         .orElse(null);
@@ -259,15 +310,15 @@ public class WorldTest {
   
   @Test
   public void testGetNeighbors() {
-    Room armory = world.getRooms().stream()
+    Room armory = (Room) world.getRooms().stream()
         .filter(room -> room.getRoomName().equals("Armory"))
         .findFirst()
         .orElse(null);
-    Room drawingRoom = world.getRooms().stream()
+    Room drawingRoom = (Room) world.getRooms().stream()
         .filter(room -> room.getRoomName().equals("Drawing Room"))
         .findFirst()
         .orElse(null);
-    List<Room> neighbors = armory.getNeighbor();
+    List<Block> neighbors = armory.getNeighbor();
     assertNotNull("Neighbors list should not be null", neighbors);
     assertTrue("Neighbors should contain neighbor1", neighbors.contains(drawingRoom));
     assertEquals("Should have exactly two neighbors", 3, neighbors.size());
@@ -275,7 +326,7 @@ public class WorldTest {
   
   @Test
   public void testGetNeighborNames() {
-    Room armory = world.getRooms().stream()
+    Room armory = (Room) world.getRooms().stream()
         .filter(room -> room.getRoomName().equals("Armory"))
         .findFirst()
         .orElse(null);
@@ -285,11 +336,11 @@ public class WorldTest {
   
   @Test
   public void testIsAdjacentTrue() {
-    Room armory = world.getRooms().stream()
+    Room armory = (Room) world.getRooms().stream()
         .filter(room -> room.getRoomName().equals("Armory"))
         .findFirst()
         .orElse(null);
-    Room adjacentRoom = world.getRooms().stream()
+    Room adjacentRoom = (Room) world.getRooms().stream()
         .filter(room -> room.getRoomName().equals("Drawing Room"))
         .findFirst()
         .orElse(null);
@@ -298,11 +349,11 @@ public class WorldTest {
   
   @Test
   public void testIsAdjacentFalse() {
-    Room armory = world.getRooms().stream()
+    Room armory = (Room) world.getRooms().stream()
         .filter(room -> room.getRoomName().equals("Armory"))
         .findFirst()
         .orElse(null);
-    Room adjacentRoom = world.getRooms().stream()
+    Room adjacentRoom = (Room) world.getRooms().stream()
         .filter(room -> room.getRoomName().equals("Library"))
         .findFirst()
         .orElse(null);
@@ -311,11 +362,11 @@ public class WorldTest {
   
   @Test
   public void testIsVisibleFromTrue() {
-    Room armory = world.getRooms().stream()
+    Room armory = (Room) world.getRooms().stream()
         .filter(room -> room.getRoomName().equals("Armory"))
         .findFirst()
         .orElse(null);
-    Room visibleRoom = world.getRooms().stream()
+    Room visibleRoom = (Room) world.getRooms().stream()
         .filter(room -> room.getRoomName().equals("Library"))
         .findFirst()
         .orElse(null);
@@ -324,11 +375,11 @@ public class WorldTest {
   
   @Test
   public void testIsVisibleFromFalse() {
-    Room armory = world.getRooms().stream()
+    Room armory = (Room) world.getRooms().stream()
         .filter(room -> room.getRoomName().equals("Armory"))
         .findFirst()
         .orElse(null);
-    Room visibleRoom = world.getRooms().stream()
+    Room visibleRoom = (Room) world.getRooms().stream()
         .filter(room -> room.getRoomName().equals("Kitchen"))
         .findFirst()
         .orElse(null);
@@ -337,15 +388,15 @@ public class WorldTest {
   
   @Test
   public void testGetItems() {
-    Room armory = world.getRooms().stream()
+    Room armory = (Room) world.getRooms().stream()
         .filter(room -> room.getRoomName().equals("Armory"))
         .findFirst()
         .orElse(null);
-    Item testItem = world.getItems().stream()
+    Item testItem = (Item) world.getItems().stream()
         .filter(room -> room.getItemName().equals("Revolver"))
         .findFirst()
         .orElse(null);
-    List<Item> items = armory.getItem();
+    List<Gadget> items = armory.getItem();
     assertNotNull("Items list should not be null", items);
     assertTrue("Items list should contain testItem", items.contains(testItem));
     assertEquals("Items list should contain exactly 1 items", 1, items.size());
@@ -353,7 +404,7 @@ public class WorldTest {
   
   @Test
   public void testGetCoordinates() {
-    Room armory = world.getRooms().stream()
+    Room armory = (Room) world.getRooms().stream()
         .filter(room -> room.getRoomName().equals("Armory"))
         .findFirst()
         .orElse(null);
@@ -365,11 +416,11 @@ public class WorldTest {
   
   @Test
   public void testAddNeighborSuccess() {
-    Room armory = world.getRooms().stream()
+    Room armory = (Room) world.getRooms().stream()
         .filter(room -> room.getRoomName().equals("Armory"))
         .findFirst()
         .orElse(null);
-    Room drawingRoom = world.getRooms().stream()
+    Room drawingRoom = (Room) world.getRooms().stream()
         .filter(room -> room.getRoomName().equals("Drawing Room"))
         .findFirst()
         .orElse(null);
@@ -383,11 +434,11 @@ public class WorldTest {
   
   @Test
   public void testAddNeighborFail() {
-    Room armory = world.getRooms().stream()
+    Room armory = (Room) world.getRooms().stream()
         .filter(room -> room.getRoomName().equals("Armory"))
         .findFirst()
         .orElse(null);
-    Room parlor = world.getRooms().stream()
+    Room parlor = (Room) world.getRooms().stream()
         .filter(room -> room.getRoomName().equals("Parlor"))
         .findFirst()
         .orElse(null);
@@ -400,11 +451,11 @@ public class WorldTest {
   
   @Test
   public void testAddVisbleFromSuccess() {
-    Room armory = world.getRooms().stream()
+    Room armory = (Room) world.getRooms().stream()
         .filter(room -> room.getRoomName().equals("Armory"))
         .findFirst()
         .orElse(null);
-    Room drawingRoom = world.getRooms().stream()
+    Room drawingRoom = (Room) world.getRooms().stream()
         .filter(room -> room.getRoomName().equals("Drawing Room"))
         .findFirst()
         .orElse(null);
@@ -418,11 +469,11 @@ public class WorldTest {
   
   @Test
   public void testAddVisbleFromFail() {
-    Room armory = world.getRooms().stream()
+    Room armory = (Room) world.getRooms().stream()
         .filter(room -> room.getRoomName().equals("Armory"))
         .findFirst()
         .orElse(null);
-    Room parlor = world.getRooms().stream()
+    Room parlor = (Room) world.getRooms().stream()
         .filter(room -> room.getRoomName().equals("Parlor"))
         .findFirst()
         .orElse(null);
@@ -435,7 +486,7 @@ public class WorldTest {
   
   @Test
   public void testCreatePlayer() {
-    Player player = world.createPlayer("Alice", 1);  
+    Player player = (Player) world.createPlayer("Alice", 1);  
     assertNotNull("Player should be created", player);
     assertEquals("Player's name should be Alice", "Alice", player.getCharacterName());
     assertEquals("Player should start in the first room", 
@@ -448,9 +499,9 @@ public class WorldTest {
     int initialItemLimit = 3;
     world.setItemLimit(initialItemLimit); 
 
-    Player player1 = world.createPlayer("Alice", 1);
-    Player player2 = world.createPlayer("Bob", 2);
-    Player player3 = world.createPlayer("Charlie", 3);
+    Player player1 = (Player) world.createPlayer("Alice", 1);
+    Player player2 = (Player) world.createPlayer("Bob", 2);
+    Player player3 = (Player) world.createPlayer("Charlie", 3);
 
     assertNotNull("Player 1 should be created", player1);
     assertNotNull("Player 2 should be created", player2);
@@ -483,10 +534,10 @@ public class WorldTest {
   @Test
   public void testSetItemLimit() {
     world.setItemLimit(3); 
-    Player player = world.createPlayer("Bob", 1);
+    Player player = (Player) world.createPlayer("Bob", 1);
     assertEquals("Item limit should be updated to 3", 3, player.getItemLimit());
 
-    Player existingPlayer = world.createPlayer("Charlie", 1);
+    Player existingPlayer = (Player) world.createPlayer("Charlie", 1);
     world.setItemLimit(2);
     assertEquals("Existing player's item limit should be adjusted to 2", 
         2, existingPlayer.getItemLimit());
@@ -501,14 +552,14 @@ public class WorldTest {
 
   @Test
   public void testAdjustItemLimitWithItems() {
-    Room startingRoom = world.getRooms().get(0);
+    Room startingRoom = (Room) world.getRooms().get(0);
     Item sword = new Item("Sword", startingRoom, 10);
     Item shield = new Item("Shield", startingRoom, 5);
     Item bow = new Item("Bow", startingRoom, 7);
     startingRoom.addItem(sword);
     startingRoom.addItem(shield);
     startingRoom.addItem(bow);
-    Player player = world.createPlayer("Eve", 1);
+    Player player = (Player) world.createPlayer("Eve", 1);
     player.pickItem(sword);
     player.pickItem(shield);
     player.pickItem(bow);
@@ -518,14 +569,14 @@ public class WorldTest {
 
   @Test
   public void testReduceItemLimitAndRemoveExcessItems() {
-    Room startingRoom = world.getRooms().get(0); 
+    Room startingRoom = (Room) world.getRooms().get(0); 
     Item sword = new Item("Sword", startingRoom, 10);
     Item shield = new Item("Shield", startingRoom, 5);
     Item bow = new Item("Bow", startingRoom, 7);
     startingRoom.addItem(sword);
     startingRoom.addItem(shield);
     startingRoom.addItem(bow);
-    Player playerFrank = world.createPlayer("Frank", 1);
+    Player playerFrank = (Player) world.createPlayer("Frank", 1);
     playerFrank.pickItem(sword);
     playerFrank.pickItem(shield);
     playerFrank.pickItem(bow);
@@ -542,7 +593,7 @@ public class WorldTest {
   
   @Test
   public void testGetRoomOccupants() {
-    Room armory = world.getRooms().get(0);
+    Room armory = (Room) world.getRooms().get(0);
     world.createPlayer("Alice", 1);
     world.createPlayer("Bob", 1);
     String occupants = world.getRoomOccupants(armory);
@@ -572,7 +623,7 @@ public class WorldTest {
   
   @Test
   public void testDisplayRoomInfoValidWithPlayerId() {
-    Player player = world.createPlayer("Alice", 1);
+    Player player = (Player) world.createPlayer("Alice", 1);
     String roomInfo = world.displayPlayerRoomInfo(player.getPlayerId());
     assertNotNull("Room info should not be null", roomInfo);
     assertTrue("Room info should contain the room name", roomInfo.contains("Armory"));
@@ -593,4 +644,313 @@ public class WorldTest {
   public void testDisplayRoomInfoInvalid() {
     world.displayRoomInfo("Nonexistent Room");
   }
+  
+  @Test
+  public void testPetStartingLocation() {
+    String input = 
+        "36 30 Doctor Lucky's Mansion\n" 
+            + "50 Doctor Lucky\n" 
+            + "Fortune the Cat\n" 
+            + "21\n" 
+            + "22 19 23 26 Armory\n" 
+            + "16 21 21 28 Billiard Room\n" 
+            + "28  0 35  5 Carriage House\n" 
+            + "12 11 21 20 Dining Hall\n" 
+            + "22 13 25 18 Drawing Room\n" 
+            + "26 13 27 18 Foyer\n" 
+            + "28 26 35 29 Green House\n" 
+            + "30 20 35 25 Hedge Maze\n" 
+            + "16  3 21 10 Kitchen\n" 
+            + " 0  3  5  8 Lancaster Room\n" 
+            + " 4 23  9 28 Library\n" 
+            + " 2  9  7 14 Lilac Room\n" 
+            + " 2 15  7 22 Master Suite\n" 
+            + " 0 23  3 28 Nursery\n" 
+            + "10  5 15 10 Parlor\n" 
+            + "28 12 35 19 Piazza\n" 
+            + " 6  3  9  8 Servants' Quarters\n" 
+            + " 8 11 11 20 Tennessee Room\n" 
+            + "10 21 15 26 Trophy Room\n" 
+            + "22  5 23 12 Wine Cellar\n" 
+            + "30  6 35 11 Winter Garden\n" 
+            + "20\n" 
+            + "8 3 Crepe Pan\n" 
+            + "4 2 Letter Opener\n" 
+            + "12 2 Shoe Horn\n" 
+            + "8 3 Sharp Knife\n" 
+            + "0 3 Revolver\n" 
+            + "15 3 Civil War Cannon\n" 
+            + "2 4 Chain Saw\n" 
+            + "16 2 Broom Stick\n" 
+            + "1 2 Billiard Cue\n" 
+            + "19 2 Rat Poison\n" 
+            + "6 2 Trowel\n" 
+            + "2 4 Big Red Hammer\n" 
+            + "6 2 Pinking Shears\n" 
+            + "18 3 Duck Decoy\n" 
+            + "13 2 Bad Cream\n" 
+            + "18 2 Monkey Hand\n" 
+            + "11 2 Tight Hat\n" 
+            + "19 2 Piece of Rope\n" 
+            + "9 3 Silken Cord\n" 
+            + "7 2 Loud Noise\n";
+    Reader fileInput = new StringReader(input);
+    world = new World(fileInput); 
+    Block armory = world.getRooms().get(0);
+    assertEquals("Initial location should be 'Aromry'", armory, world.getPet().getLocation());
+  }
+  
+  @Test
+  public void testGetTargetInfo() {
+    String targetInfo = world.getTargetInfo();
+    assertTrue("Should contain 'Health Points'", targetInfo.contains("Health Points"));
+    assertTrue("Should contain 'Current Location'", targetInfo.contains("Current Location"));
+  }
+  
+  @Test
+  public void testPlayerLocation() {
+    world.createPlayer("Alice", 1); 
+    String playerLocationInfo = world.getPlayerLocation(0);
+    assertTrue("Should contain 'Room ID'", playerLocationInfo.contains("Room ID"));
+    assertTrue("Should contain 'Room Name'", playerLocationInfo.contains("Room Name"));
+  }
+  
+  @Test
+  public void testMovePetToDifferentRoom() {
+    world.createPlayer("Alice", 2); 
+    String moveResult = world.movePet(0, 2); 
+    assertEquals("Pet has been moved to Billiard Room.", moveResult);
+  }
+  
+  @Test
+  public void testinitializePetDfs() {
+    world.initializePetDfs(); 
+    CharacterPet pet = world.getPet(); 
+    Stack<Block> path = pet.getPath();
+    StringBuilder pathString = new StringBuilder();
+    while (!path.isEmpty()) {
+      Block room = path.pop();
+      pathString.append(room.getRoomName()).append(" -> ");
+    }
+    String expectedPath = "Billiard Room -> Armory -> Dining Hall -> "
+        + "Drawing Room -> Foyer -> Piazza -> "
+        + "Hedge Maze -> Green House -> Hedge Maze -> Piazza -> Winter Garden -> Carriage House -> "
+        + "Winter Garden -> Piazza -> Foyer -> Drawing Room -> Wine Cellar -> Kitchen -> Parlor -> "
+        + "Servants' Quarters -> Lancaster Room -> Lilac Room -> "
+        + "Master Suite -> Library -> Nursery -> "
+        + "Library -> Trophy Room -> Tennessee Room";  
+    String actualPath = pathString.toString().trim();
+    if (actualPath.endsWith("->")) {
+      actualPath = actualPath.substring(0, actualPath.length() - 3);
+    }
+    assertEquals("DFS path does not match expected", expectedPath.trim(), actualPath);
+  }
+  
+  
+  @Test
+  public void testDfsResetsOnPetMove() {
+    world.createPlayer("Alice", 2); 
+    String moveResult = world.movePet(0, 21);
+    assertTrue("Move message should confirm the move", moveResult.contains("Pet has been moved"));
+    CharacterPet pet = world.getPet(); 
+    Stack<Block> newPath = pet.getPath();
+    assertFalse("Path should not be empty after move", newPath.isEmpty());
+    StringBuilder pathString = new StringBuilder();
+    while (!newPath.isEmpty()) {
+      pathString.append(newPath.pop().getRoomName()).append(" -> ");
+    }
+    String expectedPath = "Winter Garden -> Carriage House -> Winter Garden -> Piazza -> Foyer -> "
+        + "Drawing Room -> Armory -> Billiard Room -> Dining Hall -> Kitchen -> Parlor -> "
+        + "Servants' Quarters -> Lancaster Room -> Lilac Room ->"
+        + " Master Suite -> Library -> Nursery -> "
+        + "Library -> Trophy Room -> Tennessee Room -> Trophy Room ->";  
+    assertTrue("Path should start with the expected initial rooms",
+        pathString.toString().startsWith(expectedPath));
+  }
+  
+  @Test
+  public void testVisibilityPlayersWithoutPet() {
+    world.createPlayer("Bob", 1);
+    world.createPlayer("Eric", 1);
+    assertTrue("Player should be seen by others in the same room", world.canPlayerBeSeenByAny(1));
+  }
+  
+  @Test
+  public void testVisibilityPlayersWithPet() {
+    world.createPlayer("Bob", 2);
+    world.movePet(0, 21);
+    world.createPlayer("Eric", 21);
+    world.createPlayer("Ada", 21);
+    assertTrue("Player should be seen by others in the "
+        + "same room even with pet", world.canPlayerBeSeenByAny(2));
+  }
+  
+  @Test
+  public void testVisibilityPlayersNeighborSpaceWithoutPet() {
+    world.createPlayer("Bob", 1);
+    world.createPlayer("Eric", 5);
+    assertTrue("Player should be seen by others in the neigbor "
+        + "room", world.canPlayerBeSeenByAny(1));
+  }
+  
+  @Test
+  public void testVisibilityPlayersNeighborSpaceWithPetInBeSeen() {
+    world.createPlayer("Bob", 2);
+    world.movePet(0, 3);
+    world.createPlayer("Eric", 21);
+    world.createPlayer("Ada", 3);
+    assertFalse("Player should not be seen by others in the neigbor "
+        + "room when pet exists as the one being seen", world.canPlayerBeSeenByAny(2));
+  }
+  
+  @Test
+  public void testVisibilityPlayersNeighborSpaceWithPetInOtherPlayer() {
+    world.createPlayer("Bob", 2);
+    world.movePet(0, 21);
+    world.createPlayer("Eric", 21);
+    world.createPlayer("Ada", 3);
+    assertTrue("Player should be seen by others in the neigbor "
+        + "room when pet exists with other player", world.canPlayerBeSeenByAny(2));
+  }
+  
+  @Test
+  public void testAttackWithoutItem() {
+    world.createPlayer("Bob", 1);
+    CharacterTarget target = world.getTarget();
+    int initialHealth = target.getHealthPoint();
+    String murderResult = world.murderAttempt(0);
+    int finalHealth = target.getHealthPoint();
+    assertTrue("The string does contain 'Success'", murderResult.contains("Success"));
+    assertEquals("Initial health should be 50", 50, initialHealth);
+    assertEquals("Final health should be 49 after the attack", 49, finalHealth);
+  }
+  
+  @Test
+  public void testUseItem() {
+    world.createPlayer("Bob", 1);
+    world.playerPickUpItem(0, "Revolver");
+    world.usePlayerItem(0, "Revolver");
+    for (Block room : world.getRooms()) {
+      for (Gadget item : room.getItem()) {
+        assertFalse("Revolver should disappear from the game", 
+            item.getItemName().equals("Revolver"));
+      }
+    }
+  }
+  
+  @Test
+  public void testUseItemAgain() {
+    world.createPlayer("Bob", 1);
+    world.playerPickUpItem(0, "Revolver");
+    world.usePlayerItem(0, "Revolver");
+    for (Block room : world.getRooms()) {
+      for (Gadget item : room.getItem()) {
+        assertFalse("Revolver should disappear from the game", 
+            item.getItemName().equals("Revolver"));
+      }
+    }
+    world.murderAttempt(0);
+    assertThrows(IllegalArgumentException.class, () -> {
+      world.usePlayerItem(0, "Revolver");
+    });
+  }
+  
+  @Test
+  public void testUseNonCarryingItem() {
+    CharacterPlayer bob = world.createPlayer("Bob", 1);
+    for (Gadget item : bob.getItem()) {
+      assertFalse("Bob should not have item Machine Gun", 
+          !item.getItemName().equals("Piece of Rope"));
+    }
+    world.playerPickUpItem(0, "Revolver");
+    assertThrows(IllegalArgumentException.class, () -> {
+      world.usePlayerItem(0, "Piece of Rope");
+    });
+
+  }
+  
+  @Test
+  public void testAttackWithItem() {
+    world.createPlayer("Bob", 1);
+    world.playerPickUpItem(0, "Revolver");
+    CharacterTarget target = world.getTarget();
+    int initialHealth = target.getHealthPoint();
+    world.usePlayerItem(0, "Revolver");
+    String murderResult = world.murderAttempt(0);
+    int finalHealth = target.getHealthPoint();
+    assertTrue("The string does contain 'Success'", murderResult.contains("Success"));
+    assertEquals("Initial health should be 50", 50, initialHealth);
+    assertEquals("Final health should be 49 after the attack", 47, finalHealth);
+  }
+  
+  @Test
+  public void testAttackNotInSameSpace() {
+    CharacterPlayer bob = world.createPlayer("Bob", 2);
+    CharacterTarget target = world.getTarget();
+    assertFalse("Bob and target should not be in the same location", 
+        bob.getLocation().equals(target.getLocation()));
+    assertThrows(IllegalArgumentException.class, () -> { 
+      world.murderAttempt(0); 
+    });
+  }
+  
+  @Test
+  public void testAttackWithOtherPlayerPresent() {
+    world.createPlayer("Bob", 1);
+    world.createPlayer("Ada", 1);
+    CharacterTarget target = world.getTarget();
+    int initialHealth = target.getHealthPoint();
+    String murderResult = world.murderAttempt(0);
+    int finalHealth = target.getHealthPoint();
+    assertTrue("The string does contain 'Success'", murderResult.contains("Failed"));
+    assertEquals("Initial health should be 50", 50, initialHealth);
+    assertEquals("Final health should be 50 after the failed attack", 50, finalHealth);
+  }
+  
+  @Test
+  public void testAttackWithOtherPlayerPresentInNeighborWithPet() {
+    world.createPlayer("Bob", 1);
+    CharacterPlayer ada = world.createPlayer("Ada", 2);
+    CharacterTarget target = world.getTarget();
+    int initialHealth = target.getHealthPoint();
+    String murderResult = world.murderAttempt(0);
+    assertTrue("The string does contain 'Success'", murderResult.contains("Failed"));
+    assertEquals("Pet should be in the same room", ada.getLocation(), world.getPet().getLocation());
+    assertEquals("Initial health should be 50", 50, initialHealth);
+    int finalHealth = target.getHealthPoint();
+    assertEquals("Final health should be 50 after the failed attack", 50, finalHealth);
+  }
+  
+  @Test
+  public void testAttackWithOtherPlayerPresentInNeighborWithoutPet() {
+    world.createPlayer("Bob", 1);
+    CharacterPlayer ada = world.createPlayer("Ada", 2);
+    CharacterTarget target = world.getTarget();
+    world.movePetToNextRoom();
+    int initialHealth = target.getHealthPoint();
+    String murderResult = world.murderAttempt(0);
+    assertTrue("The string does contain 'Success'", murderResult.contains("Failed"));
+    assertNotEquals("Pet should be in the same room", 
+        ada.getLocation(), world.getPet().getLocation());
+    assertEquals("Initial health should be 50", 50, initialHealth);
+    int finalHealth = target.getHealthPoint();
+    assertEquals("Final health should be 50 after the failed attack", 50, finalHealth);
+  }
+  
+  @Test
+  public void testAttackWhilePetInSameRoomWithOtherPlayerPresentInNeighbor() {
+    world.createPlayer("Bob", 2);
+    world.createPlayer("Ada", 19);
+    world.moveTargetToRoom("Billiard Room");
+    CharacterTarget target = world.getTarget();
+    int initialHealth = target.getHealthPoint();
+    String murderResult = world.murderAttempt(0);
+    assertTrue("The string does contain 'Success'", murderResult.contains("Success"));
+    assertEquals("Pet should be in the same room", target.getLocation(), 
+        world.getPet().getLocation());
+    assertEquals("Initial health should be 50", 50, initialHealth);
+    int finalHealth = target.getHealthPoint();
+    assertEquals("Final health should be 50 after the failed attack", 49, finalHealth);
+  }
+
 }

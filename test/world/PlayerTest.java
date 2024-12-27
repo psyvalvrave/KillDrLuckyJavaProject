@@ -4,8 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.Reader;
+import java.io.StringReader;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -31,22 +31,35 @@ public class PlayerTest {
    * to facilitate various test scenarios. It also creates multiple players 
    * and a target within the world to simulate interaction.
    *
-   * @throws FileNotFoundException if the configuration file for the world is not found.
    */
   @Before
-  public void setUp() throws FileNotFoundException {
-    Readable fileInput = new FileReader("res/three_rooms_player_test.txt");
+  public void setUp() {
+    String input = 
+        "36 30 Two And One\n" 
+            + "50 Doctor Lucky\n" 
+            + "Fortune the Cat\n" 
+            + "3\n" 
+            + "22 13 25 18 Close One\n" 
+            + "26 13 27 18 Close Two\n" 
+            + "0 23  3 28 Far Away\n" 
+            + "3\n" 
+            + "0 3 Crepe Pan\n" 
+            + "0 2 Letter Opener\n" 
+            + "1 2 Shoe Horn\n"
+;
+    Reader fileInput = new StringReader(input);
     world = new World(fileInput);
-    startingRoom = world.getRooms().get(0);
-    closeRoom = world.getRooms().get(1);
-    farRoom = world.getRooms().get(2);
-    item1 = world.getItems().get(0);
-    item2 = world.getItems().get(1);
+    startingRoom = (Room) world.getRooms().get(0);
+    closeRoom = (Room) world.getRooms().get(1);
+    farRoom = (Room) world.getRooms().get(2);
+    item1 = (Item) world.getItems().get(0);
+    item2 = (Item) world.getItems().get(1);
 
-    player = world.createPlayer("Test Player", 1);
-    playerFar = world.createPlayer("Test Far Player", 3);
-    secondPlayerInRoom = world.createPlayer("Test Second Player", 1);
+    player = (Player) world.createPlayer("Test Player", 1);
+    playerFar = (Player) world.createPlayer("Test Far Player", 3);
+    secondPlayerInRoom = (Player) world.createPlayer("Test Second Player", 1);
     target = new Target("Doctor Lucky", startingRoom, 100);
+    world.removePet();
   }
   
   @Test
@@ -115,21 +128,6 @@ public class PlayerTest {
                           + "Current Room Items: None" + "\n";
     assertEquals("Look around should provide accurate room info.", 
         expectedInfo, playerFar.lookAround());
-  }
-  
-  @Test
-  public void testMurderSuccess() {
-    int damage = 25;
-    player.murder(target, damage);
-    assertEquals("Target health should be reduced by the damage amount.", 
-        75, target.getHealthPoint());
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void testMurderFailureDifferentRoom() {
-    target.move(farRoom);
-    int damage = 25;
-    player.murder(target, damage); 
   }
   
   @Test

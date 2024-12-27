@@ -10,10 +10,13 @@ import java.util.stream.Collectors;
  * This is not yet the requirement for milestone 1, so I just create a basic version, 
  * it will be updated in next iteration. 
  */
-public class Player extends AbstractCharacter {
+public class Player implements CharacterPlayer {
+  private final String name;
+  private Block currentRoom;
   private final int playerId;
-  private List<Item> items;
+  private List<Gadget> items;
   private int itemLimit;
+  private int murderPoint = 1;
 
   /**
    * Constructor for the Player class.
@@ -23,9 +26,10 @@ public class Player extends AbstractCharacter {
    * @param playerIdInput player ID set, should be set by default in model
    * @param itemLimitInput Numbers of item can carry
    */
-  public Player(String playerNameInput, Room startingRoomInput, 
+  public Player(String playerNameInput, Block startingRoomInput, 
       int playerIdInput, int itemLimitInput) {
-    super(playerNameInput, startingRoomInput);
+    this.name = playerNameInput;
+    this.currentRoom = startingRoomInput;
     this.playerId = playerIdInput;
     this.itemLimit = itemLimitInput;
     this.items = new ArrayList<>();
@@ -37,42 +41,67 @@ public class Player extends AbstractCharacter {
    * @return The location of the player, should be room.
    */
   @Override
-  public Room getLocation() {
+  public Block getLocation() {
     return currentRoom;
   }
 
-  /**
-   * Attempts to murder a target within the same room.
-   * 
-   * @param target The target to murder.
-   * @param damage The amount of damage to inflict.
-   */
-  public void murder(Target target, int damage) {
+  @Override
+  public void murder(CharacterTarget target) {
     if (target == null) {
       throw new IllegalArgumentException("No target specified.");
     }
     if (!currentRoom.equals(target.getLocation())) {
-      throw new IllegalArgumentException(name + " cannot attack " 
-    + target.getCharacterName() + " from current location.");
+      throw new IllegalArgumentException(name + " cannot attack "
+          + "" + target.getCharacterName() + " from current location.");
     }
-    target.setHealthPoint(target.getHealthPoint() - damage);
+    target.setHealthPoint(target.getHealthPoint() - murderPoint);
+    this.murderPoint = 1;
   }
   
-  /**
-   * Retrieves detailed information about the player including its current location.
-   * 
-   * @return A formatted string containing the name, health, and location of the target.
-   */
+  @Override
+  public void useItem(Gadget item) {
+    if (item == null || !items.contains(item)) {
+      throw new IllegalArgumentException("Specified item is not in possession.");
+    }
+    this.murderPoint = item.getMurderValue();  
+    items.remove(item); 
+  }
+  
+  @Override
+  public void useHighestItem() {
+    if (items.isEmpty()) {
+      return; 
+    }
+    Gadget highestValueItem = items.stream()
+        .max((item1, item2) -> Integer.compare(item1.getMurderValue(), item2.getMurderValue()))
+        .orElse(null);
+    if (highestValueItem != null) {
+      this.murderPoint = highestValueItem.getMurderValue();
+      items.remove(highestValueItem);  
+    }
+  }
+  
   @Override
   public String getCharacterInfo() {
     return String.format("ID: %d, Name: %s, Current Room: %s, Items: %s", 
             playerId, getCharacterName(), getLocation().getRoomName(), listItems());
   }
   
-  public List<Item> getItem() {
-    return new ArrayList<>(items);
+  /**
+   * Return player's inventory as list of gadget.
+   *
+   * @return List of Gadget objects.
+   */
+  public List<Gadget> getItem() {
+    ArrayList<Gadget> gadgets = new ArrayList<>(items);
+    return gadgets;
   }
   
+  /**
+   * Return current player's id.
+   *
+   * @return int number as player id.
+   */
   public int getPlayerId() {
     return playerId;
   }
@@ -95,7 +124,7 @@ public class Player extends AbstractCharacter {
       return "None";
     }
     StringBuilder sb = new StringBuilder();
-    for (Item item : items) {
+    for (Gadget item : items) {
       if (sb.length() > 0) {
         sb.append(", ");
       }
@@ -124,83 +153,95 @@ public class Player extends AbstractCharacter {
         && Objects.equals(items, other.items);
   }
   
-  /**
-   * Adds an item to the player's inventory if it is present in the current room and
-   * the player has not reached the item limit.
-   *
-   * @param item The item to be picked up by the player.
-   * @throws IllegalArgumentException If the item is not available 
-   *        in the current room or if the item limit is reached.
-   */
-  public void pickItem(Item item) throws IllegalArgumentException {
-    Room currentRoom = getLocation();
-    if (!currentRoom.getItem().contains(item)) {
+  @Override
+  public void pickItem(Gadget item) throws IllegalArgumentException {
+    Room playerCurrentRoom = (Room) getLocation();
+    if (!playerCurrentRoom.getItem().contains(item)) {
       throw new IllegalArgumentException("Item not available in the room.");
     }
     if (items.size() >= itemLimit) {
       throw new IllegalArgumentException("Item limit reached. Cannot pick up any more items.");
     }
-    items.add(item);
-    currentRoom.removeItem(item);
+    items.add((Item) item);
+    playerCurrentRoom.removeItem((Item) item);
   }
   
-  /**
-   * Provides a detailed description of the player's surroundings in the current room,
-   * including visible rooms and items in those rooms.
-   *
-   * @return A detailed string describing the current room, its items, and any visible rooms.
-   */
+  @Override
   public String lookAround() {
-    Room currentRoom = getLocation();
+    Room playerCurrentRoom = (Room) getLocation();
     StringBuilder info = new StringBuilder();
-    info.append("Current Room ID: ").append(currentRoom.getRoomId()).append("\n")
-        .append("Current Room Name: ").append(currentRoom.getRoomName()).append("\n")
-        .append("Current Room Items: ").append(currentRoom.listItems()).append("\n");
+    info.append("Current Room ID: ").append(playerCurrentRoom.getRoomId()).append("\n")
+        .append("Current Room Name: ").append(playerCurrentRoom.getRoomName()).append("\n")
+        .append("Current Room Items: ").append(playerCurrentRoom.listItems()).append("\n");
 
-    List<Room> visibleAndNeighbor = currentRoom.getVisibleFrom().stream()
+    List<Block> visibleAndNeighbor = playerCurrentRoom.getVisibleFrom().stream()
         .filter(currentRoom.getNeighbor()::contains)
         .collect(Collectors.toList());
 
     if (!visibleAndNeighbor.isEmpty()) {
       info.append("Neighboring and Visible Rooms:\n");
-      for (Room room : visibleAndNeighbor) {
+      for (Block room : visibleAndNeighbor) {
         info.append("  Room ID: ").append(room.getRoomId())
             .append(", Room Name: ").append(room.getRoomName())
-            .append(", Items: ").append(room.listItems()).append("\n");
+            .append(", Items: ").append(((Room) room).listItems()).append("\n");
       }
     }
 
-    List<Room> visibleNotNeighbor = currentRoom.getVisibleFrom().stream()
+    List<Block> visibleNotNeighbor = currentRoom.getVisibleFrom().stream()
         .filter(room -> !currentRoom.getNeighbor().contains(room))
         .collect(Collectors.toList());
 
     if (!visibleNotNeighbor.isEmpty()) {
       info.append("Other Visible Rooms:\n");
-      for (Room room : visibleNotNeighbor) {
+      for (Block room : visibleNotNeighbor) {
         info.append("  Room ID: ").append(room.getRoomId())
             .append(", Room Name: ").append(room.getRoomName())
-            .append(", Items: ").append(room.listItems()).append("\n");
+            .append(", Items: ").append(((Room) room).listItems()).append("\n");
       }
     }
 
     return info.toString();
   }
   
-  /**
-   * Moves the player to a new room if it is a neighbor.
-   *
-   * @param room The new room to move the player to.
-   * @throws IllegalArgumentException If the room is null or not a neighbor.
-   */
   @Override
-  public void move(Room room) {
-    if (room == null) {
+  public String lookAround(List<Block> restrictedRooms) {
+    Room playerCurrentRoom = (Room) getLocation();
+    StringBuilder info = new StringBuilder();
+    info.append("Current Room ID: ").append(playerCurrentRoom.getRoomId()).append("\n")
+        .append("Current Room Name: ").append(playerCurrentRoom.getRoomName()).append("\n")
+        .append("Current Room Items: ").append(playerCurrentRoom.listItems()).append("\n");
+
+    List<Block> visibleRooms = playerCurrentRoom.getVisibleFrom();
+    if (!visibleRooms.isEmpty()) {
+      info.append("Visible Rooms:\n");
+      for (Block room : visibleRooms) {
+        if (restrictedRooms.contains(room)) {
+          info.append("  Room ID: ").append(room.getRoomId())
+              .append(", Room Name: ").append(room.getRoomName())
+              .append(": Restricted details due to pet presence.\n");
+        } else {
+          info.append("  Room ID: ").append(room.getRoomId())
+              .append(", Room Name: ").append(room.getRoomName())
+              .append(", Items: ").append(((Room) room).listItems()).append("\n");
+        }
+      }
+    } else {
+      info.append("No visible rooms from your current location.\n");
+    }
+    return info.toString();
+  }
+
+  
+
+  @Override
+  public void move(Block targetRoom) {
+    if (targetRoom == null) {
       throw new IllegalArgumentException("Room cannot be null.");
     }
-    if (!currentRoom.isAdjacent(room)) {
+    if (!currentRoom.isAdjacent(targetRoom)) {
       throw new IllegalArgumentException("Cannot move to a non-neighboring room.");
     }
-    this.currentRoom = room;
+    this.currentRoom = targetRoom;
   }
   
   /**
@@ -209,6 +250,9 @@ public class Player extends AbstractCharacter {
    * @param newItemLimit The new limit on the number of items the player can hold.
    */
   public void setItemLimit(int newItemLimit) {
+    if (newItemLimit < 0) {
+      throw new IllegalArgumentException("newItemLimit cannot be negative");
+    }
     this.itemLimit = newItemLimit;
     while (items.size() > itemLimit) {
       items.remove(items.size() - 1); 
@@ -223,6 +267,28 @@ public class Player extends AbstractCharacter {
   public int getItemLimit() {
     return this.itemLimit;
   }
+  
+  @Override
+  public String getCharacterName() {
+    return name;
+  }
+  
+  @Override
+  public boolean canSee(CharacterPlayer otherPlayer) {
+    Block otherPlayerLocation = otherPlayer.getLocation();
+    if (this.currentRoom.equals(otherPlayerLocation)) {
+      return true;
+    }
+    List<Block> neighbors = this.currentRoom.getNeighbor();
+    for (Block neighbor : neighbors) {
+      if (neighbor.equals(otherPlayerLocation)) {
+        return true;
+      }
+    }
+    return false; 
+  }
+
+
   
   
   

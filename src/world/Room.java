@@ -14,9 +14,9 @@ import java.util.Set;
 public class Room implements Block {
   private String roomName;
   private int roomId; 
-  private List<Room> neighbors;
-  private List<Room> visibleFrom;
-  private List<Item> items;
+  private List<Block> neighbors;
+  private List<Block> visibleFrom;
+  private List<Gadget> items;
   private final int[] locationRoom;  
   private List<String[]> allRoomData;
 
@@ -49,38 +49,26 @@ public class Room implements Block {
     return roomName;
   }
 
-  /**
-   * Returns a list of adjacent rooms.
-   * 
-   * @return a list of Room objects that are adjacent to this room
-   */
   @Override
-  public List<Room> getNeighbor() {
-    return new ArrayList<>(neighbors);
+  public List<Block> getNeighbor() {
+    ArrayList<Block> rooms = new ArrayList<>(neighbors);
+    return rooms;
+    
   }
   
-  /**
-   * Returns a list of rooms from which this room is visible.
-   * 
-   * @return a list of Room objects that can see this room
-   */
   @Override
-  public List<Room> getVisibleFrom() {
-    return new ArrayList<>(visibleFrom);
+  public List<Block> getVisibleFrom() {
+    ArrayList<Block> rooms = new ArrayList<>(visibleFrom);
+    return rooms;
   }
   
-  /**
-   * Returns a comma-separated string of all neighbor room names.
-   * 
-   * @return Comma-separated names of neighboring rooms.
-   */
   @Override
   public String getNeighborNames() {
     if (neighbors.isEmpty()) {
       return "No neighbors";
     }
     StringBuilder neighborNames = new StringBuilder();
-    for (Room neighbor : neighbors) {
+    for (Block neighbor : neighbors) {
       if (neighborNames.length() > 0) {
         neighborNames.append(", ");
       }
@@ -170,45 +158,23 @@ public class Room implements Block {
     return horizontalAlignment || verticalAlignment;
   }
 
-  /**
-   * Determines if the specified room is a neighbor based on adjacency of coordinates.
-   * This one is public for better efficiency
-   * 
-   * @param room the room to check against this room
-   * @return true if the rooms are adjacent, false otherwise
-   */
   @Override
-  public boolean isAdjacent(Room room) {
+  public boolean isAdjacent(Block room) {
     return neighbors.contains(room);
   }
 
-  /**
-   * Checks if this room is visible from another room based on direct line of sight.
-   * This one is public for better efficiency
-   * 
-   * @param room the room to check visibility from
-   * @return true if this room is visible from the other room, false otherwise
-   */
   @Override
-  public boolean isVisibleFrom(Room room) {
+  public boolean isVisibleFrom(Block room) {
     return visibleFrom.contains(room);
   }
 
-  /**
-   * Returns a list of all items in this room.
-   * 
-   * @return a list containing all items in the room
-   */
   @Override
-  public List<Item> getItem() {
+  public List<Gadget> getItem() {
     return new ArrayList<>(items);
   }
 
-  /**
-   * Adds a neighbor room to this room.
-   * 
-   * @param room The room to be added as a neighbor.
-   */
+ 
+  @Override
   public void addNeighbor(Room room) {
     if (room != null && !neighbors.contains(room) && this.areNeighbors(room)) {
       neighbors.add(room);
@@ -216,27 +182,21 @@ public class Room implements Block {
     }
   }
 
-  /**
-   * Marks a room as visible from this room.
-   * 
-   * @param room The room from which this room can be seen.
-   */
+ 
+  @Override
   public void addVisibleFromRoom(Room room) {
     if (room != null && !visibleFrom.contains(room) && this.canSeeFrom(room)) {
       visibleFrom.add(room);
     }
   }
 
-  /**
-   * Adds an item to the room.
-   * 
-   * @param item The item to be added to the room.
-   */
-  public void addItem(Item item) {
+  @Override
+  public void addItem(Gadget item) {
     if (item != null && !items.contains(item)) {
       items.add(item);
     }
   }
+  
   
   /**
    * Returns the coordinates of this room.
@@ -247,12 +207,7 @@ public class Room implements Block {
     return locationRoom;
   }
   
-  /**
-   * Returns detailed information about this room, including its name, ID, coordinates, 
-   * neighbors, visibility, and items contained.
-   * 
-   * @return detailed string representation of this room
-   */
+  @Override
   public String getInfo() {
     StringBuilder info = new StringBuilder();
     info.append("Room Name: ").append(roomName).append("\n");
@@ -267,7 +222,7 @@ public class Room implements Block {
     if (neighbors.isEmpty()) {
       info.append("None");
     } else {
-      for (Room neighbor : neighbors) {
+      for (Block neighbor : neighbors) {
         info.append(neighbor.getRoomName()).append(", ");
       }
       info.setLength(info.length() - 2);  
@@ -278,7 +233,7 @@ public class Room implements Block {
     if (visibleFrom.isEmpty()) {
       info.append("None");
     } else {
-      for (Room visible : visibleFrom) {
+      for (Block visible : visibleFrom) {
         info.append(visible.getRoomName()).append(", ");
       }
       info.setLength(info.length() - 2);  
@@ -290,16 +245,17 @@ public class Room implements Block {
     return info.toString();
   }
 
-  /**
-   * Gets the unique identifier for this room.
-   * 
-   * @return the room ID
-   */
+
   @Override
   public int getRoomId() {
     return roomId;
   }
   
+  /**
+   * Return selected item in current room. 
+   * 
+   * @param item the selected item.
+   */
   public void removeItem(Item item) {
     items.remove(item);
   }
@@ -314,7 +270,7 @@ public class Room implements Block {
       return "None";
     }
     StringBuilder itemsList = new StringBuilder();
-    for (Item item : items) {
+    for (Gadget item : items) {
       itemsList.append(item.getItemName()).append(", ");
     }
     itemsList.setLength(itemsList.length() - 2); 

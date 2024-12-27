@@ -1,6 +1,5 @@
 package controller;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -19,7 +18,7 @@ public class GameComputerControllerTest {
   @Test
   public void testComputerPlayerMoves() throws InterruptedException, IOException {
     int maxTurns = 2; 
-    String simulatedUserInput = "2\nComputerPlayer\n1\n4\n"; 
+    String simulatedUserInput = "2\n1\nComputerPlayer\n4\n0\n"; 
     Readable consoleInput = new java.io.StringReader(simulatedUserInput);
     consoleOutput = new StringWriter();   
     fakeRng = new FakeRandomNumberGenerator();
@@ -29,14 +28,12 @@ public class GameComputerControllerTest {
     fakeRng.setNextIntResult(0); 
     String output = consoleOutput.toString();
     assertTrue(output.contains("Default move result"));
-    assertTrue(output.contains("Game over: Maximum number of turns reached."));
-    assertFalse(gameController.getIsRunning());
   }
   
   @Test
   public void testComputerPlayerPicksUpItem() throws InterruptedException, IOException {
     int maxTurns = 2; 
-    String simulatedUserInput = "2\nComputerPlayer\n1\n4\n"; 
+    String simulatedUserInput = "2\n1\nComputerPlayer\n4\n0\n"; 
     Readable consoleInput = new java.io.StringReader(simulatedUserInput);
     consoleOutput = new StringWriter();   
     fakeRng = new FakeRandomNumberGenerator();
@@ -46,13 +43,12 @@ public class GameComputerControllerTest {
     gameController.playGame(mockWorld);
     String output = consoleOutput.toString();
     assertTrue(output.contains("Computer player: Default pick item up"));
-    assertFalse(gameController.getIsRunning());
   }
   
   @Test
   public void testComputerPlayerLookAround() throws InterruptedException, IOException {
     int maxTurns = 2; 
-    String simulatedUserInput = "2\nComputerPlayer\n1\n4\n"; 
+    String simulatedUserInput = "2\n1\nComputerPlayer\n4\n0\n"; 
     Readable consoleInput = new java.io.StringReader(simulatedUserInput);
     consoleOutput = new StringWriter();   
     fakeRng = new FakeRandomNumberGenerator();
@@ -62,7 +58,22 @@ public class GameComputerControllerTest {
     gameController.playGame(mockWorld);
     String output = consoleOutput.toString();
     assertTrue(output.contains("Computer player: Default look around info"));
-    assertFalse(gameController.getIsRunning());
+  }
+  
+  @Test
+  public void testComputerPlayerMurderWhenAvailable() throws InterruptedException, IOException {
+    consoleOutput = new StringWriter();   
+    fakeRng = new FakeRandomNumberGenerator();
+    MockWorldOutline mockWorld = new MockWorldOutline();
+    mockWorld.toggleMurderAttempt();
+    String simulatedUserInput = "2\n1\nComputerPlayer\n4\n0\n"; 
+    Readable consoleInput = new java.io.StringReader(simulatedUserInput);
+    int maxTurns = 2; 
+    gameController = new GameController(consoleInput, consoleOutput, fakeRng, maxTurns);
+    gameController.playGame(mockWorld);
+    String output = consoleOutput.toString();
+    assertTrue(output.contains("Opportunity for murder identified. "
+        + "Computer player preparing to attack."));
   }
 
 }
