@@ -1,5 +1,5 @@
 # CS5010-DrLuckyGame
-This is a class project to kill a game base with java. It is similar to the board game Kill Doctor Lucky, but it has some different rules. 
+This is a class project to play a game base with java. It is similar to the board game Kill Doctor Lucky, but it has some different rules. 
 
 ## Milestone 1: Game Board Creation
 
